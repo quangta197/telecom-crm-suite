@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -85,7 +86,12 @@ const filterOptions = [
 const savedFilters = ["Sent Proposals", "This Month's Proposals"];
 
 const Proposals = () => {
+  const navigate = useNavigate();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+
+  const handleRowClick = (id: number) => {
+    navigate(`/proposals/${id}`);
+  };
 
   const toggleRow = (id: number) => {
     setSelectedRows((prev) =>
@@ -145,8 +151,9 @@ const Proposals = () => {
                   className={`hover:bg-muted/50 cursor-pointer ${
                     selectedRows.includes(proposal.id) ? "bg-primary/5" : ""
                   }`}
+                  onClick={() => handleRowClick(proposal.id)}
                 >
-                  <TableCell>
+                  <TableCell onClick={(e) => e.stopPropagation()}>
                     <Checkbox
                       checked={selectedRows.includes(proposal.id)}
                       onCheckedChange={() => toggleRow(proposal.id)}
