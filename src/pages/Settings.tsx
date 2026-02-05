@@ -15,6 +15,7 @@ import {
   GripVertical,
   MoreHorizontal,
 } from "lucide-react";
+import { StatusList } from "@/components/settings/StatusList";
 import {
   Dialog,
   DialogContent,
@@ -280,42 +281,16 @@ export default function Settings() {
                   ))}
                 </div>
 
-                {/* Status List */}
-                <div className="space-y-3">
-                  {statuses[selectedStatusType].map((status, index) => (
-                    <div
-                      key={status.id}
-                      className="flex items-center justify-between p-4 bg-secondary/30 rounded-lg border hover:bg-secondary/50 transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <GripVertical className="h-5 w-5 text-muted-foreground cursor-grab" />
-                        <span className="text-sm text-muted-foreground w-6">{index + 1}</span>
-                        <div className={`h-4 w-4 rounded ${status.color}`} />
-                        <div>
-                          <p className="font-medium">{status.name}</p>
-                          <p className="text-sm text-muted-foreground">{status.description}</p>
-                        </div>
-                      </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem className="gap-2">
-                            <Pencil className="h-4 w-4" />
-                            Chỉnh sửa
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2 text-destructive">
-                            <Trash2 className="h-4 w-4" />
-                            Xóa
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  ))}
-                </div>
+                {/* Status List with Drag and Drop */}
+                <StatusList
+                  statuses={statuses[selectedStatusType]}
+                  onReorder={(newStatuses) => {
+                    setStatuses((prev) => ({
+                      ...prev,
+                      [selectedStatusType]: newStatuses,
+                    }));
+                  }}
+                />
 
                 <p className="text-sm text-muted-foreground">
                   💡 Kéo thả để sắp xếp thứ tự hiển thị của các trạng thái trong pipeline
