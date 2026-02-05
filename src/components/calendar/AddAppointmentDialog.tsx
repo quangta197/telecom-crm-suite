@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { format } from "date-fns";
-import { CalendarIcon, Clock } from "lucide-react";
+import { CalendarIcon, Clock, MapPin, Video } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -26,6 +26,8 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { LocationMapPicker } from "./LocationMapPicker";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 export interface Appointment {
   id: number;
@@ -36,6 +38,9 @@ export interface Appointment {
   attendees: number;
   date: Date;
   description?: string;
+  mode: "online" | "offline";
+  coordinates?: { lat: number; lng: number; address?: string };
+  meetingLink?: string;
 }
 
 interface AddAppointmentDialogProps {
@@ -64,6 +69,9 @@ export function AddAppointmentDialog({
   const [location, setLocation] = useState("");
   const [attendees, setAttendees] = useState("1");
   const [description, setDescription] = useState("");
+  const [mode, setMode] = useState<"online" | "offline">("online");
+  const [coordinates, setCoordinates] = useState<{ lat: number; lng: number; address?: string }>();
+  const [meetingLink, setMeetingLink] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,10 +82,13 @@ export function AddAppointmentDialog({
       title,
       time: `${startTime} - ${endTime}`,
       type,
-      location: location || "TBD",
+      location: mode === "online" ? (meetingLink || "Online") : (location || "TBD"),
       attendees: parseInt(attendees) || 1,
       date,
       description,
+      mode,
+      coordinates: mode === "offline" ? coordinates : undefined,
+      meetingLink: mode === "online" ? meetingLink : undefined,
     });
 
     // Reset form
@@ -89,6 +100,9 @@ export function AddAppointmentDialog({
     setLocation("");
     setAttendees("1");
     setDescription("");
+    setMode("online");
+    setCoordinates(undefined);
+    setMeetingLink("");
     onOpenChange(false);
   };
 
@@ -192,16 +206,65 @@ export function AddAppointmentDialog({
               </Select>
             </div>
 
-            {/* Location */}
+            {/* Mode Selection */}
             <div className="grid gap-2">
-              <Label htmlFor="location">Location</Label>
-              <Input
-                id="location"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="Meeting room, Online, etc."
-              />
+              <Label>Appointment Mode *</Label>
+              <RadioGroup
+                value={mode}
+                onValueChange={(v) => setMode(v as "online" | "offline")}
+                className="flex gap-4"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="online" id="online" />
+                  <Label htmlFor="online" className="flex items-center gap-2 cursor-pointer">
+                    <Video className="h-4 w-4 text-primary" />
+                    Online
+                  </Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="offline" id="offline" />
+                  <Label htmlFor="offline" className="flex items-center gap-2 cursor-pointer">
+                    <MapPin className="h-4 w-4 text-destructive" />
+                    Offline
+                  </Label>
+                </div>
+              </RadioGroup>
             </div>
+
+            {/* Online: Meeting Link */}
+            {mode === "online" && (
+              <div className="grid gap-2">
+                <Label htmlFor="meetingLink">Meeting Link</Label>
+                <Input
+                  id="meetingLink"
+                  value={meetingLink}
+                  onChange={(e) => setMeetingLink(e.target.value)}
+                  placeholder="https://meet.google.com/..."
+                />
+              </div>
+            )}
+
+            {/* Offline: Location */}
+            {mode === "offline" && (
+              <>
+                <div className="grid gap-2">
+                  <Label htmlFor="location">Location Name</Label>
+                  <Input
+                    id="location"
+                    value={location}
+                    onChange={(e) => setLocation(e.target.value)}
+                    placeholder="Meeting room, Office address, etc."
+                  />
+                </div>
+                <div className="grid gap-2">
+                  <Label>Select Location on Map</Label>
+                  <LocationMapPicker
+                    value={coordinates}
+                    onChange={setCoordinates}
+                  />
+                </div>
+              </>
+            )}
 
             {/* Attendees */}
             <div className="grid gap-2">

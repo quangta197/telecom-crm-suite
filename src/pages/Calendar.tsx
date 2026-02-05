@@ -2,7 +2,7 @@ import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Plus, ChevronLeft, ChevronRight, Clock, MapPin, Users } from "lucide-react";
+import { Plus, ChevronLeft, ChevronRight, Clock, MapPin, Users, Video, ExternalLink } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AddAppointmentDialog, Appointment } from "@/components/calendar/AddAppointmentDialog";
 import { toast } from "@/hooks/use-toast";
@@ -16,33 +16,41 @@ const initialEvents: Appointment[] = [
     location: "Meeting Room A",
     attendees: 5,
     date: new Date(),
+    mode: "offline",
+    coordinates: { lat: 10.8231, lng: 106.6297, address: "VNPT Office" },
   },
   {
     id: 2,
     title: "Viettel Follow-up Call",
     time: "11:00 - 11:30",
     type: "call",
-    location: "Online",
+    location: "Google Meet",
     attendees: 2,
     date: new Date(),
+    mode: "online",
+    meetingLink: "https://meet.google.com/abc-defg-hij",
   },
   {
     id: 3,
     title: "FPT Solution Presentation",
     time: "14:00 - 16:00",
     type: "presentation",
-    location: "Client Site",
+    location: "FPT Tower, District 7",
     attendees: 8,
     date: new Date(),
+    mode: "offline",
+    coordinates: { lat: 10.7285, lng: 106.7188, address: "FPT Tower, D7" },
   },
   {
     id: 4,
     title: "CMC Contract Review",
     time: "16:30 - 17:30",
     type: "internal",
-    location: "Meeting Room B",
+    location: "Zoom",
     attendees: 3,
     date: new Date(),
+    mode: "online",
+    meetingLink: "https://zoom.us/j/123456789",
   },
 ];
 
@@ -189,8 +197,28 @@ const CalendarPage = () => {
                         {event.time}
                       </div>
                       <div className="flex items-center gap-2">
-                        <MapPin className="h-3 w-3" />
-                        {event.location}
+                        {event.mode === "online" ? (
+                          <>
+                            <Video className="h-3 w-3 text-primary" />
+                            <span className="text-primary">Online</span>
+                            {event.meetingLink && (
+                              <a 
+                                href={event.meetingLink} 
+                                target="_blank" 
+                                rel="noopener noreferrer"
+                                className="text-primary hover:underline flex items-center gap-1"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <ExternalLink className="h-3 w-3" />
+                              </a>
+                            )}
+                          </>
+                        ) : (
+                          <>
+                            <MapPin className="h-3 w-3 text-destructive" />
+                            <span>{event.location}</span>
+                          </>
+                        )}
                       </div>
                       <div className="flex items-center gap-2">
                         <Users className="h-3 w-3" />
