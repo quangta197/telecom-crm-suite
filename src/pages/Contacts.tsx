@@ -1,6 +1,6 @@
+ import { useState } from "react";
  import { MainLayout } from "@/components/layout/MainLayout";
  import { Button } from "@/components/ui/button";
- import { Input } from "@/components/ui/input";
  import { Badge } from "@/components/ui/badge";
  import {
    Table,
@@ -10,140 +10,191 @@
    TableHeader,
    TableRow,
  } from "@/components/ui/table";
- import { Plus, Search, Filter, MoreHorizontal, Building2, Phone, Mail } from "lucide-react";
- import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+ import { Plus, MoreHorizontal, Phone } from "lucide-react";
+ import { Checkbox } from "@/components/ui/checkbox";
  
  const contacts = [
    {
      id: 1,
-     name: "Nguyễn Văn Minh",
-     company: "VNPT Hà Nội",
-     position: "Giám đốc CNTT",
-     email: "minh.nv@vnpt.com.vn",
-     phone: "0912 345 678",
-     status: "Hoạt động",
+     code: "KH00015",
+     name: "Công ty CP MISA",
+     taxCode: "0102345646",
+     phone: "0362 855 655",
+     smeScore: 90,
    },
    {
      id: 2,
-     name: "Trần Thị Hương",
-     company: "Viettel Business",
-     position: "Trưởng phòng mua hàng",
-     email: "huong.tt@viettel.com.vn",
-     phone: "0987 654 321",
-     status: "Hoạt động",
+     code: "KH00016",
+     name: "Công ty TNHH Thân Thiện",
+     taxCode: "0102345647",
+     phone: "0362 624 827",
+     smeScore: 100,
    },
    {
      id: 3,
-     name: "Lê Hoàng Nam",
-     company: "FPT Telecom",
-     position: "Phó Giám đốc",
-     email: "nam.lh@fpt.com.vn",
-     phone: "0909 123 456",
-     status: "Không hoạt động",
+     code: "KH00017",
+     name: "Công ty CP Văn Kiều",
+     taxCode: "0102345648",
+     phone: "0362 222 333",
+     smeScore: 40,
    },
    {
      id: 4,
-     name: "Phạm Thanh Tùng",
-     company: "CMC Telecom",
-     position: "Giám đốc kinh doanh",
-     email: "tung.pt@cmc.com.vn",
-     phone: "0918 765 432",
-     status: "Hoạt động",
+     code: "KH00018",
+     name: "Quán Nhỏ",
+     taxCode: "0102345649",
+     phone: "0362 123 123",
+     smeScore: 70,
    },
    {
      id: 5,
-     name: "Đỗ Minh Châu",
-     company: "MobiFone",
-     position: "Trưởng phòng dự án",
-     email: "chau.dm@mobifone.vn",
-     phone: "0923 456 789",
-     status: "Hoạt động",
+     code: "KH00019",
+     name: "Cà phê Trung Nguyên",
+     taxCode: "0102345650",
+     phone: "0362 255 255",
+     smeScore: 90,
+   },
+   {
+     id: 6,
+     code: "KH00020",
+     name: "Công ty CP TM & DV Thân Thiện",
+     taxCode: "0102345651",
+     phone: "0362 500 500",
+     smeScore: 80,
+   },
+   {
+     id: 7,
+     code: "KH00022",
+     name: "Công ty CP Anh Dũng",
+     taxCode: "0102345652",
+     phone: "0362 212 212",
+     smeScore: 10,
+   },
+   {
+     id: 8,
+     code: "KH00023",
+     name: "Chuỗi cửa hàng thời trang T & T",
+     taxCode: "0102345653",
+     phone: "0362 222 222",
+     smeScore: 100,
+   },
+   {
+     id: 9,
+     code: "KH00024",
+     name: "Công ty CP Minh Nhật",
+     taxCode: "0102345654",
+     phone: "0362 678 678",
+     smeScore: 90,
+   },
+   {
+     id: 10,
+     code: "KH00025",
+     name: "Cà phê 69",
+     taxCode: "0102345655",
+     phone: "0362 822 833",
+     smeScore: 20,
    },
  ];
  
+ const filterOptions = [
+   { id: "code", label: "Mã khách hàng" },
+   { id: "name", label: "Tên khách hàng" },
+   { id: "taxCode", label: "Mã số thuế" },
+   { id: "phone", label: "Điện thoại" },
+   { id: "smeScore", label: "Điểm tiềm năng SME" },
+ ];
+ 
+ const savedFilters = ["Khách hàng VIP", "Khách hàng mới"];
+ 
  const Contacts = () => {
+   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+ 
+   const toggleRow = (id: number) => {
+     setSelectedRows((prev) =>
+       prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id]
+     );
+   };
+ 
+   const toggleAll = () => {
+     if (selectedRows.length === contacts.length) {
+       setSelectedRows([]);
+     } else {
+       setSelectedRows(contacts.map((c) => c.id));
+     }
+   };
+ 
+   const getScoreColor = (score: number) => {
+     if (score >= 80) return "text-success";
+     if (score >= 50) return "text-warning";
+     return "text-destructive";
+   };
+ 
    return (
-     <MainLayout>
+     <MainLayout
+       filterTitle="Tất cả khách hàng"
+       filters={filterOptions}
+       savedFilters={savedFilters}
+     >
        <div className="space-y-6 animate-fade-in">
          {/* Page Header */}
          <div className="flex items-center justify-between">
            <div>
-             <h1 className="text-2xl font-bold">Liên hệ</h1>
-             <p className="text-muted-foreground">
-               Quản lý danh sách khách hàng và đối tác
-             </p>
+             <h1 className="text-xl font-bold">Tất cả khách hàng</h1>
            </div>
-           <Button className="gradient-primary">
-             <Plus className="mr-2 h-4 w-4" />
-             Thêm liên hệ
-           </Button>
-         </div>
- 
-         {/* Filters */}
-         <div className="flex items-center gap-4">
-           <div className="relative flex-1 max-w-md">
-             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-             <Input placeholder="Tìm kiếm liên hệ..." className="pl-10" />
+           <div className="flex items-center gap-2">
+             <Button className="gradient-primary">
+               <Plus className="mr-2 h-4 w-4" />
+               Thêm
+             </Button>
            </div>
-           <Button variant="outline">
-             <Filter className="mr-2 h-4 w-4" />
-             Bộ lọc
-           </Button>
          </div>
  
          {/* Table */}
-         <div className="rounded-xl bg-card shadow-card overflow-hidden">
+         <div className="rounded-lg bg-card shadow-sm overflow-hidden border">
            <Table>
              <TableHeader>
-               <TableRow className="bg-secondary/50">
-                 <TableHead>Liên hệ</TableHead>
-                 <TableHead>Công ty</TableHead>
-                 <TableHead>Liên lạc</TableHead>
-                 <TableHead>Trạng thái</TableHead>
+               <TableRow className="bg-muted/50">
+                 <TableHead className="w-12">
+                   <Checkbox
+                     checked={selectedRows.length === contacts.length}
+                     onCheckedChange={toggleAll}
+                   />
+                 </TableHead>
+                 <TableHead>Mã khách hàng</TableHead>
+                 <TableHead>Tên khách hàng</TableHead>
+                 <TableHead>Mã số thuế</TableHead>
+                 <TableHead>Điện thoại</TableHead>
+                 <TableHead className="text-right">Điểm tiềm năng SME</TableHead>
                  <TableHead className="w-12"></TableHead>
                </TableRow>
              </TableHeader>
              <TableBody>
                {contacts.map((contact) => (
-                 <TableRow key={contact.id} className="hover:bg-secondary/30">
+                 <TableRow
+                   key={contact.id}
+                   className={`hover:bg-muted/50 cursor-pointer ${
+                     selectedRows.includes(contact.id) ? "bg-primary/5" : ""
+                   }`}
+                 >
                    <TableCell>
-                     <div className="flex items-center gap-3">
-                       <Avatar>
-                         <AvatarFallback className="bg-primary/10 text-primary font-semibold">
-                           {contact.name.split(" ").map(n => n[0]).join("").slice(-2)}
-                         </AvatarFallback>
-                       </Avatar>
-                       <div>
-                         <p className="font-medium">{contact.name}</p>
-                         <p className="text-sm text-muted-foreground">{contact.position}</p>
-                       </div>
-                     </div>
+                     <Checkbox
+                       checked={selectedRows.includes(contact.id)}
+                       onCheckedChange={() => toggleRow(contact.id)}
+                     />
                    </TableCell>
+                   <TableCell className="font-mono text-sm">{contact.code}</TableCell>
+                   <TableCell className="font-medium text-primary hover:underline">
+                     {contact.name}
+                   </TableCell>
+                   <TableCell className="font-mono text-sm">{contact.taxCode}</TableCell>
                    <TableCell>
                      <div className="flex items-center gap-2">
-                       <Building2 className="h-4 w-4 text-muted-foreground" />
-                       {contact.company}
+                       <Phone className="h-3.5 w-3.5 text-success" />
+                       <span>{contact.phone}</span>
                      </div>
                    </TableCell>
-                   <TableCell>
-                     <div className="space-y-1">
-                       <div className="flex items-center gap-2 text-sm">
-                         <Mail className="h-3 w-3 text-muted-foreground" />
-                         {contact.email}
-                       </div>
-                       <div className="flex items-center gap-2 text-sm">
-                         <Phone className="h-3 w-3 text-muted-foreground" />
-                         {contact.phone}
-                       </div>
-                     </div>
-                   </TableCell>
-                   <TableCell>
-                     <Badge
-                       variant={contact.status === "Hoạt động" ? "default" : "secondary"}
-                       className={contact.status === "Hoạt động" ? "bg-success/10 text-success hover:bg-success/20" : ""}
-                     >
-                       {contact.status}
-                     </Badge>
+                   <TableCell className={`text-right font-semibold ${getScoreColor(contact.smeScore)}`}>
+                     {contact.smeScore}
                    </TableCell>
                    <TableCell>
                      <Button variant="ghost" size="icon">
@@ -154,6 +205,16 @@
                ))}
              </TableBody>
            </Table>
+ 
+           {/* Footer */}
+           <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/30">
+             <div className="flex items-center gap-2 text-sm text-muted-foreground">
+               <span>Tổng: {contacts.length}</span>
+             </div>
+             <div className="flex items-center gap-2 text-sm">
+               <span className="text-muted-foreground">1 đến {contacts.length}</span>
+             </div>
+           </div>
          </div>
        </div>
      </MainLayout>
