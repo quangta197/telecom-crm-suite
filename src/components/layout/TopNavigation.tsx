@@ -23,9 +23,9 @@ import { Button } from "@/components/ui/button";
 const menuItems = [
   { icon: LayoutDashboard, label: "Dashboard", path: "/" },
   { icon: Target, label: "Leads", path: "/leads" },
+  { icon: TrendingUp, label: "Opportunities", path: "/opportunities" },
   { icon: FileText, label: "Proposals", path: "/proposals" },
   { icon: Users, label: "Contacts", path: "/contacts" },
-  { icon: TrendingUp, label: "Opportunities", path: "/opportunities" },
   { icon: Calculator, label: "Quotations", path: "/quotations" },
   { icon: Calendar, label: "Calendar", path: "/calendar" },
   { icon: BarChart3, label: "Analytics", path: "/analytics" },

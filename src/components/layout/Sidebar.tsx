@@ -16,17 +16,17 @@
  } from "lucide-react";
  import { cn } from "@/lib/utils";
  
- const menuItems = [
-   { icon: LayoutDashboard, label: "Bàn làm việc", path: "/" },
-   { icon: Users, label: "Liên hệ", path: "/contacts" },
-   { icon: Target, label: "Tiềm năng", path: "/leads" },
-   { icon: TrendingUp, label: "Cơ hội", path: "/opportunities" },
-   { icon: Calendar, label: "Lịch làm việc", path: "/calendar" },
-   { icon: FileText, label: "Chào hàng", path: "/proposals" },
-   { icon: Calculator, label: "Báo giá", path: "/quotations" },
-   { icon: BarChart3, label: "Phân tích lãi lỗ", path: "/analytics" },
-   { icon: MapPin, label: "Bản đồ hoạt động", path: "/sales-map" },
- ];
+const menuItems = [
+  { icon: LayoutDashboard, label: "Bàn làm việc", path: "/" },
+  { icon: Target, label: "Tiềm năng", path: "/leads" },
+  { icon: TrendingUp, label: "Cơ hội", path: "/opportunities" },
+  { icon: FileText, label: "Chào hàng", path: "/proposals" },
+  { icon: Users, label: "Liên hệ", path: "/contacts" },
+  { icon: Calendar, label: "Lịch làm việc", path: "/calendar" },
+  { icon: Calculator, label: "Báo giá", path: "/quotations" },
+  { icon: BarChart3, label: "Phân tích lãi lỗ", path: "/analytics" },
+  { icon: MapPin, label: "Bản đồ hoạt động", path: "/sales-map" },
+];
  
  export function Sidebar() {
    const [collapsed, setCollapsed] = useState(false);
