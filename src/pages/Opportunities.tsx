@@ -2,21 +2,13 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Plus, MoreHorizontal } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Progress } from "@/components/ui/progress";
+import { Plus, LayoutGrid, List } from "lucide-react";
 import { AddOpportunityDialog } from "@/components/opportunities/AddOpportunityDialog";
+import { OpportunityTableView } from "@/components/opportunities/OpportunityTableView";
+import { OpportunityBoardView } from "@/components/opportunities/OpportunityBoardView";
 import { toast } from "@/components/ui/use-toast";
-const opportunities = [
+
+const initialOpportunities = [
   {
     id: 1,
     code: "OP00001",
@@ -85,14 +77,6 @@ const opportunities = [
   },
 ];
 
-const stageColors: Record<string, string> = {
-  "Discovery": "bg-info/10 text-info",
-  "Qualification": "bg-primary/10 text-primary",
-  "Proposal": "bg-accent/10 text-accent",
-  "Negotiation": "bg-warning/10 text-warning",
-  "Closed Won": "bg-success/10 text-success",
-};
-
 const filterOptions = [
   { id: "code", label: "Opportunity Code" },
   { id: "title", label: "Opportunity Name" },
@@ -104,11 +88,14 @@ const filterOptions = [
 
 const savedFilters = ["In Negotiation", "This Month's Opportunities"];
 
+type ViewMode = "list" | "board";
+
 const Opportunities = () => {
   const navigate = useNavigate();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
-  const [opportunitiesList, setOpportunitiesList] = useState(opportunities);
+  const [opportunitiesList, setOpportunitiesList] = useState(initialOpportunities);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
 
   const handleRowClick = (id: number) => {
     navigate(`/opportunities/${id}`);
@@ -174,10 +161,33 @@ const Opportunities = () => {
         {/* Page Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold">All Opportunities</h1>
-          <Button className="gradient-primary" onClick={() => setIsDialogOpen(true)}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add
-          </Button>
+          <div className="flex items-center gap-2">
+            {/* View Toggle */}
+            <div className="flex items-center border rounded-lg p-1 bg-muted/30">
+              <Button
+                variant={viewMode === "list" ? "secondary" : "ghost"}
+                size="sm"
+                className="h-8 px-3"
+                onClick={() => setViewMode("list")}
+              >
+                <List className="h-4 w-4 mr-1" />
+                List
+              </Button>
+              <Button
+                variant={viewMode === "board" ? "secondary" : "ghost"}
+                size="sm"
+                className="h-8 px-3"
+                onClick={() => setViewMode("board")}
+              >
+                <LayoutGrid className="h-4 w-4 mr-1" />
+                Board
+              </Button>
+            </div>
+            <Button className="gradient-primary" onClick={() => setIsDialogOpen(true)}>
+              <Plus className="mr-2 h-4 w-4" />
+              Add
+            </Button>
+          </div>
         </div>
 
         {/* Add Opportunity Dialog */}
@@ -187,84 +197,21 @@ const Opportunities = () => {
           onSubmit={handleAddOpportunity}
         />
 
-        {/* Table */}
-        <div className="rounded-lg bg-card shadow-sm overflow-hidden border">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/50">
-                <TableHead className="w-12">
-                  <Checkbox
-                    checked={selectedRows.length === opportunitiesList.length}
-                    onCheckedChange={toggleAll}
-                  />
-                </TableHead>
-                <TableHead>Opp ID</TableHead>
-                <TableHead>Opportunity Name</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Value</TableHead>
-                <TableHead>Stage</TableHead>
-                <TableHead>Probability</TableHead>
-                <TableHead>Close Date</TableHead>
-                <TableHead>Owner</TableHead>
-                <TableHead className="w-12"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {opportunitiesList.map((opp) => (
-                <TableRow
-                  key={opp.id}
-                  className={`hover:bg-muted/50 cursor-pointer ${
-                    selectedRows.includes(opp.id) ? "bg-primary/5" : ""
-                  }`}
-                  onClick={() => handleRowClick(opp.id)}
-                >
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <Checkbox
-                      checked={selectedRows.includes(opp.id)}
-                      onCheckedChange={() => toggleRow(opp.id)}
-                    />
-                  </TableCell>
-                  <TableCell className="font-mono text-sm">{opp.code}</TableCell>
-                  <TableCell className="font-medium text-primary hover:underline">
-                    {opp.title}
-                  </TableCell>
-                  <TableCell>{opp.company}</TableCell>
-                  <TableCell className="font-semibold text-primary">
-                    {opp.value}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant="secondary" className={stageColors[opp.stage]}>
-                      {opp.stage}
-                    </Badge>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Progress value={opp.probability} className="h-2 w-16" />
-                      <span className="text-sm">{opp.probability}%</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{opp.closeDate}</TableCell>
-                  <TableCell>{opp.owner}</TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-
-          {/* Footer */}
-          <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/30">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Total: {opportunitiesList.length}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-muted-foreground">1 to {opportunitiesList.length}</span>
-            </div>
-          </div>
-        </div>
+        {/* View Content */}
+        {viewMode === "list" ? (
+          <OpportunityTableView
+            opportunities={opportunitiesList}
+            selectedRows={selectedRows}
+            onRowClick={handleRowClick}
+            onToggleRow={toggleRow}
+            onToggleAll={toggleAll}
+          />
+        ) : (
+          <OpportunityBoardView
+            opportunities={opportunitiesList}
+            onOpportunityClick={handleRowClick}
+          />
+        )}
       </div>
     </MainLayout>
   );
