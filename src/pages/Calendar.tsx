@@ -1,11 +1,13 @@
+import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Plus, ChevronLeft, ChevronRight, Clock, MapPin, Users } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AddAppointmentDialog, Appointment } from "@/components/calendar/AddAppointmentDialog";
+import { toast } from "@/hooks/use-toast";
 
-const events = [
+const initialEvents: Appointment[] = [
   {
     id: 1,
     title: "VNPT Product Demo Meeting",
@@ -13,6 +15,7 @@ const events = [
     type: "meeting",
     location: "Meeting Room A",
     attendees: 5,
+    date: new Date(),
   },
   {
     id: 2,
@@ -21,6 +24,7 @@ const events = [
     type: "call",
     location: "Online",
     attendees: 2,
+    date: new Date(),
   },
   {
     id: 3,
@@ -29,6 +33,7 @@ const events = [
     type: "presentation",
     location: "Client Site",
     attendees: 8,
+    date: new Date(),
   },
   {
     id: 4,
@@ -37,6 +42,7 @@ const events = [
     type: "internal",
     location: "Meeting Room B",
     attendees: 3,
+    date: new Date(),
   },
 ];
 
@@ -50,11 +56,31 @@ const typeColors = {
 const weekDays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 const CalendarPage = () => {
+  const [events, setEvents] = useState<Appointment[]>(initialEvents);
+  const [dialogOpen, setDialogOpen] = useState(false);
+
   // Generate calendar days for current month
   const today = new Date();
   const daysInMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0).getDate();
   const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1).getDay();
   const adjustedFirstDay = firstDayOfMonth === 0 ? 6 : firstDayOfMonth - 1;
+
+  const handleAddAppointment = (appointment: Omit<Appointment, "id">) => {
+    const newAppointment: Appointment = {
+      id: Date.now(),
+      ...appointment,
+    };
+    setEvents([...events, newAppointment]);
+    toast({
+      title: "Appointment created",
+      description: `${appointment.title} has been scheduled.`,
+    });
+  };
+
+  // Filter today's events
+  const todaysEvents = events.filter(
+    (event) => event.date.toDateString() === today.toDateString()
+  );
 
   return (
     <MainLayout>
@@ -67,11 +93,17 @@ const CalendarPage = () => {
               Manage appointments and meetings
             </p>
           </div>
-          <Button className="gradient-primary">
+          <Button className="gradient-primary" onClick={() => setDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Create Appointment
           </Button>
         </div>
+
+        <AddAppointmentDialog
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
+          onAdd={handleAddAppointment}
+        />
 
         <div className="grid gap-6 lg:grid-cols-3">
           {/* Calendar */}
@@ -137,31 +169,37 @@ const CalendarPage = () => {
           <Card className="p-6 shadow-card">
             <h3 className="text-lg font-semibold mb-4">Today's Schedule</h3>
             <div className="space-y-3">
-              {events.map((event) => (
-                <div
-                  key={event.id}
-                  className={cn(
-                    "p-4 rounded-lg border-l-4 transition-all hover:shadow-md cursor-pointer",
-                    typeColors[event.type as keyof typeof typeColors]
-                  )}
-                >
-                  <p className="font-semibold text-sm mb-2">{event.title}</p>
-                  <div className="space-y-1 text-xs text-muted-foreground">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-3 w-3" />
-                      {event.time}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <MapPin className="h-3 w-3" />
-                      {event.location}
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Users className="h-3 w-3" />
-                      {event.attendees} attendees
+              {todaysEvents.length === 0 ? (
+                <p className="text-sm text-muted-foreground text-center py-8">
+                  No appointments scheduled for today
+                </p>
+              ) : (
+                todaysEvents.map((event) => (
+                  <div
+                    key={event.id}
+                    className={cn(
+                      "p-4 rounded-lg border-l-4 transition-all hover:shadow-md cursor-pointer",
+                      typeColors[event.type as keyof typeof typeColors]
+                    )}
+                  >
+                    <p className="font-semibold text-sm mb-2">{event.title}</p>
+                    <div className="space-y-1 text-xs text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <Clock className="h-3 w-3" />
+                        {event.time}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <MapPin className="h-3 w-3" />
+                        {event.location}
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <Users className="h-3 w-3" />
+                        {event.attendees} attendees
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
             </div>
           </Card>
         </div>
