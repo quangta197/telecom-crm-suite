@@ -13,7 +13,8 @@ import {
 import { Plus, MoreHorizontal } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Progress } from "@/components/ui/progress";
-
+import { AddOpportunityDialog } from "@/components/opportunities/AddOpportunityDialog";
+import { toast } from "@/components/ui/use-toast";
 const opportunities = [
   {
     id: 1,
@@ -104,6 +105,8 @@ const savedFilters = ["In Negotiation", "This Month's Opportunities"];
 
 const Opportunities = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [opportunitiesList, setOpportunitiesList] = useState(opportunities);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   const toggleRow = (id: number) => {
     setSelectedRows((prev) =>
@@ -112,11 +115,47 @@ const Opportunities = () => {
   };
 
   const toggleAll = () => {
-    if (selectedRows.length === opportunities.length) {
+    if (selectedRows.length === opportunitiesList.length) {
       setSelectedRows([]);
     } else {
-      setSelectedRows(opportunities.map((o) => o.id));
+      setSelectedRows(opportunitiesList.map((o) => o.id));
     }
+  };
+
+  const handleAddOpportunity = (data: {
+    title: string;
+    company: string;
+    value: string;
+    stage: string;
+    probability: number;
+    closeDate: string;
+    owner: string;
+  }) => {
+    const newId = Math.max(...opportunitiesList.map((o) => o.id)) + 1;
+    const newCode = `OP${String(newId).padStart(5, "0")}`;
+    const formattedDate = new Date(data.closeDate).toLocaleDateString("en-US", {
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+    });
+
+    const newOpportunity = {
+      id: newId,
+      code: newCode,
+      title: data.title,
+      company: data.company,
+      value: data.value,
+      stage: data.stage,
+      probability: data.probability,
+      closeDate: formattedDate,
+      owner: data.owner,
+    };
+
+    setOpportunitiesList((prev) => [...prev, newOpportunity]);
+    toast({
+      title: "Opportunity Created",
+      description: `${data.title} has been added successfully.`,
+    });
   };
 
   return (
@@ -129,11 +168,18 @@ const Opportunities = () => {
         {/* Page Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold">All Opportunities</h1>
-          <Button className="gradient-primary">
+          <Button className="gradient-primary" onClick={() => setIsDialogOpen(true)}>
             <Plus className="mr-2 h-4 w-4" />
             Add
           </Button>
         </div>
+
+        {/* Add Opportunity Dialog */}
+        <AddOpportunityDialog
+          open={isDialogOpen}
+          onOpenChange={setIsDialogOpen}
+          onSubmit={handleAddOpportunity}
+        />
 
         {/* Table */}
         <div className="rounded-lg bg-card shadow-sm overflow-hidden border">
@@ -142,7 +188,7 @@ const Opportunities = () => {
               <TableRow className="bg-muted/50">
                 <TableHead className="w-12">
                   <Checkbox
-                    checked={selectedRows.length === opportunities.length}
+                    checked={selectedRows.length === opportunitiesList.length}
                     onCheckedChange={toggleAll}
                   />
                 </TableHead>
@@ -158,7 +204,7 @@ const Opportunities = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {opportunities.map((opp) => (
+              {opportunitiesList.map((opp) => (
                 <TableRow
                   key={opp.id}
                   className={`hover:bg-muted/50 cursor-pointer ${
@@ -205,10 +251,10 @@ const Opportunities = () => {
           {/* Footer */}
           <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/30">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Total: {opportunities.length}</span>
+              <span>Total: {opportunitiesList.length}</span>
             </div>
             <div className="flex items-center gap-2 text-sm">
-              <span className="text-muted-foreground">1 to {opportunities.length}</span>
+              <span className="text-muted-foreground">1 to {opportunitiesList.length}</span>
             </div>
           </div>
         </div>
