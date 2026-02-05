@@ -1,0 +1,134 @@
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { MoreHorizontal, Phone } from "lucide-react";
+
+interface Lead {
+  id: number;
+  code: string;
+  name: string;
+  company: string;
+  phone: string;
+  source: string;
+  score: number;
+  status: string;
+  createdAt: string;
+}
+
+interface LeadTableViewProps {
+  leads: Lead[];
+  selectedRows: number[];
+  onRowClick: (id: number) => void;
+  onToggleRow: (id: number) => void;
+  onToggleAll: () => void;
+}
+
+const statusColors = {
+  Hot: "bg-destructive/10 text-destructive",
+  Warm: "bg-warning/10 text-warning",
+  Cold: "bg-info/10 text-info",
+};
+
+export function LeadTableView({
+  leads,
+  selectedRows,
+  onRowClick,
+  onToggleRow,
+  onToggleAll,
+}: LeadTableViewProps) {
+  const getScoreColor = (score: number) => {
+    if (score >= 80) return "text-success";
+    if (score >= 50) return "text-warning";
+    return "text-destructive";
+  };
+
+  return (
+    <div className="rounded-lg bg-card shadow-sm overflow-hidden border">
+      <Table>
+        <TableHeader>
+          <TableRow className="bg-muted/50">
+            <TableHead className="w-12">
+              <Checkbox
+                checked={selectedRows.length === leads.length}
+                onCheckedChange={onToggleAll}
+              />
+            </TableHead>
+            <TableHead>Lead ID</TableHead>
+            <TableHead>Lead Name</TableHead>
+            <TableHead>Company</TableHead>
+            <TableHead>Phone</TableHead>
+            <TableHead>Source</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead className="text-right">Score</TableHead>
+            <TableHead className="w-12"></TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {leads.map((lead) => (
+            <TableRow
+              key={lead.id}
+              className={`hover:bg-muted/50 cursor-pointer ${
+                selectedRows.includes(lead.id) ? "bg-primary/5" : ""
+              }`}
+              onClick={() => onRowClick(lead.id)}
+            >
+              <TableCell onClick={(e) => e.stopPropagation()}>
+                <Checkbox
+                  checked={selectedRows.includes(lead.id)}
+                  onCheckedChange={() => onToggleRow(lead.id)}
+                />
+              </TableCell>
+              <TableCell className="font-mono text-sm">{lead.code}</TableCell>
+              <TableCell className="font-medium text-primary hover:underline">
+                {lead.name}
+              </TableCell>
+              <TableCell>{lead.company}</TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <Phone className="h-3.5 w-3.5 text-success" />
+                  <span>{lead.phone}</span>
+                </div>
+              </TableCell>
+              <TableCell>{lead.source}</TableCell>
+              <TableCell>
+                <Badge
+                  variant="secondary"
+                  className={statusColors[lead.status as keyof typeof statusColors]}
+                >
+                  {lead.status}
+                </Badge>
+              </TableCell>
+              <TableCell
+                className={`text-right font-semibold ${getScoreColor(lead.score)}`}
+              >
+                {lead.score}
+              </TableCell>
+              <TableCell>
+                <Button variant="ghost" size="icon">
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+
+      <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/30">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <span>Total: {leads.length}</span>
+        </div>
+        <div className="flex items-center gap-2 text-sm">
+          <span className="text-muted-foreground">1 to {leads.length}</span>
+        </div>
+      </div>
+    </div>
+  );
+}

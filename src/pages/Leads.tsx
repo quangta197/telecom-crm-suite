@@ -1,19 +1,11 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
-import { Badge } from "@/components/ui/badge";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal, Phone } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
+import { LayoutGrid, List } from "lucide-react";
 import { AddLeadDialog, LeadFormData } from "@/components/leads/AddLeadDialog";
+import { LeadTableView } from "@/components/leads/LeadTableView";
+import { LeadBoardView } from "@/components/leads/LeadBoardView";
 
 const initialLeads = [
   {
@@ -84,12 +76,6 @@ const initialLeads = [
   },
 ];
 
-const statusColors = {
-  "Hot": "bg-destructive/10 text-destructive",
-  "Warm": "bg-warning/10 text-warning",
-  "Cold": "bg-info/10 text-info",
-};
-
 const filterOptions = [
   { id: "code", label: "Lead Code" },
   { id: "name", label: "Lead Name" },
@@ -101,10 +87,13 @@ const filterOptions = [
 
 const savedFilters = ["Hot Leads", "This Week's Leads"];
 
+type ViewMode = "list" | "board";
+
 const Leads = () => {
   const navigate = useNavigate();
   const [leads, setLeads] = useState(initialLeads);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const [viewMode, setViewMode] = useState<ViewMode>("list");
 
   const handleRowClick = (id: number) => {
     navigate(`/leads/${id}`);
@@ -122,12 +111,6 @@ const Leads = () => {
     } else {
       setSelectedRows(leads.map((l) => l.id));
     }
-  };
-
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-success";
-    if (score >= 50) return "text-warning";
-    return "text-destructive";
   };
 
   const handleAddLead = (formData: LeadFormData) => {
@@ -155,88 +138,44 @@ const Leads = () => {
         {/* Page Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold">All Leads</h1>
-          <AddLeadDialog onAddLead={handleAddLead} />
-        </div>
-
-        {/* Table */}
-        <div className="rounded-lg bg-card shadow-sm overflow-hidden border">
-          <Table>
-            <TableHeader>
-              <TableRow className="bg-muted/50">
-                <TableHead className="w-12">
-                  <Checkbox
-                    checked={selectedRows.length === leads.length}
-                    onCheckedChange={toggleAll}
-                  />
-                </TableHead>
-                <TableHead>Lead ID</TableHead>
-                <TableHead>Lead Name</TableHead>
-                <TableHead>Company</TableHead>
-                <TableHead>Phone</TableHead>
-                <TableHead>Source</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Score</TableHead>
-                <TableHead className="w-12"></TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {leads.map((lead) => (
-                <TableRow
-                  key={lead.id}
-                  className={`hover:bg-muted/50 cursor-pointer ${
-                    selectedRows.includes(lead.id) ? "bg-primary/5" : ""
-                  }`}
-                  onClick={() => handleRowClick(lead.id)}
-                >
-                  <TableCell onClick={(e) => e.stopPropagation()}>
-                    <Checkbox
-                      checked={selectedRows.includes(lead.id)}
-                      onCheckedChange={() => toggleRow(lead.id)}
-                    />
-                  </TableCell>
-                  <TableCell className="font-mono text-sm">{lead.code}</TableCell>
-                  <TableCell className="font-medium text-primary hover:underline">
-                    {lead.name}
-                  </TableCell>
-                  <TableCell>{lead.company}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <Phone className="h-3.5 w-3.5 text-success" />
-                      <span>{lead.phone}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>{lead.source}</TableCell>
-                  <TableCell>
-                    <Badge
-                      variant="secondary"
-                      className={statusColors[lead.status as keyof typeof statusColors]}
-                    >
-                      {lead.status}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className={`text-right font-semibold ${getScoreColor(lead.score)}`}>
-                    {lead.score}
-                  </TableCell>
-                  <TableCell>
-                    <Button variant="ghost" size="icon">
-                      <MoreHorizontal className="h-4 w-4" />
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-
-          {/* Footer */}
-          <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/30">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Total: {leads.length}</span>
+          <div className="flex items-center gap-2">
+            {/* View Toggle */}
+            <div className="flex items-center border rounded-lg p-1 bg-muted/30">
+              <Button
+                variant={viewMode === "list" ? "secondary" : "ghost"}
+                size="sm"
+                className="h-8 px-3"
+                onClick={() => setViewMode("list")}
+              >
+                <List className="h-4 w-4 mr-1" />
+                List
+              </Button>
+              <Button
+                variant={viewMode === "board" ? "secondary" : "ghost"}
+                size="sm"
+                className="h-8 px-3"
+                onClick={() => setViewMode("board")}
+              >
+                <LayoutGrid className="h-4 w-4 mr-1" />
+                Board
+              </Button>
             </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-muted-foreground">1 to {leads.length}</span>
-            </div>
+            <AddLeadDialog onAddLead={handleAddLead} />
           </div>
         </div>
+
+        {/* View Content */}
+        {viewMode === "list" ? (
+          <LeadTableView
+            leads={leads}
+            selectedRows={selectedRows}
+            onRowClick={handleRowClick}
+            onToggleRow={toggleRow}
+            onToggleAll={toggleAll}
+          />
+        ) : (
+          <LeadBoardView leads={leads} onLeadClick={handleRowClick} />
+        )}
       </div>
     </MainLayout>
   );
