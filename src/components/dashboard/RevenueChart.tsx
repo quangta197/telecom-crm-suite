@@ -35,14 +35,15 @@
        <div className="h-80">
          <ResponsiveContainer width="100%" height="100%">
            <AreaChart data={data}>
+ 
              <defs>
                <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                 <stop offset="5%" stopColor="hsl(217, 91%, 50%)" stopOpacity={0.3} />
-                 <stop offset="95%" stopColor="hsl(217, 91%, 50%)" stopOpacity={0} />
+                 <stop offset="5%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0.3} />
+                 <stop offset="95%" stopColor="hsl(24, 95%, 53%)" stopOpacity={0} />
                </linearGradient>
                <linearGradient id="colorTarget" x1="0" y1="0" x2="0" y2="1">
-                 <stop offset="5%" stopColor="hsl(174, 72%, 40%)" stopOpacity={0.3} />
-                 <stop offset="95%" stopColor="hsl(174, 72%, 40%)" stopOpacity={0} />
+                 <stop offset="5%" stopColor="hsl(32, 98%, 50%)" stopOpacity={0.3} />
+                 <stop offset="95%" stopColor="hsl(32, 98%, 50%)" stopOpacity={0} />
                </linearGradient>
              </defs>
              <CartesianGrid strokeDasharray="3 3" stroke="hsl(214, 32%, 91%)" />
@@ -69,10 +70,11 @@
                }}
                formatter={(value: number) => [`${value.toLocaleString()} triệu`, ""]}
              />
+ 
              <Area
                type="monotone"
                dataKey="revenue"
-               stroke="hsl(217, 91%, 50%)"
+               stroke="hsl(24, 95%, 53%)"
                strokeWidth={2}
                fillOpacity={1}
                fill="url(#colorRevenue)"
@@ -81,7 +83,7 @@
              <Area
                type="monotone"
                dataKey="target"
-               stroke="hsl(174, 72%, 40%)"
+               stroke="hsl(32, 98%, 50%)"
                strokeWidth={2}
                fillOpacity={1}
                fill="url(#colorTarget)"

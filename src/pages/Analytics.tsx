@@ -48,9 +48,9 @@
  ];
  
  const costBreakdown = [
-   { name: "Nhân sự", value: 45, color: "hsl(217, 91%, 50%)" },
-   { name: "Thiết bị", value: 25, color: "hsl(174, 72%, 40%)" },
-   { name: "Vận hành", value: 15, color: "hsl(38, 92%, 50%)" },
+   { name: "Nhân sự", value: 45, color: "hsl(24, 95%, 53%)" },
+   { name: "Thiết bị", value: 25, color: "hsl(32, 98%, 50%)" },
+   { name: "Vận hành", value: 15, color: "hsl(142, 71%, 45%)" },
    { name: "Khác", value: 15, color: "hsl(215, 16%, 47%)" },
  ];
  
