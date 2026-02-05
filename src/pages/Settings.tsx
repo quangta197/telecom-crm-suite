@@ -1,410 +1,325 @@
+import { useState } from "react";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 import { 
-  User, 
-  Building2, 
-  Bell, 
-  Shield, 
-  Palette, 
-  Globe, 
-  Mail,
-  Phone,
-  Camera,
-  Save
+  FileText, 
+  Tags,
+  Plus,
+  Pencil,
+  Trash2,
+  GripVertical,
+  MoreHorizontal,
 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+
+// Mock data for quotation templates
+const initialTemplates = [
+  { id: 1, name: "Gói Internet doanh nghiệp", description: "Mẫu báo giá cho các gói Internet B2B", isDefault: true },
+  { id: 2, name: "Giải pháp tổng đài", description: "Mẫu báo giá tổng đài VoIP và Cloud PBX", isDefault: false },
+  { id: 3, name: "Dịch vụ Cloud", description: "Mẫu báo giá các dịch vụ Cloud hosting, VPS", isDefault: false },
+  { id: 4, name: "Combo viễn thông", description: "Mẫu báo giá gói combo Internet + Điện thoại", isDefault: false },
+];
+
+// Mock data for status definitions
+const initialStatuses = {
+  lead: [
+    { id: 1, name: "Hot", color: "bg-red-500", description: "Lead có tiềm năng cao" },
+    { id: 2, name: "Warm", color: "bg-orange-500", description: "Lead đang quan tâm" },
+    { id: 3, name: "Cold", color: "bg-blue-500", description: "Lead cần nuôi dưỡng" },
+  ],
+  opportunity: [
+    { id: 1, name: "Discovery", color: "bg-slate-500", description: "Đang tìm hiểu nhu cầu" },
+    { id: 2, name: "Qualification", color: "bg-blue-500", description: "Đánh giá khả năng" },
+    { id: 3, name: "Proposal", color: "bg-yellow-500", description: "Đã gửi đề xuất" },
+    { id: 4, name: "Negotiation", color: "bg-orange-500", description: "Đang đàm phán" },
+    { id: 5, name: "Closed Won", color: "bg-green-500", description: "Thắng hợp đồng" },
+    { id: 6, name: "Closed Lost", color: "bg-red-500", description: "Mất cơ hội" },
+  ],
+  proposal: [
+    { id: 1, name: "Draft", color: "bg-slate-500", description: "Bản nháp" },
+    { id: 2, name: "Pending Approval", color: "bg-yellow-500", description: "Chờ phê duyệt" },
+    { id: 3, name: "Approved", color: "bg-blue-500", description: "Đã phê duyệt" },
+    { id: 4, name: "Sent", color: "bg-green-500", description: "Đã gửi khách hàng" },
+    { id: 5, name: "Rejected", color: "bg-red-500", description: "Bị từ chối" },
+  ],
+  task: [
+    { id: 1, name: "To Do", color: "bg-slate-500", description: "Chưa bắt đầu" },
+    { id: 2, name: "In Progress", color: "bg-blue-500", description: "Đang thực hiện" },
+    { id: 3, name: "Completed", color: "bg-green-500", description: "Hoàn thành" },
+    { id: 4, name: "Cancelled", color: "bg-red-500", description: "Đã hủy" },
+  ],
+};
+
+const colorOptions = [
+  { value: "bg-slate-500", label: "Xám" },
+  { value: "bg-red-500", label: "Đỏ" },
+  { value: "bg-orange-500", label: "Cam" },
+  { value: "bg-yellow-500", label: "Vàng" },
+  { value: "bg-green-500", label: "Xanh lá" },
+  { value: "bg-blue-500", label: "Xanh dương" },
+  { value: "bg-purple-500", label: "Tím" },
+  { value: "bg-pink-500", label: "Hồng" },
+];
 
 export default function Settings() {
+  const [templates, setTemplates] = useState(initialTemplates);
+  const [statuses, setStatuses] = useState(initialStatuses);
+  const [selectedStatusType, setSelectedStatusType] = useState<keyof typeof initialStatuses>("lead");
+  const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
+  const [statusDialogOpen, setStatusDialogOpen] = useState(false);
+
+  const statusTypeLabels = {
+    lead: "Tiềm năng (Lead)",
+    opportunity: "Cơ hội",
+    proposal: "Chào hàng",
+    task: "Nhiệm vụ",
+  };
+
   return (
     <MainLayout showFilters={false} showActivity={false}>
       <div className="space-y-6">
         {/* Header */}
         <div>
           <h1 className="text-2xl font-bold text-foreground">Cài đặt</h1>
-          <p className="text-muted-foreground">Quản lý cài đặt tài khoản và hệ thống</p>
+          <p className="text-muted-foreground">Thiết lập các định nghĩa và cấu hình hệ thống CRM</p>
         </div>
 
-        <Tabs defaultValue="profile" className="space-y-6">
+        <Tabs defaultValue="templates" className="space-y-6">
           <TabsList className="bg-card border">
-            <TabsTrigger value="profile" className="gap-2">
-              <User className="h-4 w-4" />
-              Hồ sơ
+            <TabsTrigger value="templates" className="gap-2">
+              <FileText className="h-4 w-4" />
+              Biểu mẫu chào giá
             </TabsTrigger>
-            <TabsTrigger value="company" className="gap-2">
-              <Building2 className="h-4 w-4" />
-              Công ty
-            </TabsTrigger>
-            <TabsTrigger value="notifications" className="gap-2">
-              <Bell className="h-4 w-4" />
-              Thông báo
-            </TabsTrigger>
-            <TabsTrigger value="security" className="gap-2">
-              <Shield className="h-4 w-4" />
-              Bảo mật
-            </TabsTrigger>
-            <TabsTrigger value="appearance" className="gap-2">
-              <Palette className="h-4 w-4" />
-              Giao diện
+            <TabsTrigger value="statuses" className="gap-2">
+              <Tags className="h-4 w-4" />
+              Trạng thái
             </TabsTrigger>
           </TabsList>
 
-          {/* Profile Tab */}
-          <TabsContent value="profile">
+          {/* Quotation Templates Tab */}
+          <TabsContent value="templates">
             <Card>
-              <CardHeader>
-                <CardTitle>Thông tin cá nhân</CardTitle>
-                <CardDescription>Cập nhật thông tin hồ sơ của bạn</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Avatar */}
-                <div className="flex items-center gap-6">
-                  <Avatar className="h-20 w-20">
-                    <AvatarFallback className="text-2xl gradient-primary text-primary-foreground">
-                      JD
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="space-y-2">
-                    <Button variant="outline" size="sm" className="gap-2">
-                      <Camera className="h-4 w-4" />
-                      Đổi ảnh đại diện
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Biểu mẫu chào giá</CardTitle>
+                  <CardDescription>Quản lý các mẫu báo giá dùng trong hệ thống</CardDescription>
+                </div>
+                <Dialog open={templateDialogOpen} onOpenChange={setTemplateDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="gap-2">
+                      <Plus className="h-4 w-4" />
+                      Thêm biểu mẫu
                     </Button>
-                    <p className="text-xs text-muted-foreground">JPG, PNG hoặc GIF. Tối đa 2MB</p>
-                  </div>
-                </div>
-
-                <Separator />
-
-                {/* Form */}
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="firstName">Họ</Label>
-                    <Input id="firstName" defaultValue="John" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="lastName">Tên</Label>
-                    <Input id="lastName" defaultValue="Doe" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="email">Email</Label>
-                    <div className="relative">
-                      <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input id="email" type="email" defaultValue="john.doe@company.com" className="pl-10" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="phone">Số điện thoại</Label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input id="phone" defaultValue="0912 345 678" className="pl-10" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="role">Chức vụ</Label>
-                    <Input id="role" defaultValue="Sales Manager" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="department">Phòng ban</Label>
-                    <Select defaultValue="sales">
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="sales">Kinh doanh</SelectItem>
-                        <SelectItem value="marketing">Marketing</SelectItem>
-                        <SelectItem value="support">Hỗ trợ</SelectItem>
-                        <SelectItem value="tech">Kỹ thuật</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="flex justify-end">
-                  <Button className="gap-2">
-                    <Save className="h-4 w-4" />
-                    Lưu thay đổi
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Company Tab */}
-          <TabsContent value="company">
-            <Card>
-              <CardHeader>
-                <CardTitle>Thông tin công ty</CardTitle>
-                <CardDescription>Cấu hình thông tin doanh nghiệp của bạn</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="grid grid-cols-2 gap-6">
-                  <div className="space-y-2">
-                    <Label htmlFor="companyName">Tên công ty</Label>
-                    <Input id="companyName" defaultValue="TeleCRM Việt Nam" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="taxCode">Mã số thuế</Label>
-                    <Input id="taxCode" defaultValue="0123456789" />
-                  </div>
-                  <div className="space-y-2 col-span-2">
-                    <Label htmlFor="address">Địa chỉ</Label>
-                    <Input id="address" defaultValue="123 Nguyễn Huệ, Quận 1, TP.HCM" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="companyEmail">Email công ty</Label>
-                    <Input id="companyEmail" type="email" defaultValue="contact@telecrm.vn" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="companyPhone">Hotline</Label>
-                    <Input id="companyPhone" defaultValue="1900 1234" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="website">Website</Label>
-                    <div className="relative">
-                      <Globe className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                      <Input id="website" defaultValue="https://telecrm.vn" className="pl-10" />
-                    </div>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="industry">Ngành nghề</Label>
-                    <Select defaultValue="telecom">
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="telecom">Viễn thông</SelectItem>
-                        <SelectItem value="it">Công nghệ thông tin</SelectItem>
-                        <SelectItem value="finance">Tài chính</SelectItem>
-                        <SelectItem value="retail">Bán lẻ</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="flex justify-end">
-                  <Button className="gap-2">
-                    <Save className="h-4 w-4" />
-                    Lưu thay đổi
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Notifications Tab */}
-          <TabsContent value="notifications">
-            <Card>
-              <CardHeader>
-                <CardTitle>Cài đặt thông báo</CardTitle>
-                <CardDescription>Quản lý cách bạn nhận thông báo</CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Thông báo email</Label>
-                      <p className="text-sm text-muted-foreground">Nhận thông báo qua email</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                  <Separator />
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Lead mới</Label>
-                      <p className="text-sm text-muted-foreground">Thông báo khi có lead mới được gán</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                  <Separator />
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Cơ hội sắp đến hạn</Label>
-                      <p className="text-sm text-muted-foreground">Nhắc nhở trước 3 ngày khi cơ hội đến hạn đóng</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                  <Separator />
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Nhiệm vụ quá hạn</Label>
-                      <p className="text-sm text-muted-foreground">Thông báo khi nhiệm vụ bị quá hạn</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                  <Separator />
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Báo cáo hàng tuần</Label>
-                      <p className="text-sm text-muted-foreground">Nhận email tổng kết hoạt động mỗi tuần</p>
-                    </div>
-                    <Switch />
-                  </div>
-                </div>
-
-                <div className="flex justify-end">
-                  <Button className="gap-2">
-                    <Save className="h-4 w-4" />
-                    Lưu thay đổi
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          {/* Security Tab */}
-          <TabsContent value="security">
-            <div className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Đổi mật khẩu</CardTitle>
-                  <CardDescription>Cập nhật mật khẩu để bảo vệ tài khoản</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="currentPassword">Mật khẩu hiện tại</Label>
-                    <Input id="currentPassword" type="password" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="newPassword">Mật khẩu mới</Label>
-                    <Input id="newPassword" type="password" />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Xác nhận mật khẩu mới</Label>
-                    <Input id="confirmPassword" type="password" />
-                  </div>
-                  <Button className="gap-2">
-                    <Save className="h-4 w-4" />
-                    Đổi mật khẩu
-                  </Button>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Xác thực 2 bước</CardTitle>
-                  <CardDescription>Thêm lớp bảo mật cho tài khoản của bạn</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label>Bật xác thực 2 bước</Label>
-                      <p className="text-sm text-muted-foreground">Sử dụng ứng dụng authenticator</p>
-                    </div>
-                    <Switch />
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card>
-                <CardHeader>
-                  <CardTitle>Phiên đăng nhập</CardTitle>
-                  <CardDescription>Quản lý các thiết bị đã đăng nhập</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
-                      <div>
-                        <p className="font-medium">Chrome - Windows</p>
-                        <p className="text-sm text-muted-foreground">TP.HCM, Vietnam • Hiện tại</p>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Thêm biểu mẫu mới</DialogTitle>
+                      <DialogDescription>Tạo mẫu báo giá mới cho hệ thống</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="templateName">Tên biểu mẫu</Label>
+                        <Input id="templateName" placeholder="Nhập tên biểu mẫu" />
                       </div>
-                      <span className="text-xs bg-primary/10 text-primary px-2 py-1 rounded">Thiết bị này</span>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-secondary/50 rounded-lg">
-                      <div>
-                        <p className="font-medium">Safari - iPhone</p>
-                        <p className="text-sm text-muted-foreground">TP.HCM, Vietnam • 2 giờ trước</p>
+                      <div className="space-y-2">
+                        <Label htmlFor="templateDesc">Mô tả</Label>
+                        <Textarea id="templateDesc" placeholder="Mô tả ngắn về biểu mẫu" />
                       </div>
-                      <Button variant="ghost" size="sm" className="text-destructive">Đăng xuất</Button>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setTemplateDialogOpen(false)}>Hủy</Button>
+                      <Button onClick={() => setTemplateDialogOpen(false)}>Lưu biểu mẫu</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  {templates.map((template) => (
+                    <div
+                      key={template.id}
+                      className="flex items-center justify-between p-4 bg-secondary/30 rounded-lg border hover:bg-secondary/50 transition-colors"
+                    >
+                      <div className="flex items-center gap-4">
+                        <GripVertical className="h-5 w-5 text-muted-foreground cursor-grab" />
+                        <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
+                          <FileText className="h-5 w-5 text-primary" />
+                        </div>
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium">{template.name}</p>
+                            {template.isDefault && (
+                              <Badge variant="secondary" className="text-xs">Mặc định</Badge>
+                            )}
+                          </div>
+                          <p className="text-sm text-muted-foreground">{template.description}</p>
+                        </div>
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem className="gap-2">
+                            <Pencil className="h-4 w-4" />
+                            Chỉnh sửa
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="gap-2">
+                            <FileText className="h-4 w-4" />
+                            Đặt làm mặc định
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="gap-2 text-destructive">
+                            <Trash2 className="h-4 w-4" />
+                            Xóa
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
-          {/* Appearance Tab */}
-          <TabsContent value="appearance">
+          {/* Status Definitions Tab */}
+          <TabsContent value="statuses">
             <Card>
-              <CardHeader>
-                <CardTitle>Giao diện</CardTitle>
-                <CardDescription>Tùy chỉnh giao diện ứng dụng</CardDescription>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                  <CardTitle>Định nghĩa trạng thái</CardTitle>
+                  <CardDescription>Quản lý các trạng thái cho từng loại đối tượng trong CRM</CardDescription>
+                </div>
+                <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
+                  <DialogTrigger asChild>
+                    <Button className="gap-2">
+                      <Plus className="h-4 w-4" />
+                      Thêm trạng thái
+                    </Button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <DialogHeader>
+                      <DialogTitle>Thêm trạng thái mới</DialogTitle>
+                      <DialogDescription>Tạo trạng thái mới cho {statusTypeLabels[selectedStatusType]}</DialogDescription>
+                    </DialogHeader>
+                    <div className="space-y-4 py-4">
+                      <div className="space-y-2">
+                        <Label htmlFor="statusName">Tên trạng thái</Label>
+                        <Input id="statusName" placeholder="Nhập tên trạng thái" />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="statusColor">Màu sắc</Label>
+                        <Select defaultValue="bg-blue-500">
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {colorOptions.map((color) => (
+                              <SelectItem key={color.value} value={color.value}>
+                                <div className="flex items-center gap-2">
+                                  <div className={`h-4 w-4 rounded ${color.value}`} />
+                                  <span>{color.label}</span>
+                                </div>
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="statusDesc">Mô tả</Label>
+                        <Input id="statusDesc" placeholder="Mô tả ngắn về trạng thái" />
+                      </div>
+                    </div>
+                    <DialogFooter>
+                      <Button variant="outline" onClick={() => setStatusDialogOpen(false)}>Hủy</Button>
+                      <Button onClick={() => setStatusDialogOpen(false)}>Lưu trạng thái</Button>
+                    </DialogFooter>
+                  </DialogContent>
+                </Dialog>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Chế độ hiển thị</Label>
-                    <Select defaultValue="light">
-                      <SelectTrigger className="w-48">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="light">Sáng</SelectItem>
-                        <SelectItem value="dark">Tối</SelectItem>
-                        <SelectItem value="system">Theo hệ thống</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-2">
-                    <Label>Ngôn ngữ</Label>
-                    <Select defaultValue="vi">
-                      <SelectTrigger className="w-48">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="vi">Tiếng Việt</SelectItem>
-                        <SelectItem value="en">English</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-2">
-                    <Label>Múi giờ</Label>
-                    <Select defaultValue="asia_hcm">
-                      <SelectTrigger className="w-64">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="asia_hcm">(UTC+07:00) Ho Chi Minh</SelectItem>
-                        <SelectItem value="asia_hanoi">(UTC+07:00) Hanoi</SelectItem>
-                        <SelectItem value="asia_singapore">(UTC+08:00) Singapore</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <Separator />
-
-                  <div className="space-y-2">
-                    <Label>Định dạng ngày</Label>
-                    <Select defaultValue="dd_mm_yyyy">
-                      <SelectTrigger className="w-48">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="dd_mm_yyyy">DD/MM/YYYY</SelectItem>
-                        <SelectItem value="mm_dd_yyyy">MM/DD/YYYY</SelectItem>
-                        <SelectItem value="yyyy_mm_dd">YYYY-MM-DD</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+                {/* Status Type Selector */}
+                <div className="flex gap-2">
+                  {Object.entries(statusTypeLabels).map(([key, label]) => (
+                    <Button
+                      key={key}
+                      variant={selectedStatusType === key ? "default" : "outline"}
+                      size="sm"
+                      onClick={() => setSelectedStatusType(key as keyof typeof initialStatuses)}
+                    >
+                      {label}
+                    </Button>
+                  ))}
                 </div>
 
-                <div className="flex justify-end">
-                  <Button className="gap-2">
-                    <Save className="h-4 w-4" />
-                    Lưu thay đổi
-                  </Button>
+                {/* Status List */}
+                <div className="space-y-3">
+                  {statuses[selectedStatusType].map((status, index) => (
+                    <div
+                      key={status.id}
+                      className="flex items-center justify-between p-4 bg-secondary/30 rounded-lg border hover:bg-secondary/50 transition-colors"
+                    >
+                      <div className="flex items-center gap-4">
+                        <GripVertical className="h-5 w-5 text-muted-foreground cursor-grab" />
+                        <span className="text-sm text-muted-foreground w-6">{index + 1}</span>
+                        <div className={`h-4 w-4 rounded ${status.color}`} />
+                        <div>
+                          <p className="font-medium">{status.name}</p>
+                          <p className="text-sm text-muted-foreground">{status.description}</p>
+                        </div>
+                      </div>
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuItem className="gap-2">
+                            <Pencil className="h-4 w-4" />
+                            Chỉnh sửa
+                          </DropdownMenuItem>
+                          <DropdownMenuItem className="gap-2 text-destructive">
+                            <Trash2 className="h-4 w-4" />
+                            Xóa
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  ))}
                 </div>
+
+                <p className="text-sm text-muted-foreground">
+                  💡 Kéo thả để sắp xếp thứ tự hiển thị của các trạng thái trong pipeline
+                </p>
               </CardContent>
             </Card>
           </TabsContent>
