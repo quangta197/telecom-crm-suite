@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
   Table,
@@ -11,10 +10,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, MoreHorizontal, Phone } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { MoreHorizontal, Phone } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { AddLeadDialog, LeadFormData } from "@/components/leads/AddLeadDialog";
 
-const leads = [
+const initialLeads = [
   {
     id: 1,
     code: "LD00001",
@@ -102,6 +103,7 @@ const savedFilters = ["Hot Leads", "This Week's Leads"];
 
 const Leads = () => {
   const navigate = useNavigate();
+  const [leads, setLeads] = useState(initialLeads);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
 
   const handleRowClick = (id: number) => {
@@ -128,6 +130,21 @@ const Leads = () => {
     return "text-destructive";
   };
 
+  const handleAddLead = (formData: LeadFormData) => {
+    const newLead = {
+      id: leads.length + 1,
+      code: `LD${String(leads.length + 1).padStart(5, "0")}`,
+      name: formData.name,
+      company: formData.company,
+      phone: formData.phone,
+      source: formData.source || "Website",
+      score: formData.status === "Hot" ? 85 : formData.status === "Warm" ? 65 : 40,
+      status: formData.status,
+      createdAt: new Date().toLocaleDateString("vi-VN"),
+    };
+    setLeads([newLead, ...leads]);
+  };
+
   return (
     <MainLayout
       filterTitle="All Leads"
@@ -138,10 +155,7 @@ const Leads = () => {
         {/* Page Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold">All Leads</h1>
-          <Button className="gradient-primary">
-            <Plus className="mr-2 h-4 w-4" />
-            Add
-          </Button>
+          <AddLeadDialog onAddLead={handleAddLead} />
         </div>
 
         {/* Table */}
