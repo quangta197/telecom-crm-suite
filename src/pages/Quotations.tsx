@@ -1,13 +1,22 @@
+ import { useState } from "react";
  import { MainLayout } from "@/components/layout/MainLayout";
  import { Button } from "@/components/ui/button";
- import { Input } from "@/components/ui/input";
  import { Badge } from "@/components/ui/badge";
- import { Card } from "@/components/ui/card";
- import { Plus, Search, Filter, FileText, Building2, Calendar, DollarSign, Copy, Send } from "lucide-react";
+ import {
+   Table,
+   TableBody,
+   TableCell,
+   TableHead,
+   TableHeader,
+   TableRow,
+ } from "@/components/ui/table";
+ import { Plus, MoreHorizontal, Eye, Send } from "lucide-react";
+ import { Checkbox } from "@/components/ui/checkbox";
  
  const quotations = [
    {
-     id: "QT-2024-001",
+     id: 1,
+     code: "BG-2024-001",
      title: "Gói hạ tầng mạng Enterprise",
      customer: "VNPT Hà Nội",
      items: 12,
@@ -18,7 +27,8 @@
      validUntil: "15/02/2024",
    },
    {
-     id: "QT-2024-002",
+     id: 2,
+     code: "BG-2024-002",
      title: "Data Center Premium Package",
      customer: "Viettel Business",
      items: 8,
@@ -29,7 +39,8 @@
      validUntil: "20/02/2024",
    },
    {
-     id: "QT-2024-003",
+     id: 3,
+     code: "BG-2024-003",
      title: "Cloud Migration Standard",
      customer: "FPT Telecom",
      items: 5,
@@ -40,7 +51,8 @@
      validUntil: "25/02/2024",
    },
    {
-     id: "QT-2024-004",
+     id: 4,
+     code: "BG-2024-004",
      title: "5G Enterprise Solution",
      customer: "CMC Telecom",
      items: 15,
@@ -50,9 +62,21 @@
      status: "Nháp",
      validUntil: "28/02/2024",
    },
+   {
+     id: 5,
+     code: "BG-2024-005",
+     title: "IoT Platform Package",
+     customer: "MobiFone",
+     items: 7,
+     totalValue: "1.8 tỷ",
+     discount: "5%",
+     finalValue: "1.71 tỷ",
+     status: "Đã gửi",
+     validUntil: "01/03/2024",
+   },
  ];
  
- const statusColors = {
+ const statusColors: Record<string, string> = {
    "Nháp": "bg-secondary text-secondary-foreground",
    "Chờ xác nhận": "bg-warning/10 text-warning",
    "Đã chấp nhận": "bg-success/10 text-success",
@@ -60,98 +84,128 @@
    "Đã từ chối": "bg-destructive/10 text-destructive",
  };
  
+ const filterOptions = [
+   { id: "code", label: "Mã báo giá" },
+   { id: "title", label: "Tiêu đề" },
+   { id: "customer", label: "Khách hàng" },
+   { id: "value", label: "Giá trị" },
+   { id: "status", label: "Trạng thái" },
+ ];
+ 
+ const savedFilters = ["Báo giá đã gửi", "Báo giá tháng này"];
+ 
  const Quotations = () => {
+   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+ 
+   const toggleRow = (id: number) => {
+     setSelectedRows((prev) =>
+       prev.includes(id) ? prev.filter((r) => r !== id) : [...prev, id]
+     );
+   };
+ 
+   const toggleAll = () => {
+     if (selectedRows.length === quotations.length) {
+       setSelectedRows([]);
+     } else {
+       setSelectedRows(quotations.map((q) => q.id));
+     }
+   };
+ 
    return (
-     <MainLayout>
+     <MainLayout
+       filterTitle="Tất cả báo giá"
+       filters={filterOptions}
+       savedFilters={savedFilters}
+     >
        <div className="space-y-6 animate-fade-in">
          {/* Page Header */}
          <div className="flex items-center justify-between">
-           <div>
-             <h1 className="text-2xl font-bold">Báo giá</h1>
-             <p className="text-muted-foreground">
-               Quản lý và theo dõi các báo giá gửi khách hàng
-             </p>
-           </div>
+           <h1 className="text-xl font-bold">Tất cả báo giá</h1>
            <Button className="gradient-primary">
              <Plus className="mr-2 h-4 w-4" />
-             Tạo báo giá
+             Thêm
            </Button>
          </div>
  
-         {/* Filters */}
-         <div className="flex items-center gap-4">
-           <div className="relative flex-1 max-w-md">
-             <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-             <Input placeholder="Tìm kiếm báo giá..." className="pl-10" />
-           </div>
-           <Button variant="outline">
-             <Filter className="mr-2 h-4 w-4" />
-             Bộ lọc
-           </Button>
-         </div>
- 
-         {/* Quotation Cards */}
-         <div className="grid gap-4 md:grid-cols-2">
-           {quotations.map((quote) => (
-             <Card key={quote.id} className="p-6 shadow-card hover:shadow-card-hover transition-all">
-               <div className="flex items-start justify-between mb-4">
-                 <div className="flex items-center gap-3">
-                   <div className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10">
-                     <FileText className="h-6 w-6 text-primary" />
-                   </div>
-                   <div>
-                     <p className="font-mono text-sm text-muted-foreground">{quote.id}</p>
-                     <p className="font-semibold">{quote.title}</p>
-                   </div>
-                 </div>
-                 <Badge
-                   variant="secondary"
-                   className={statusColors[quote.status as keyof typeof statusColors]}
+         {/* Table */}
+         <div className="rounded-lg bg-card shadow-sm overflow-hidden border">
+           <Table>
+             <TableHeader>
+               <TableRow className="bg-muted/50">
+                 <TableHead className="w-12">
+                   <Checkbox
+                     checked={selectedRows.length === quotations.length}
+                     onCheckedChange={toggleAll}
+                   />
+                 </TableHead>
+                 <TableHead>Mã BG</TableHead>
+                 <TableHead>Tiêu đề</TableHead>
+                 <TableHead>Khách hàng</TableHead>
+                 <TableHead>Tổng giá</TableHead>
+                 <TableHead>Chiết khấu</TableHead>
+                 <TableHead>Thành tiền</TableHead>
+                 <TableHead>Trạng thái</TableHead>
+                 <TableHead>Hiệu lực</TableHead>
+                 <TableHead className="w-24">Thao tác</TableHead>
+               </TableRow>
+             </TableHeader>
+             <TableBody>
+               {quotations.map((quote) => (
+                 <TableRow
+                   key={quote.id}
+                   className={`hover:bg-muted/50 cursor-pointer ${
+                     selectedRows.includes(quote.id) ? "bg-primary/5" : ""
+                   }`}
                  >
-                   {quote.status}
-                 </Badge>
-               </div>
+                   <TableCell>
+                     <Checkbox
+                       checked={selectedRows.includes(quote.id)}
+                       onCheckedChange={() => toggleRow(quote.id)}
+                     />
+                   </TableCell>
+                   <TableCell className="font-mono text-sm">{quote.code}</TableCell>
+                   <TableCell className="font-medium text-primary hover:underline">
+                     {quote.title}
+                   </TableCell>
+                   <TableCell>{quote.customer}</TableCell>
+                   <TableCell>{quote.totalValue}</TableCell>
+                   <TableCell className="text-success">-{quote.discount}</TableCell>
+                   <TableCell className="font-semibold text-primary">
+                     {quote.finalValue}
+                   </TableCell>
+                   <TableCell>
+                     <Badge variant="secondary" className={statusColors[quote.status]}>
+                       {quote.status}
+                     </Badge>
+                   </TableCell>
+                   <TableCell>{quote.validUntil}</TableCell>
+                   <TableCell>
+                     <div className="flex items-center gap-1">
+                       <Button variant="ghost" size="icon" className="h-8 w-8">
+                         <Eye className="h-4 w-4" />
+                       </Button>
+                       <Button variant="ghost" size="icon" className="h-8 w-8">
+                         <Send className="h-4 w-4" />
+                       </Button>
+                       <Button variant="ghost" size="icon" className="h-8 w-8">
+                         <MoreHorizontal className="h-4 w-4" />
+                       </Button>
+                     </div>
+                   </TableCell>
+                 </TableRow>
+               ))}
+             </TableBody>
+           </Table>
  
-               <div className="grid grid-cols-2 gap-4 mb-4">
-                 <div className="flex items-center gap-2 text-sm">
-                   <Building2 className="h-4 w-4 text-muted-foreground" />
-                   <span>{quote.customer}</span>
-                 </div>
-                 <div className="flex items-center gap-2 text-sm">
-                   <Calendar className="h-4 w-4 text-muted-foreground" />
-                   <span>HSD: {quote.validUntil}</span>
-                 </div>
-               </div>
- 
-               <div className="rounded-lg bg-secondary/50 p-4 mb-4">
-                 <div className="grid grid-cols-3 gap-4 text-sm">
-                   <div>
-                     <p className="text-muted-foreground">Tổng giá</p>
-                     <p className="font-semibold">{quote.totalValue}</p>
-                   </div>
-                   <div>
-                     <p className="text-muted-foreground">Chiết khấu</p>
-                     <p className="font-semibold text-success">-{quote.discount}</p>
-                   </div>
-                   <div>
-                     <p className="text-muted-foreground">Thành tiền</p>
-                     <p className="font-bold text-primary">{quote.finalValue}</p>
-                   </div>
-                 </div>
-               </div>
- 
-               <div className="flex gap-2">
-                 <Button variant="outline" size="sm" className="flex-1">
-                   <Copy className="mr-1 h-3 w-3" />
-                   Nhân bản
-                 </Button>
-                 <Button size="sm" className="flex-1 gradient-primary">
-                   <Send className="mr-1 h-3 w-3" />
-                   Gửi KH
-                 </Button>
-               </div>
-             </Card>
-           ))}
+           {/* Footer */}
+           <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/30">
+             <div className="flex items-center gap-2 text-sm text-muted-foreground">
+               <span>Tổng: {quotations.length}</span>
+             </div>
+             <div className="flex items-center gap-2 text-sm">
+               <span className="text-muted-foreground">1 đến {quotations.length}</span>
+             </div>
+           </div>
          </div>
        </div>
      </MainLayout>
