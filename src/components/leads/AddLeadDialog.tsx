@@ -55,8 +55,8 @@ export function AddLeadDialog({ onAddLead }: AddLeadDialogProps) {
     
     if (!formData.name.trim()) {
       toast({
-        title: "Lỗi",
-        description: "Vui lòng nhập tên khách hàng tiềm năng",
+        title: "Error",
+        description: "Please enter lead name",
         variant: "destructive",
       });
       return;
@@ -64,8 +64,8 @@ export function AddLeadDialog({ onAddLead }: AddLeadDialogProps) {
 
     if (!formData.phone.trim()) {
       toast({
-        title: "Lỗi",
-        description: "Vui lòng nhập số điện thoại",
+        title: "Error",
+        description: "Please enter phone number",
         variant: "destructive",
       });
       return;
@@ -74,8 +74,8 @@ export function AddLeadDialog({ onAddLead }: AddLeadDialogProps) {
     onAddLead?.(formData);
     
     toast({
-      title: "Thành công",
-      description: "Đã thêm khách hàng tiềm năng mới",
+      title: "Success",
+      description: "New lead added successfully",
     });
 
     setFormData({
@@ -95,30 +95,30 @@ export function AddLeadDialog({ onAddLead }: AddLeadDialogProps) {
       <DialogTrigger asChild>
         <Button className="gradient-primary">
           <Plus className="mr-2 h-4 w-4" />
-          Thêm mới
+          Add
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Thêm khách hàng tiềm năng</DialogTitle>
+          <DialogTitle>Add New Lead</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="name">Họ và tên <span className="text-destructive">*</span></Label>
+              <Label htmlFor="name">Full Name <span className="text-destructive">*</span></Label>
               <Input
                 id="name"
-                placeholder="Nhập họ và tên"
+                placeholder="Enter full name"
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 maxLength={100}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="company">Công ty</Label>
+              <Label htmlFor="company">Company</Label>
               <Input
                 id="company"
-                placeholder="Nhập tên công ty"
+                placeholder="Enter company name"
                 value={formData.company}
                 onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                 maxLength={100}
@@ -128,7 +128,7 @@ export function AddLeadDialog({ onAddLead }: AddLeadDialogProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="phone">Số điện thoại <span className="text-destructive">*</span></Label>
+              <Label htmlFor="phone">Phone <span className="text-destructive">*</span></Label>
               <Input
                 id="phone"
                 placeholder="0912 345 678"
@@ -152,13 +152,13 @@ export function AddLeadDialog({ onAddLead }: AddLeadDialogProps) {
 
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label htmlFor="source">Nguồn</Label>
+              <Label htmlFor="source">Source</Label>
               <Select
                 value={formData.source}
                 onValueChange={(value) => setFormData({ ...formData, source: value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Chọn nguồn" />
+                  <SelectValue placeholder="Select source" />
                 </SelectTrigger>
                 <SelectContent>
                   {sources.map((source) => (
@@ -170,13 +170,13 @@ export function AddLeadDialog({ onAddLead }: AddLeadDialogProps) {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label htmlFor="status">Trạng thái</Label>
+              <Label htmlFor="status">Status</Label>
               <Select
                 value={formData.status}
                 onValueChange={(value) => setFormData({ ...formData, status: value })}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder="Chọn trạng thái" />
+                  <SelectValue placeholder="Select status" />
                 </SelectTrigger>
                 <SelectContent>
                   {statuses.map((status) => (
@@ -190,10 +190,10 @@ export function AddLeadDialog({ onAddLead }: AddLeadDialogProps) {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="notes">Ghi chú</Label>
+            <Label htmlFor="notes">Notes</Label>
             <Textarea
               id="notes"
-              placeholder="Nhập ghi chú..."
+              placeholder="Enter notes..."
               value={formData.notes}
               onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
               maxLength={1000}
@@ -203,10 +203,10 @@ export function AddLeadDialog({ onAddLead }: AddLeadDialogProps) {
 
           <div className="flex justify-end gap-2 pt-4">
             <Button type="button" variant="outline" onClick={() => setOpen(false)}>
-              Hủy
+              Cancel
             </Button>
             <Button type="submit" className="gradient-primary">
-              Thêm mới
+              Add
             </Button>
           </div>
         </form>
