@@ -13,7 +13,7 @@
  
  const Index = () => {
    return (
-     <MainLayout>
+     <MainLayout showFilters={false} showActivity={false}>
        <div className="space-y-6 animate-fade-in">
          {/* Page Header */}
          <div className="flex items-center justify-between">
