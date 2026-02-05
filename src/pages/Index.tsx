@@ -3,6 +3,14 @@ import { WorkStatistics } from "@/components/dashboard/WorkStatistics";
 import { DueTasks } from "@/components/dashboard/DueTasks";
 import { DueAppointments } from "@/components/dashboard/DueAppointments";
 import { WorkCalendar } from "@/components/dashboard/WorkCalendar";
+import { CustomerOverview } from "@/components/dashboard/CustomerOverview";
+import { CustomerGrowthChart } from "@/components/dashboard/CustomerGrowthChart";
+import { PurchasingGrowthChart } from "@/components/dashboard/PurchasingGrowthChart";
+import { CustomerRevenueByType } from "@/components/dashboard/CustomerRevenueByType";
+import { CustomersBySource } from "@/components/dashboard/CustomersBySource";
+import { CustomersByType } from "@/components/dashboard/CustomersByType";
+import { CustomerBirthdays } from "@/components/dashboard/CustomerBirthdays";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const Index = () => {
   return (
@@ -18,25 +26,56 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Main Content Grid */}
-        <div className="grid gap-6 lg:grid-cols-3">
-          {/* Left Column - Statistics & Lists */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Work Statistics */}
-            <WorkStatistics />
+        {/* Dashboard Tabs */}
+        <Tabs defaultValue="work" className="w-full">
+          <TabsList>
+            <TabsTrigger value="work">Work Table</TabsTrigger>
+            <TabsTrigger value="customer360">Customer 360</TabsTrigger>
+          </TabsList>
 
-            {/* Due Tasks & Appointments Row */}
-            <div className="grid gap-6 md:grid-cols-2">
-              <DueTasks />
-              <DueAppointments />
+          {/* Work Table Tab */}
+          <TabsContent value="work" className="space-y-6 mt-6">
+            {/* Main Content Grid */}
+            <div className="grid gap-6 lg:grid-cols-3">
+              {/* Left Column - Statistics & Lists */}
+              <div className="lg:col-span-2 space-y-6">
+                {/* Work Statistics */}
+                <WorkStatistics />
+
+                {/* Due Tasks & Appointments Row */}
+                <div className="grid gap-6 md:grid-cols-2">
+                  <DueTasks />
+                  <DueAppointments />
+                </div>
+              </div>
+
+              {/* Right Column - Work Calendar */}
+              <div className="lg:col-span-1">
+                <WorkCalendar />
+              </div>
             </div>
-          </div>
+          </TabsContent>
 
-          {/* Right Column - Work Calendar */}
-          <div className="lg:col-span-1">
-            <WorkCalendar />
-          </div>
-        </div>
+          {/* Customer 360 Tab */}
+          <TabsContent value="customer360" className="space-y-6 mt-6">
+            {/* Customer Overview Stats */}
+            <CustomerOverview />
+
+            {/* Charts Row 1 */}
+            <div className="grid gap-6 lg:grid-cols-3">
+              <CustomerGrowthChart />
+              <PurchasingGrowthChart />
+              <CustomerRevenueByType />
+            </div>
+
+            {/* Charts Row 2 */}
+            <div className="grid gap-6 lg:grid-cols-3">
+              <CustomersBySource />
+              <CustomersByType />
+              <CustomerBirthdays />
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </MainLayout>
   );
