@@ -1,8 +1,10 @@
 import { useState } from "react";
-import { Phone, Mail, Calendar, MessageSquare, FileText, User, ChevronRight, X } from "lucide-react";
+import { Phone, Mail, Calendar, MessageSquare, FileText, ChevronRight, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { AddActivityDialog } from "./AddActivityDialog";
+import { toast } from "@/hooks/use-toast";
 
 interface Activity {
   id: string;
@@ -79,12 +81,41 @@ const defaultActivities: Activity[] = [
   },
 ];
 
+type ActivityType = "call" | "email" | "meeting" | "note";
+
 export function ActivityPanel({
-  activities = defaultActivities,
+  activities: initialActivities = defaultActivities,
   selectedName,
   isOpen = true,
   onClose,
 }: ActivityPanelProps) {
+  const [activities, setActivities] = useState<Activity[]>(initialActivities);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogType, setDialogType] = useState<ActivityType>("call");
+
+  const handleOpenDialog = (type: ActivityType) => {
+    setDialogType(type);
+    setDialogOpen(true);
+  };
+
+  const handleAddActivity = (newActivity: {
+    type: ActivityType;
+    title: string;
+    description: string;
+    author: string;
+    date: string;
+  }) => {
+    const activity: Activity = {
+      id: Date.now().toString(),
+      ...newActivity,
+    };
+    setActivities([activity, ...activities]);
+    toast({
+      title: "Activity added",
+      description: `${newActivity.title} has been logged successfully.`,
+    });
+  };
+
   if (!isOpen) return null;
 
   return (
@@ -92,16 +123,40 @@ export function ActivityPanel({
       {/* Action buttons */}
       <div className="flex items-center justify-between p-3 border-b">
         <div className="flex items-center gap-1">
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8" 
+            onClick={() => handleOpenDialog("call")}
+            title="Log Call"
+          >
             <Phone className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8" 
+            onClick={() => handleOpenDialog("email")}
+            title="Log Email"
+          >
             <Mail className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8" 
+            onClick={() => handleOpenDialog("meeting")}
+            title="Log Meeting"
+          >
             <Calendar className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" className="h-8 w-8">
+          <Button 
+            variant="ghost" 
+            size="icon" 
+            className="h-8 w-8" 
+            onClick={() => handleOpenDialog("note")}
+            title="Add Note"
+          >
             <MessageSquare className="h-4 w-4" />
           </Button>
         </div>
@@ -109,6 +164,13 @@ export function ActivityPanel({
           <X className="h-4 w-4" />
         </Button>
       </div>
+
+      <AddActivityDialog
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        type={dialogType}
+        onAdd={handleAddActivity}
+      />
 
       {/* Tabs */}
       <Tabs defaultValue="activities" className="flex-1 flex flex-col">
