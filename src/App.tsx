@@ -16,6 +16,7 @@ import ProposalDetail from "./pages/ProposalDetail";
 import Quotations from "./pages/Quotations";
 import Analytics from "./pages/Analytics";
 import SalesMap from "./pages/SalesMap";
+import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -40,6 +41,7 @@ const App = () => (
           <Route path="/quotations" element={<Quotations />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/sales-map" element={<SalesMap />} />
+          <Route path="/settings" element={<Settings />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
