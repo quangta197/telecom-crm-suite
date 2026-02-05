@@ -16,6 +16,7 @@ import {
   MoreHorizontal,
 } from "lucide-react";
 import { StatusList } from "@/components/settings/StatusList";
+import { TemplateList } from "@/components/settings/TemplateList";
 import {
   Dialog,
   DialogContent,
@@ -162,51 +163,18 @@ export default function Settings() {
                 </Dialog>
               </CardHeader>
               <CardContent>
-                <div className="space-y-3">
-                  {templates.map((template) => (
-                    <div
-                      key={template.id}
-                      className="flex items-center justify-between p-4 bg-secondary/30 rounded-lg border hover:bg-secondary/50 transition-colors"
-                    >
-                      <div className="flex items-center gap-4">
-                        <GripVertical className="h-5 w-5 text-muted-foreground cursor-grab" />
-                        <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                          <FileText className="h-5 w-5 text-primary" />
-                        </div>
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium">{template.name}</p>
-                            {template.isDefault && (
-                              <Badge variant="secondary" className="text-xs">Mặc định</Badge>
-                            )}
-                          </div>
-                          <p className="text-sm text-muted-foreground">{template.description}</p>
-                        </div>
-                      </div>
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon">
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem className="gap-2">
-                            <Pencil className="h-4 w-4" />
-                            Chỉnh sửa
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2">
-                            <FileText className="h-4 w-4" />
-                            Đặt làm mặc định
-                          </DropdownMenuItem>
-                          <DropdownMenuItem className="gap-2 text-destructive">
-                            <Trash2 className="h-4 w-4" />
-                            Xóa
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  ))}
-                </div>
+                <TemplateList
+                  templates={templates}
+                  onReorder={setTemplates}
+                  onSetDefault={(id) => {
+                    setTemplates((prev) =>
+                      prev.map((t) => ({ ...t, isDefault: t.id === id }))
+                    );
+                  }}
+                />
+                <p className="text-sm text-muted-foreground mt-4">
+                  💡 Kéo thả để sắp xếp thứ tự hiển thị của các biểu mẫu
+                </p>
               </CardContent>
             </Card>
           </TabsContent>
