@@ -12,7 +12,7 @@ import {
   Signal,
   Search,
   Bell,
-  Settings,
+  Settings as SettingsIcon,
   HelpCircle,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -30,6 +30,7 @@ const menuItems = [
   { icon: Calendar, label: "Calendar", path: "/calendar" },
   { icon: BarChart3, label: "Analytics", path: "/analytics" },
   { icon: MapPin, label: "Sales Map", path: "/sales-map" },
+  { icon: SettingsIcon, label: "Settings", path: "/settings" },
 ];
 
 export function TopNavigation() {
@@ -64,7 +65,7 @@ export function TopNavigation() {
             <Bell className="h-5 w-5" />
           </Button>
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
-            <Settings className="h-5 w-5" />
+            <SettingsIcon className="h-5 w-5" />
           </Button>
           <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground">
             <HelpCircle className="h-5 w-5" />

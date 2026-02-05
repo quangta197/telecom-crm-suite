@@ -1,19 +1,20 @@
  import { useState } from "react";
  import { Link, useLocation } from "react-router-dom";
- import {
-   LayoutDashboard,
-   Users,
-   Target,
-   TrendingUp,
-   Calendar,
-   FileText,
-   Calculator,
-   BarChart3,
-   MapPin,
-   ChevronLeft,
-   ChevronRight,
-   Signal,
- } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  Target,
+  TrendingUp,
+  Calendar,
+  FileText,
+  Calculator,
+  BarChart3,
+  MapPin,
+  ChevronLeft,
+  ChevronRight,
+  Signal,
+  Settings,
+} from "lucide-react";
  import { cn } from "@/lib/utils";
  
 const menuItems = [
@@ -26,6 +27,7 @@ const menuItems = [
   { icon: Calculator, label: "Báo giá", path: "/quotations" },
   { icon: BarChart3, label: "Phân tích lãi lỗ", path: "/analytics" },
   { icon: MapPin, label: "Bản đồ hoạt động", path: "/sales-map" },
+  { icon: Settings, label: "Cài đặt", path: "/settings" },
 ];
  
  export function Sidebar() {
