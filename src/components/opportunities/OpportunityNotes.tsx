@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { MessageSquare, Trash2 } from "lucide-react";
+import { MessageSquare, Trash2, Pencil, Check, X } from "lucide-react";
 
 interface Note {
   id: number;
@@ -56,6 +56,8 @@ const sourceLabels: Record<string, { label: string; className: string }> = {
 export const OpportunityNotes = () => {
   const [notes, setNotes] = useState<Note[]>([...opportunityNotes, ...leadNotes]);
   const [newNote, setNewNote] = useState("");
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editContent, setEditContent] = useState("");
 
   const handleAddNote = () => {
     if (!newNote.trim()) return;
@@ -72,6 +74,23 @@ export const OpportunityNotes = () => {
 
   const handleDelete = (id: number) => {
     setNotes(notes.filter(n => n.id !== id));
+  };
+
+  const handleStartEdit = (note: Note) => {
+    setEditingId(note.id);
+    setEditContent(note.content);
+  };
+
+  const handleSaveEdit = () => {
+    if (!editContent.trim() || editingId === null) return;
+    setNotes(notes.map(n => n.id === editingId ? { ...n, content: editContent.trim() } : n));
+    setEditingId(null);
+    setEditContent("");
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditContent("");
   };
 
   return (
@@ -124,12 +143,40 @@ export const OpportunityNotes = () => {
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
+                      onClick={() => handleStartEdit(note)}
+                    >
+                      <Pencil className="h-3.5 w-3.5 text-muted-foreground" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
                       onClick={() => handleDelete(note.id)}
                     >
                       <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
                     </Button>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">{note.content}</p>
+                  {editingId === note.id ? (
+                    <div className="mt-1">
+                      <Textarea
+                        value={editContent}
+                        onChange={e => setEditContent(e.target.value)}
+                        rows={2}
+                        className="text-sm mb-2"
+                        autoFocus
+                      />
+                      <div className="flex gap-1.5">
+                        <Button size="sm" variant="default" className="h-7 text-xs gap-1" onClick={handleSaveEdit} disabled={!editContent.trim()}>
+                          <Check className="h-3 w-3" /> Save
+                        </Button>
+                        <Button size="sm" variant="ghost" className="h-7 text-xs gap-1" onClick={handleCancelEdit}>
+                          <X className="h-3 w-3" /> Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground mt-1 whitespace-pre-wrap">{note.content}</p>
+                  )}
                 </div>
               </div>
             );
