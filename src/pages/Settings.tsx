@@ -64,7 +64,7 @@ const initialStatuses = {
     { id: 5, name: "Closed Won", color: "bg-green-500", description: "Thắng hợp đồng" },
     { id: 6, name: "Closed Lost", color: "bg-red-500", description: "Mất cơ hội" },
   ],
-  proposal: [
+  project: [
     { id: 1, name: "Draft", color: "bg-slate-500", description: "Bản nháp" },
     { id: 2, name: "Pending Approval", color: "bg-yellow-500", description: "Chờ phê duyệt" },
     { id: 3, name: "Approved", color: "bg-blue-500", description: "Đã phê duyệt" },
@@ -100,7 +100,7 @@ export default function Settings() {
   const statusTypeLabels = {
     lead: "Tiềm năng (Lead)",
     opportunity: "Cơ hội",
-    proposal: "Chào hàng",
+    project: "Dự án",
     task: "Nhiệm vụ",
   };
 

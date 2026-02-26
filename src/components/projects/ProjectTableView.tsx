@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Eye, Download, MoreHorizontal } from "lucide-react";
 
-interface Proposal {
+interface Project {
   id: number;
   code: string;
   title: string;
@@ -22,8 +22,8 @@ interface Proposal {
   validUntil: string;
 }
 
-interface ProposalTableViewProps {
-  proposals: Proposal[];
+interface ProjectTableViewProps {
+  projects: Project[];
   selectedRows: number[];
   onRowClick: (id: number) => void;
   onToggleRow: (id: number) => void;
@@ -38,13 +38,13 @@ const statusColors: Record<string, string> = {
   Rejected: "bg-destructive/10 text-destructive",
 };
 
-export function ProposalTableView({
-  proposals,
+export function ProjectTableView({
+  projects,
   selectedRows,
   onRowClick,
   onToggleRow,
   onToggleAll,
-}: ProposalTableViewProps) {
+}: ProjectTableViewProps) {
   return (
     <div className="rounded-lg bg-card shadow-sm overflow-hidden border">
       <Table>
@@ -52,11 +52,11 @@ export function ProposalTableView({
           <TableRow className="bg-muted/50">
             <TableHead className="w-12">
               <Checkbox
-                checked={selectedRows.length === proposals.length}
+                checked={selectedRows.length === projects.length}
                 onCheckedChange={onToggleAll}
               />
             </TableHead>
-            <TableHead>Proposal ID</TableHead>
+            <TableHead>Project ID</TableHead>
             <TableHead>Title</TableHead>
             <TableHead>Customer</TableHead>
             <TableHead>Value</TableHead>
@@ -67,35 +67,35 @@ export function ProposalTableView({
           </TableRow>
         </TableHeader>
         <TableBody>
-          {proposals.map((proposal) => (
+          {projects.map((project) => (
             <TableRow
-              key={proposal.id}
+              key={project.id}
               className={`hover:bg-muted/50 cursor-pointer ${
-                selectedRows.includes(proposal.id) ? "bg-primary/5" : ""
+                selectedRows.includes(project.id) ? "bg-primary/5" : ""
               }`}
-              onClick={() => onRowClick(proposal.id)}
+              onClick={() => onRowClick(project.id)}
             >
               <TableCell onClick={(e) => e.stopPropagation()}>
                 <Checkbox
-                  checked={selectedRows.includes(proposal.id)}
-                  onCheckedChange={() => onToggleRow(proposal.id)}
+                  checked={selectedRows.includes(project.id)}
+                  onCheckedChange={() => onToggleRow(project.id)}
                 />
               </TableCell>
-              <TableCell className="font-mono text-sm">{proposal.code}</TableCell>
+              <TableCell className="font-mono text-sm">{project.code}</TableCell>
               <TableCell className="font-medium text-primary hover:underline">
-                {proposal.title}
+                {project.title}
               </TableCell>
-              <TableCell>{proposal.customer}</TableCell>
+              <TableCell>{project.customer}</TableCell>
               <TableCell className="font-semibold text-primary">
-                {proposal.value}
+                {project.value}
               </TableCell>
               <TableCell>
-                <Badge variant="secondary" className={statusColors[proposal.status]}>
-                  {proposal.status}
+                <Badge variant="secondary" className={statusColors[project.status]}>
+                  {project.status}
                 </Badge>
               </TableCell>
-              <TableCell>{proposal.createdAt}</TableCell>
-              <TableCell>{proposal.validUntil}</TableCell>
+              <TableCell>{project.createdAt}</TableCell>
+              <TableCell>{project.validUntil}</TableCell>
               <TableCell>
                 <div className="flex items-center gap-1">
                   <Button variant="ghost" size="icon" className="h-8 w-8">
@@ -116,10 +116,10 @@ export function ProposalTableView({
 
       <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/30">
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>Total: {proposals.length}</span>
+          <span>Total: {projects.length}</span>
         </div>
         <div className="flex items-center gap-2 text-sm">
-          <span className="text-muted-foreground">1 to {proposals.length}</span>
+          <span className="text-muted-foreground">1 to {projects.length}</span>
         </div>
       </div>
     </div>

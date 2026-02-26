@@ -22,9 +22,9 @@ const activities = [
   },
   {
     id: 3,
-    type: "proposal",
+    type: "project",
     icon: FileText,
-    title: "Created new proposal",
+    title: "Created new project",
     description: "FPT Data Center project",
     time: "2 hours ago",
     user: "Mike Wilson",
@@ -52,7 +52,7 @@ const activities = [
 const typeStyles = {
   call: "bg-info/10 text-info",
   email: "bg-primary/10 text-primary",
-  proposal: "bg-accent/10 text-accent",
+  project: "bg-accent/10 text-accent",
   meeting: "bg-warning/10 text-warning",
   deal: "bg-success/10 text-success",
 };

@@ -21,7 +21,7 @@ const menuItems = [
   { icon: LayoutDashboard, label: "Bàn làm việc", path: "/" },
   { icon: Target, label: "Tiềm năng", path: "/leads" },
   { icon: TrendingUp, label: "Cơ hội", path: "/opportunities" },
-  { icon: FileText, label: "Chào hàng", path: "/proposals" },
+  { icon: FileText, label: "Dự án", path: "/projects" },
   { icon: Users, label: "Liên hệ", path: "/contacts" },
   { icon: Calendar, label: "Lịch làm việc", path: "/calendar" },
   { icon: Calculator, label: "Báo giá", path: "/quotations" },
