@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useOpportunityStagesStore } from "@/stores/opportunityStagesStore";
 import { useOpportunityCustomFieldsStore } from "@/stores/opportunityCustomFieldsStore";
 import { useParams, useNavigate } from "react-router-dom";
@@ -11,6 +11,15 @@ import { OpportunityContacts } from "@/components/opportunities/OpportunityConta
 import { OpportunityAttachments } from "@/components/opportunities/OpportunityAttachments";
 import { OpportunityNotes } from "@/components/opportunities/OpportunityNotes";
 import { OpportunityServiceProducts } from "@/components/opportunities/OpportunityServiceProducts";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Select as UISelect,
+  SelectContent as UISelectContent,
+  SelectItem as UISelectItem,
+  SelectTrigger as UISelectTrigger,
+  SelectValue as UISelectValue,
+} from "@/components/ui/select";
 import { OpportunityQuotations } from "@/components/opportunities/OpportunityQuotations";
 import { OpportunityNegotiation } from "@/components/opportunities/OpportunityNegotiation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -88,6 +97,10 @@ const OpportunityDetail = () => {
   const { stages: stageList } = useOpportunityStagesStore();
   const { fields: customFieldDefs } = useOpportunityCustomFieldsStore();
   const [activeStage, setActiveStage] = useState("closed-won");
+  const [customFieldValues, setCustomFieldValues] = useState<Record<string, string>>(opportunityData.customFields);
+  const [editingFieldId, setEditingFieldId] = useState<string | null>(null);
+  const [editingValue, setEditingValue] = useState("");
+  const editInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
   const { activityTypes } = useActivityTypesStore();
   const [activities, setActivities] = useState([...oppActivities, ...leadActivities]);
   const [activityDialogOpen, setActivityDialogOpen] = useState(false);
@@ -124,6 +137,31 @@ const OpportunityDetail = () => {
 
   const handleCancelEditActivity = () => {
     setEditingActivityId(null);
+  };
+
+  const startEditField = (fieldId: string) => {
+    setEditingFieldId(fieldId);
+    setEditingValue(customFieldValues[fieldId] || "");
+  };
+
+  const saveEditField = () => {
+    if (editingFieldId) {
+      setCustomFieldValues((prev) => ({ ...prev, [editingFieldId]: editingValue }));
+      setEditingFieldId(null);
+    }
+  };
+
+  const cancelEditField = () => {
+    setEditingFieldId(null);
+  };
+
+  const handleFieldKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      saveEditField();
+    } else if (e.key === "Escape") {
+      cancelEditField();
+    }
   };
 
   return (
@@ -290,9 +328,53 @@ const OpportunityDetail = () => {
                     <h3 className="font-semibold mb-6">Thông tin mở rộng</h3>
                     <div className="grid grid-cols-2 gap-x-12 gap-y-4 text-sm">
                       {customFieldDefs.map((field) => (
-                        <div key={field.id} className="flex justify-between py-2 border-b">
+                        <div key={field.id} className="flex justify-between items-center py-2 border-b group min-h-[40px]">
                           <span className="text-muted-foreground">{field.label}</span>
-                          <span>{opportunityData.customFields[field.id] || "-"}</span>
+                          {editingFieldId === field.id ? (
+                            <div className="flex items-center gap-1.5 max-w-[60%]">
+                              {field.type === "select" && field.options ? (
+                                <UISelect value={editingValue} onValueChange={(v) => { setEditingValue(v); setCustomFieldValues((prev) => ({ ...prev, [field.id]: v })); setEditingFieldId(null); }}>
+                                  <UISelectTrigger className="h-8 text-sm w-[180px]">
+                                    <UISelectValue placeholder="Chọn..." />
+                                  </UISelectTrigger>
+                                  <UISelectContent>
+                                    {field.options.map((opt) => (
+                                      <UISelectItem key={opt} value={opt}>{opt}</UISelectItem>
+                                    ))}
+                                  </UISelectContent>
+                                </UISelect>
+                              ) : field.type === "textarea" ? (
+                                <Textarea
+                                  ref={editInputRef as React.RefObject<HTMLTextAreaElement>}
+                                  value={editingValue}
+                                  onChange={(e) => setEditingValue(e.target.value)}
+                                  onKeyDown={handleFieldKeyDown}
+                                  onBlur={saveEditField}
+                                  className="h-16 text-sm w-[180px]"
+                                  autoFocus
+                                />
+                              ) : (
+                                <Input
+                                  ref={editInputRef as React.RefObject<HTMLInputElement>}
+                                  type={field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
+                                  value={editingValue}
+                                  onChange={(e) => setEditingValue(e.target.value)}
+                                  onKeyDown={handleFieldKeyDown}
+                                  onBlur={saveEditField}
+                                  className="h-8 text-sm w-[180px]"
+                                  autoFocus
+                                />
+                              )}
+                            </div>
+                          ) : (
+                            <span
+                              className="cursor-pointer hover:bg-muted px-2 py-1 rounded transition-colors min-w-[40px] text-right"
+                              onClick={() => startEditField(field.id)}
+                              title="Click để chỉnh sửa"
+                            >
+                              {customFieldValues[field.id] || <span className="text-muted-foreground/50 italic">Click để nhập...</span>}
+                            </span>
+                          )}
                         </div>
                       ))}
                     </div>
