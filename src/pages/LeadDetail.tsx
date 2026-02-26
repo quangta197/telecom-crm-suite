@@ -153,7 +153,7 @@ const LeadDetail = () => {
           <div className="col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="w-full justify-start bg-transparent border-b rounded-none h-auto p-0">
-                {["detail", "notes", "attachments", "tasks"].map((tab) => (
+                {["detail", "notes", "attachments"].map((tab) => (
                   <TabsTrigger
                     key={tab}
                     value={tab}
@@ -213,7 +213,7 @@ const LeadDetail = () => {
                 </Card>
               </TabsContent>
 
-              {["notes", "attachments", "tasks"].map((tab) => (
+              {["notes", "attachments"].map((tab) => (
                 <TabsContent key={tab} value={tab} className="mt-6">
                   <Card className="p-6">
                     <p className="text-muted-foreground text-center py-8">No {tab} yet</p>
