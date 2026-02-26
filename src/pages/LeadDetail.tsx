@@ -68,6 +68,7 @@ const statusColors: Record<string, string> = {
   "Hot": "bg-destructive text-destructive-foreground",
   "Warm": "bg-warning text-warning-foreground",
   "Cold": "bg-info text-info-foreground",
+  "Converted": "bg-green-500 text-white",
 };
 
 const LeadDetail = () => {
@@ -96,6 +97,14 @@ const LeadDetail = () => {
 
   const handleSaveLead = (updated: LeadData) => {
     setLeadData(updated);
+  };
+
+  const handleConverted = () => {
+    // Set stage to last stage (Converted)
+    const lastStage = stageList[stageList.length - 1];
+    if (lastStage) setActiveStage(lastStage.id);
+    // Update lead status
+    setLeadData((prev) => ({ ...prev, status: "Converted" }));
   };
 
   return (
@@ -340,6 +349,7 @@ const LeadDetail = () => {
         open={convertOpen}
         onOpenChange={setConvertOpen}
         lead={leadData}
+        onConverted={handleConverted}
       />
     </MainLayout>
   );
