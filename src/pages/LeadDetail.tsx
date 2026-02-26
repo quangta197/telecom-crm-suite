@@ -16,12 +16,20 @@ import {
   MessageSquare, 
   Mail,
   Target,
+  Plus,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditLeadDialog, LeadData } from "@/components/leads/EditLeadDialog";
 import { LeadNotes } from "@/components/leads/LeadNotes";
 import { LeadAttachments } from "@/components/leads/LeadAttachments";
 import { AddActivityDialog } from "@/components/layout/AddActivityDialog";
+import { useActivityTypesStore, iconMap } from "@/stores/activityTypesStore";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const initialLeadData: LeadData = {
   id: 1,
@@ -75,13 +83,14 @@ const LeadDetail = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [activities, setActivities] = useState(initialActivities);
   const [activityDialogOpen, setActivityDialogOpen] = useState(false);
-  const [activityType, setActivityType] = useState<"call" | "email" | "meeting" | "note">("call");
+  const [activityType, setActivityType] = useState<string>("call");
+  const { activityTypes } = useActivityTypesStore();
 
   const handleAddActivity = (activity: { type: string; title: string; description: string; author: string; date: string }) => {
     setActivities([{ id: Date.now(), ...activity }, ...activities]);
   };
 
-  const openActivityDialog = (type: "call" | "email" | "meeting" | "note") => {
+  const openActivityDialog = (type: string) => {
     setActivityType(type);
     setActivityDialogOpen(true);
   };
@@ -243,59 +252,63 @@ const LeadDetail = () => {
           {/* Right - Activity Sidebar */}
           <div className="col-span-1">
             <Card className="p-0 overflow-hidden">
-              <div className="flex items-center justify-center gap-3 p-3 border-b">
-                {([
-                  { Icon: Phone, type: "call" as const },
-                  { Icon: Calendar, type: "meeting" as const },
-                  { Icon: MessageSquare, type: "note" as const },
-                  { Icon: Mail, type: "email" as const },
-                ]).map(({ Icon, type }) => (
-                  <Button key={type} variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary" onClick={() => openActivityDialog(type)}>
-                    <Icon className="h-4 w-4" />
-                  </Button>
-                ))}
-              </div>
-
-              <div className="p-4 border-b">
-                <h4 className="font-semibold text-sm mb-2">Quick Actions</h4>
-                <div className="grid grid-cols-2 gap-2">
-                  <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8" onClick={() => openActivityDialog("call")}>
-                    <Phone className="h-3 w-3" /> Call
-                  </Button>
-                  <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8" onClick={() => openActivityDialog("email")}>
-                    <Mail className="h-3 w-3" /> Email
-                  </Button>
-                  <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8" onClick={() => openActivityDialog("meeting")}>
-                    <Calendar className="h-3 w-3" /> Meeting
-                  </Button>
-                  <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8" onClick={() => openActivityDialog("note")}>
-                    <MessageSquare className="h-3 w-3" /> Note
-                  </Button>
+              <div className="flex items-center justify-between p-3 border-b">
+                <div className="flex items-center gap-2">
+                  {activityTypes.slice(0, 4).map((at) => {
+                    const Icon = iconMap[at.icon];
+                    return (
+                      <Button key={at.id} variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary" onClick={() => openActivityDialog(at.id)}>
+                        {Icon && <Icon className="h-4 w-4" />}
+                      </Button>
+                    );
+                  })}
                 </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" className="gap-1.5 h-8 text-xs">
+                      <Plus className="h-3.5 w-3.5" /> Add
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {activityTypes.map((at) => {
+                      const Icon = iconMap[at.icon];
+                      return (
+                        <DropdownMenuItem key={at.id} onClick={() => openActivityDialog(at.id)} className="gap-2">
+                          <div className={`h-5 w-5 rounded-full ${at.color} flex items-center justify-center text-white`}>
+                            {Icon && <Icon className="h-3 w-3" />}
+                          </div>
+                          {at.name}
+                        </DropdownMenuItem>
+                      );
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
               <div className="px-4 py-2.5 border-b">
                 <h4 className="font-semibold text-sm">Activity History</h4>
               </div>
 
-              <div className="max-h-[400px] overflow-y-auto">
-                {activities.map((item) => (
-                  <div key={item.id} className="px-4 py-3 border-b last:border-b-0 hover:bg-muted/30 transition-colors">
-                    <div className="flex items-start gap-3">
-                      <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        {item.type === "call" && <Phone className="h-3.5 w-3.5 text-primary" />}
-                        {item.type === "email" && <Mail className="h-3.5 w-3.5 text-primary" />}
-                        {item.type === "note" && <MessageSquare className="h-3.5 w-3.5 text-primary" />}
-                        {item.type === "meeting" && <Calendar className="h-3.5 w-3.5 text-primary" />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-sm leading-tight">{item.title}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{item.author} • {item.date}</p>
+              <div className="max-h-[450px] overflow-y-auto">
+                {activities.map((item) => {
+                  const actType = activityTypes.find((at) => at.id === item.type);
+                  const Icon = actType ? iconMap[actType.icon] : null;
+                  const color = actType?.color || "bg-primary/10";
+                  return (
+                    <div key={item.id} className="px-4 py-3 border-b last:border-b-0 hover:bg-muted/30 transition-colors">
+                      <div className="flex items-start gap-3">
+                        <div className={`h-9 w-9 rounded-full ${color} flex items-center justify-center flex-shrink-0 text-white`}>
+                          {Icon && <Icon className="h-3.5 w-3.5" />}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-semibold text-sm leading-tight">{item.title}</p>
+                          <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
+                          <p className="text-xs text-muted-foreground mt-1">{item.author} • {item.date}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </Card>
           </div>

@@ -14,9 +14,11 @@ import {
   Trash2,
   GripVertical,
   MoreHorizontal,
+  Activity,
 } from "lucide-react";
 import { StatusList } from "@/components/settings/StatusList";
 import { TemplateList } from "@/components/settings/TemplateList";
+import { ActivityTypeSettings } from "@/components/settings/ActivityTypeSettings";
 import {
   Dialog,
   DialogContent,
@@ -122,6 +124,10 @@ export default function Settings() {
             <TabsTrigger value="statuses" className="gap-2">
               <Tags className="h-4 w-4" />
               Trạng thái
+            </TabsTrigger>
+            <TabsTrigger value="activities" className="gap-2">
+              <Activity className="h-4 w-4" />
+              Loại hoạt động
             </TabsTrigger>
           </TabsList>
 
@@ -263,6 +269,14 @@ export default function Settings() {
                 <p className="text-sm text-muted-foreground">
                   💡 Kéo thả để sắp xếp thứ tự hiển thị của các trạng thái trong pipeline
                 </p>
+              </CardContent>
+            </Card>
+          </TabsContent>
+          {/* Activity Types Tab */}
+          <TabsContent value="activities">
+            <Card>
+              <CardContent className="pt-6">
+                <ActivityTypeSettings />
               </CardContent>
             </Card>
           </TabsContent>

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Phone, Mail, Calendar, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useActivityTypesStore, iconMap } from "@/stores/activityTypesStore";
 import {
   Dialog,
   DialogContent,
@@ -12,7 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
-type ActivityType = "call" | "email" | "meeting" | "note";
+type ActivityType = string;
 
 interface AddActivityDialogProps {
   open: boolean;
@@ -27,31 +28,10 @@ interface AddActivityDialogProps {
   }) => void;
 }
 
-const typeConfig = {
-  call: {
-    icon: Phone,
-    title: "Log Call",
-    titlePlaceholder: "Call subject",
-    descPlaceholder: "Call notes...",
-  },
-  email: {
-    icon: Mail,
-    title: "Log Email",
-    titlePlaceholder: "Email subject",
-    descPlaceholder: "Email summary...",
-  },
-  meeting: {
-    icon: Calendar,
-    title: "Log Meeting",
-    titlePlaceholder: "Meeting subject",
-    descPlaceholder: "Meeting notes...",
-  },
-  note: {
-    icon: MessageSquare,
-    title: "Add Note",
-    titlePlaceholder: "Note title",
-    descPlaceholder: "Note content...",
-  },
+const defaultConfig = {
+  title: "Log Activity",
+  titlePlaceholder: "Subject",
+  descPlaceholder: "Details...",
 };
 
 export function AddActivityDialog({
@@ -62,9 +42,11 @@ export function AddActivityDialog({
 }: AddActivityDialogProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const { activityTypes } = useActivityTypesStore();
 
-  const config = typeConfig[type];
-  const Icon = config.icon;
+  const actType = activityTypes.find((at) => at.id === type);
+  const Icon = actType ? iconMap[actType.icon] : null;
+  const dialogTitle = actType ? `Log ${actType.name}` : defaultConfig.title;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,8 +72,8 @@ export function AddActivityDialog({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Icon className="h-5 w-5" />
-            {config.title}
+            {Icon && <Icon className="h-5 w-5" />}
+            {dialogTitle}
           </DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit}>
@@ -102,7 +84,7 @@ export function AddActivityDialog({
                 id="title"
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
-                placeholder={config.titlePlaceholder}
+                placeholder="Subject"
                 required
               />
             </div>
@@ -112,7 +94,7 @@ export function AddActivityDialog({
                 id="description"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder={config.descPlaceholder}
+                placeholder="Details..."
                 rows={4}
               />
             </div>
