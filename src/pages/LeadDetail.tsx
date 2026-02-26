@@ -16,13 +16,11 @@ import {
   MessageSquare, 
   Mail,
   Target,
-  User,
-  Building2,
-  TrendingUp
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { EditLeadDialog, LeadData } from "@/components/leads/EditLeadDialog";
 
-const leadData = {
+const initialLeadData: LeadData = {
   id: 1,
   code: "LD00001",
   name: "Michael Johnson",
@@ -70,6 +68,12 @@ const LeadDetail = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("detail");
   const [activityTab, setActivityTab] = useState("activity");
+  const [leadData, setLeadData] = useState<LeadData>(initialLeadData);
+  const [editOpen, setEditOpen] = useState(false);
+
+  const handleSaveLead = (updated: LeadData) => {
+    setLeadData(updated);
+  };
 
   return (
     <MainLayout showFilters={false} showActivity={false}>
@@ -100,7 +104,7 @@ const LeadDetail = () => {
               <Target className="h-4 w-4" />
               Convert to Opportunity
             </Button>
-            <Button className="gap-2">
+            <Button className="gap-2" onClick={() => setEditOpen(true)}>
               <Edit className="h-4 w-4" />
               Edit
             </Button>
@@ -127,7 +131,7 @@ const LeadDetail = () => {
           <Card className="p-6">
             <h3 className="font-semibold mb-4">Lead Stage</h3>
             <div className="flex items-center gap-2">
-              {stages.map((stage, index) => (
+              {stages.map((stage) => (
                 <div key={stage.id} className="flex-1">
                   <div
                     className={cn(
@@ -274,6 +278,13 @@ const LeadDetail = () => {
           </div>
         </div>
       </div>
+
+      <EditLeadDialog
+        open={editOpen}
+        onOpenChange={setEditOpen}
+        lead={leadData}
+        onSave={handleSaveLead}
+      />
     </MainLayout>
   );
 };
