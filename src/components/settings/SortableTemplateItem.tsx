@@ -67,7 +67,7 @@ export function SortableTemplateItem({
           <div className="flex items-center gap-2">
             <p className="font-medium">{template.name}</p>
             {template.isDefault && (
-              <Badge variant="secondary" className="text-xs">Mặc định</Badge>
+              <Badge variant="secondary" className="text-xs">Default</Badge>
             )}
           </div>
           <p className="text-sm text-muted-foreground">{template.description}</p>
@@ -82,15 +82,15 @@ export function SortableTemplateItem({
         <DropdownMenuContent align="end">
           <DropdownMenuItem className="gap-2" onClick={() => onEdit?.(template.id)}>
             <Pencil className="h-4 w-4" />
-            Chỉnh sửa
+            Edit
           </DropdownMenuItem>
           <DropdownMenuItem className="gap-2" onClick={() => onSetDefault?.(template.id)}>
             <FileText className="h-4 w-4" />
-            Đặt làm mặc định
+            Set as Default
           </DropdownMenuItem>
           <DropdownMenuItem className="gap-2 text-destructive" onClick={() => onDelete?.(template.id)}>
             <Trash2 className="h-4 w-4" />
-            Xóa
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

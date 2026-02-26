@@ -68,11 +68,11 @@ export function SortableStatusItem({ status, index }: SortableStatusItemProps) {
         <DropdownMenuContent align="end">
           <DropdownMenuItem className="gap-2">
             <Pencil className="h-4 w-4" />
-            Chỉnh sửa
+            Edit
           </DropdownMenuItem>
           <DropdownMenuItem className="gap-2 text-destructive">
             <Trash2 className="h-4 w-4" />
-            Xóa
+            Delete
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>

@@ -50,8 +50,8 @@ export function StatusList({ statuses, onReorder }: StatusListProps) {
       const newStatuses = arrayMove(statuses, oldIndex, newIndex);
       onReorder(newStatuses);
       toast({
-        title: "Đã cập nhật thứ tự",
-        description: "Thứ tự trạng thái đã được thay đổi",
+        title: "Order updated",
+        description: "Status order has been changed",
       });
     }
   }

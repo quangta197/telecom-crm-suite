@@ -68,9 +68,9 @@ export function ContactRoleSettings() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="font-semibold">Contact Roles</h3>
-          <p className="text-sm text-muted-foreground">Định nghĩa các vai trò của liên hệ trong Opportunity</p>
+          <p className="text-sm text-muted-foreground">Define contact roles used in Opportunity</p>
         </div>
-        <Button className="gap-2" onClick={openAdd}><Plus className="h-4 w-4" /> Thêm vai trò</Button>
+        <Button className="gap-2" onClick={openAdd}><Plus className="h-4 w-4" /> Add Role</Button>
       </div>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -83,26 +83,26 @@ export function ContactRoleSettings() {
         </SortableContext>
       </DndContext>
 
-      <p className="text-sm text-muted-foreground">💡 Kéo thả để sắp xếp thứ tự hiển thị</p>
+      <p className="text-sm text-muted-foreground">💡 Drag and drop to reorder display order</p>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle>{editingId ? "Sửa vai trò" : "Thêm vai trò"}</DialogTitle>
+            <DialogTitle>{editingId ? "Edit Role" : "Add Role"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label>Tên</Label>
-              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="VD: Decision Maker..." />
+              <Label>Name</Label>
+              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Decision Maker..." />
             </div>
             <div className="space-y-2">
-              <Label>Mô tả</Label>
-              <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Mô tả ngắn" />
+              <Label>Description</Label>
+              <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Short description" />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Hủy</Button>
-            <Button onClick={handleSave}>Lưu</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleSave}>Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

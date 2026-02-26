@@ -57,42 +57,42 @@ import { useQuotationTemplatesStore } from "@/stores/quotationTemplatesStore";
 // Mock data for status definitions
 const initialStatuses = {
   lead: [
-    { id: 1, name: "Hot", color: "bg-red-500", description: "Lead có tiềm năng cao" },
-    { id: 2, name: "Warm", color: "bg-orange-500", description: "Lead đang quan tâm" },
-    { id: 3, name: "Cold", color: "bg-blue-500", description: "Lead cần nuôi dưỡng" },
+    { id: 1, name: "Hot", color: "bg-red-500", description: "High potential lead" },
+    { id: 2, name: "Warm", color: "bg-orange-500", description: "Interested lead" },
+    { id: 3, name: "Cold", color: "bg-blue-500", description: "Needs nurturing" },
   ],
   opportunity: [
-    { id: 1, name: "Discovery", color: "bg-slate-500", description: "Đang tìm hiểu nhu cầu" },
-    { id: 2, name: "Qualification", color: "bg-blue-500", description: "Đánh giá khả năng" },
-    { id: 3, name: "Proposal", color: "bg-yellow-500", description: "Đã gửi đề xuất" },
-    { id: 4, name: "Negotiation", color: "bg-orange-500", description: "Đang đàm phán" },
-    { id: 5, name: "Closed Won", color: "bg-green-500", description: "Thắng hợp đồng" },
-    { id: 6, name: "Closed Lost", color: "bg-red-500", description: "Mất cơ hội" },
+    { id: 1, name: "Discovery", color: "bg-slate-500", description: "Exploring needs" },
+    { id: 2, name: "Qualification", color: "bg-blue-500", description: "Evaluating fit" },
+    { id: 3, name: "Proposal", color: "bg-yellow-500", description: "Proposal sent" },
+    { id: 4, name: "Negotiation", color: "bg-orange-500", description: "Negotiating terms" },
+    { id: 5, name: "Closed Won", color: "bg-green-500", description: "Deal won" },
+    { id: 6, name: "Closed Lost", color: "bg-red-500", description: "Deal lost" },
   ],
   project: [
-    { id: 1, name: "Draft", color: "bg-slate-500", description: "Bản nháp" },
-    { id: 2, name: "Pending Approval", color: "bg-yellow-500", description: "Chờ phê duyệt" },
-    { id: 3, name: "Approved", color: "bg-blue-500", description: "Đã phê duyệt" },
-    { id: 4, name: "Sent", color: "bg-green-500", description: "Đã gửi khách hàng" },
-    { id: 5, name: "Rejected", color: "bg-red-500", description: "Bị từ chối" },
+    { id: 1, name: "Draft", color: "bg-slate-500", description: "Draft stage" },
+    { id: 2, name: "Pending Approval", color: "bg-yellow-500", description: "Awaiting approval" },
+    { id: 3, name: "Approved", color: "bg-blue-500", description: "Approved" },
+    { id: 4, name: "Sent", color: "bg-green-500", description: "Sent to customer" },
+    { id: 5, name: "Rejected", color: "bg-red-500", description: "Rejected" },
   ],
   task: [
-    { id: 1, name: "To Do", color: "bg-slate-500", description: "Chưa bắt đầu" },
-    { id: 2, name: "In Progress", color: "bg-blue-500", description: "Đang thực hiện" },
-    { id: 3, name: "Completed", color: "bg-green-500", description: "Hoàn thành" },
-    { id: 4, name: "Cancelled", color: "bg-red-500", description: "Đã hủy" },
+    { id: 1, name: "To Do", color: "bg-slate-500", description: "Not started" },
+    { id: 2, name: "In Progress", color: "bg-blue-500", description: "In progress" },
+    { id: 3, name: "Completed", color: "bg-green-500", description: "Completed" },
+    { id: 4, name: "Cancelled", color: "bg-red-500", description: "Cancelled" },
   ],
 };
 
 const colorOptions = [
-  { value: "bg-slate-500", label: "Xám" },
-  { value: "bg-red-500", label: "Đỏ" },
-  { value: "bg-orange-500", label: "Cam" },
-  { value: "bg-yellow-500", label: "Vàng" },
-  { value: "bg-green-500", label: "Xanh lá" },
-  { value: "bg-blue-500", label: "Xanh dương" },
-  { value: "bg-purple-500", label: "Tím" },
-  { value: "bg-pink-500", label: "Hồng" },
+  { value: "bg-slate-500", label: "Gray" },
+  { value: "bg-red-500", label: "Red" },
+  { value: "bg-orange-500", label: "Orange" },
+  { value: "bg-yellow-500", label: "Yellow" },
+  { value: "bg-green-500", label: "Green" },
+  { value: "bg-blue-500", label: "Blue" },
+  { value: "bg-purple-500", label: "Purple" },
+  { value: "bg-pink-500", label: "Pink" },
 ];
 
 export default function Settings() {
@@ -103,10 +103,10 @@ export default function Settings() {
   const [statusDialogOpen, setStatusDialogOpen] = useState(false);
 
   const statusTypeLabels = {
-    lead: "Tiềm năng (Lead)",
-    opportunity: "Cơ hội",
-    project: "Dự án",
-    task: "Nhiệm vụ",
+    lead: "Lead",
+    opportunity: "Opportunity",
+    project: "Project",
+    task: "Task",
   };
 
   return (
@@ -114,23 +114,23 @@ export default function Settings() {
       <div className="space-y-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-foreground">Cài đặt</h1>
-          <p className="text-muted-foreground">Thiết lập các định nghĩa và cấu hình hệ thống CRM</p>
+          <h1 className="text-2xl font-bold text-foreground">Settings</h1>
+          <p className="text-muted-foreground">Configure definitions and system settings for CRM</p>
         </div>
 
         <Tabs defaultValue="templates" className="space-y-6">
           <TabsList className="bg-card border">
             <TabsTrigger value="templates" className="gap-2">
               <FileText className="h-4 w-4" />
-              Biểu mẫu chào giá
+              Quotation Templates
             </TabsTrigger>
             <TabsTrigger value="statuses" className="gap-2">
               <Tags className="h-4 w-4" />
-              Trạng thái
+              Statuses
             </TabsTrigger>
             <TabsTrigger value="activities" className="gap-2">
               <Activity className="h-4 w-4" />
-              Loại hoạt động
+              Activity Types
             </TabsTrigger>
             <TabsTrigger value="leadStages" className="gap-2">
               <GitBranch className="h-4 w-4" />
@@ -167,34 +167,34 @@ export default function Settings() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle>Biểu mẫu chào giá</CardTitle>
-                  <CardDescription>Quản lý các mẫu báo giá dùng trong hệ thống</CardDescription>
+                  <CardTitle>Quotation Templates</CardTitle>
+                  <CardDescription>Manage quotation templates used in the system</CardDescription>
                 </div>
                 <Dialog open={templateDialogOpen} onOpenChange={setTemplateDialogOpen}>
                   <DialogTrigger asChild>
                     <Button className="gap-2">
                       <Plus className="h-4 w-4" />
-                      Thêm biểu mẫu
+                      Add Template
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>Thêm biểu mẫu mới</DialogTitle>
-                      <DialogDescription>Tạo mẫu báo giá mới cho hệ thống</DialogDescription>
+                      <DialogTitle>Add New Template</DialogTitle>
+                      <DialogDescription>Create a new quotation template for the system</DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
-                        <Label htmlFor="templateName">Tên biểu mẫu</Label>
-                        <Input id="templateName" placeholder="Nhập tên biểu mẫu" />
+                        <Label htmlFor="templateName">Template Name</Label>
+                        <Input id="templateName" placeholder="Enter template name" />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="templateDesc">Mô tả</Label>
-                        <Textarea id="templateDesc" placeholder="Mô tả ngắn về biểu mẫu" />
+                        <Label htmlFor="templateDesc">Description</Label>
+                        <Textarea id="templateDesc" placeholder="Short description of the template" />
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button variant="outline" onClick={() => setTemplateDialogOpen(false)}>Hủy</Button>
-                      <Button onClick={() => setTemplateDialogOpen(false)}>Lưu biểu mẫu</Button>
+                      <Button variant="outline" onClick={() => setTemplateDialogOpen(false)}>Cancel</Button>
+                      <Button onClick={() => setTemplateDialogOpen(false)}>Save Template</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
@@ -206,7 +206,7 @@ export default function Settings() {
                   onSetDefault={(id) => setDefault(id)}
                 />
                 <p className="text-sm text-muted-foreground mt-4">
-                  💡 Kéo thả để sắp xếp thứ tự hiển thị của các biểu mẫu
+                  💡 Drag and drop to reorder template display order
                 </p>
               </CardContent>
             </Card>
@@ -217,28 +217,28 @@ export default function Settings() {
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
                 <div>
-                  <CardTitle>Định nghĩa trạng thái</CardTitle>
-                  <CardDescription>Quản lý các trạng thái cho từng loại đối tượng trong CRM</CardDescription>
+                  <CardTitle>Status Definitions</CardTitle>
+                  <CardDescription>Manage statuses for each entity type in CRM</CardDescription>
                 </div>
                 <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
                   <DialogTrigger asChild>
                     <Button className="gap-2">
                       <Plus className="h-4 w-4" />
-                      Thêm trạng thái
+                      Add Status
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>Thêm trạng thái mới</DialogTitle>
-                      <DialogDescription>Tạo trạng thái mới cho {statusTypeLabels[selectedStatusType]}</DialogDescription>
+                      <DialogTitle>Add New Status</DialogTitle>
+                      <DialogDescription>Create a new status for {statusTypeLabels[selectedStatusType]}</DialogDescription>
                     </DialogHeader>
                     <div className="space-y-4 py-4">
                       <div className="space-y-2">
-                        <Label htmlFor="statusName">Tên trạng thái</Label>
-                        <Input id="statusName" placeholder="Nhập tên trạng thái" />
+                        <Label htmlFor="statusName">Status Name</Label>
+                        <Input id="statusName" placeholder="Enter status name" />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="statusColor">Màu sắc</Label>
+                        <Label htmlFor="statusColor">Color</Label>
                         <Select defaultValue="bg-blue-500">
                           <SelectTrigger>
                             <SelectValue />
@@ -256,13 +256,13 @@ export default function Settings() {
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="statusDesc">Mô tả</Label>
-                        <Input id="statusDesc" placeholder="Mô tả ngắn về trạng thái" />
+                        <Label htmlFor="statusDesc">Description</Label>
+                        <Input id="statusDesc" placeholder="Short description of the status" />
                       </div>
                     </div>
                     <DialogFooter>
-                      <Button variant="outline" onClick={() => setStatusDialogOpen(false)}>Hủy</Button>
-                      <Button onClick={() => setStatusDialogOpen(false)}>Lưu trạng thái</Button>
+                      <Button variant="outline" onClick={() => setStatusDialogOpen(false)}>Cancel</Button>
+                      <Button onClick={() => setStatusDialogOpen(false)}>Save Status</Button>
                     </DialogFooter>
                   </DialogContent>
                 </Dialog>
@@ -294,7 +294,7 @@ export default function Settings() {
                 />
 
                 <p className="text-sm text-muted-foreground">
-                  💡 Kéo thả để sắp xếp thứ tự hiển thị của các trạng thái trong pipeline
+                  💡 Drag and drop to reorder status display in pipeline
                 </p>
               </CardContent>
             </Card>
