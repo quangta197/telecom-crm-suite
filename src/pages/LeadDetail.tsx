@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditLeadDialog, LeadData } from "@/components/leads/EditLeadDialog";
+import { LeadNotes } from "@/components/leads/LeadNotes";
 
 const initialLeadData: LeadData = {
   id: 1,
@@ -217,13 +218,15 @@ const LeadDetail = () => {
                 </Card>
               </TabsContent>
 
-              {["notes", "attachments"].map((tab) => (
-                <TabsContent key={tab} value={tab} className="mt-6">
-                  <Card className="p-6">
-                    <p className="text-muted-foreground text-center py-8">No {tab} yet</p>
-                  </Card>
-                </TabsContent>
-              ))}
+              <TabsContent value="notes" className="mt-6">
+                <LeadNotes />
+              </TabsContent>
+
+              <TabsContent value="attachments" className="mt-6">
+                <Card className="p-6">
+                  <p className="text-muted-foreground text-center py-8">No attachments yet</p>
+                </Card>
+              </TabsContent>
             </Tabs>
           </div>
 
