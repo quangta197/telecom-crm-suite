@@ -21,6 +21,7 @@ import { cn } from "@/lib/utils";
 import { EditLeadDialog, LeadData } from "@/components/leads/EditLeadDialog";
 import { LeadNotes } from "@/components/leads/LeadNotes";
 import { LeadAttachments } from "@/components/leads/LeadAttachments";
+import { AddActivityDialog } from "@/components/layout/AddActivityDialog";
 
 const initialLeadData: LeadData = {
   id: 1,
@@ -53,7 +54,7 @@ const stages = [
   { id: "converted", label: "Converted", completed: false },
 ];
 
-const activities = [
+const initialActivities = [
   { id: 1, type: "call", title: "Discovery call", description: "Discussed requirements and budget", author: "John Smith", date: "01/15/2024" },
   { id: 2, type: "email", title: "Information sent", description: "Sent product brochure", author: "John Smith", date: "01/13/2024" },
   { id: 3, type: "note", title: "Lead qualified", description: "Budget confirmed, timeline Q1 2024", author: "John Smith", date: "01/12/2024" },
@@ -72,6 +73,18 @@ const LeadDetail = () => {
   const [activityTab, setActivityTab] = useState("activity");
   const [leadData, setLeadData] = useState<LeadData>(initialLeadData);
   const [editOpen, setEditOpen] = useState(false);
+  const [activities, setActivities] = useState(initialActivities);
+  const [activityDialogOpen, setActivityDialogOpen] = useState(false);
+  const [activityType, setActivityType] = useState<"call" | "email" | "meeting" | "note">("call");
+
+  const handleAddActivity = (activity: { type: string; title: string; description: string; author: string; date: string }) => {
+    setActivities([{ id: Date.now(), ...activity }, ...activities]);
+  };
+
+  const openActivityDialog = (type: "call" | "email" | "meeting" | "note") => {
+    setActivityType(type);
+    setActivityDialogOpen(true);
+  };
 
   const handleSaveLead = (updated: LeadData) => {
     setLeadData(updated);
@@ -233,8 +246,13 @@ const LeadDetail = () => {
           <div className="col-span-1">
             <Card className="p-0 overflow-hidden">
               <div className="flex items-center justify-center gap-2 p-3 border-b">
-                {[Phone, Calendar, MessageSquare, Mail].map((Icon, i) => (
-                  <Button key={i} variant="ghost" size="icon" className="h-9 w-9">
+                {([
+                  { Icon: Phone, type: "call" as const },
+                  { Icon: Calendar, type: "meeting" as const },
+                  { Icon: MessageSquare, type: "note" as const },
+                  { Icon: Mail, type: "email" as const },
+                ]).map(({ Icon, type }) => (
+                  <Button key={type} variant="ghost" size="icon" className="h-9 w-9" onClick={() => openActivityDialog(type)}>
                     <Icon className="h-4 w-4" />
                   </Button>
                 ))}
@@ -243,11 +261,17 @@ const LeadDetail = () => {
               <div className="p-4 border-b">
                 <h4 className="font-medium mb-2">Quick Actions</h4>
                 <div className="grid grid-cols-2 gap-2">
-                  <Button variant="outline" size="sm" className="gap-1">
+                  <Button variant="outline" size="sm" className="gap-1" onClick={() => openActivityDialog("call")}>
                     <Phone className="h-3 w-3" /> Call
                   </Button>
-                  <Button variant="outline" size="sm" className="gap-1">
+                  <Button variant="outline" size="sm" className="gap-1" onClick={() => openActivityDialog("email")}>
                     <Mail className="h-3 w-3" /> Email
+                  </Button>
+                  <Button variant="outline" size="sm" className="gap-1" onClick={() => openActivityDialog("meeting")}>
+                    <Calendar className="h-3 w-3" /> Meeting
+                  </Button>
+                  <Button variant="outline" size="sm" className="gap-1" onClick={() => openActivityDialog("note")}>
+                    <MessageSquare className="h-3 w-3" /> Note
                   </Button>
                 </div>
               </div>
@@ -265,6 +289,7 @@ const LeadDetail = () => {
                           {item.type === "call" && <Phone className="h-4 w-4" />}
                           {item.type === "email" && <Mail className="h-4 w-4" />}
                           {item.type === "note" && <MessageSquare className="h-4 w-4" />}
+                          {item.type === "meeting" && <Calendar className="h-4 w-4" />}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
@@ -286,6 +311,12 @@ const LeadDetail = () => {
         onOpenChange={setEditOpen}
         lead={leadData}
         onSave={handleSaveLead}
+      />
+      <AddActivityDialog
+        open={activityDialogOpen}
+        onOpenChange={setActivityDialogOpen}
+        type={activityType}
+        onAdd={handleAddActivity}
       />
     </MainLayout>
   );
