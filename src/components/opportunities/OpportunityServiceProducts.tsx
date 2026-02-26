@@ -2,14 +2,17 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import { Plus, Trash2, Package } from "lucide-react";
 
 interface ServiceProduct {
@@ -34,11 +37,34 @@ const sourceLabels: Record<string, { label: string; className: string }> = {
   opportunity: { label: "Opportunity", className: "bg-primary/10 text-primary border-primary/20" },
 };
 
+const unitOptions = ["License", "Year", "Month", "Unit", "Package", "Hour"];
+
 export const OpportunityServiceProducts = () => {
   const [items, setItems] = useState<ServiceProduct[]>(initialItems);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [form, setForm] = useState({ code: "", name: "", unit: "License", quantity: "1", unitPrice: "" });
 
   const handleDelete = (id: number) => {
     setItems(items.filter((i) => i.id !== id));
+  };
+
+  const handleAdd = () => {
+    const qty = parseInt(form.quantity, 10) || 1;
+    const price = parseInt(form.unitPrice.replace(/,/g, ""), 10) || 0;
+    const total = qty * price;
+    const newItem: ServiceProduct = {
+      id: Date.now(),
+      code: form.code || `SP${String(items.length + 1).padStart(3, "0")}`,
+      name: form.name,
+      unit: form.unit,
+      quantity: qty,
+      unitPrice: price.toLocaleString(),
+      total: total.toLocaleString(),
+      source: "opportunity",
+    };
+    setItems([...items, newItem]);
+    setForm({ code: "", name: "", unit: "License", quantity: "1", unitPrice: "" });
+    setDialogOpen(false);
   };
 
   const totalAmount = items.reduce((sum, item) => {
@@ -46,11 +72,13 @@ export const OpportunityServiceProducts = () => {
     return sum + (isNaN(val) ? 0 : val);
   }, 0);
 
+  const canSave = form.name.trim() && form.unitPrice.trim();
+
   return (
     <Card className="p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-sm">Service / Product</h3>
-        <Button size="sm" className="gap-1.5">
+        <Button size="sm" className="gap-1.5" onClick={() => setDialogOpen(true)}>
           <Plus className="h-3.5 w-3.5" /> Add Product
         </Button>
       </div>
@@ -96,12 +124,7 @@ export const OpportunityServiceProducts = () => {
                       )}
                     </TableCell>
                     <TableCell>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
-                        onClick={() => handleDelete(item.id)}
-                      >
+                      <Button variant="ghost" size="icon" className="h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity" onClick={() => handleDelete(item.id)}>
                         <Trash2 className="h-3.5 w-3.5 text-muted-foreground" />
                       </Button>
                     </TableCell>
@@ -118,6 +141,49 @@ export const OpportunityServiceProducts = () => {
           </div>
         </>
       )}
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add Service / Product</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Code</Label>
+                <Input placeholder="Auto-generated" value={form.code} onChange={(e) => setForm({ ...form, code: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Unit</Label>
+                <Select value={form.unit} onValueChange={(v) => setForm({ ...form, unit: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {unitOptions.map((u) => <SelectItem key={u} value={u}>{u}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <Label>Service/Product Name <span className="text-destructive">*</span></Label>
+              <Input placeholder="Enter name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Quantity</Label>
+                <Input type="number" min="1" value={form.quantity} onChange={(e) => setForm({ ...form, quantity: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Unit Price <span className="text-destructive">*</span></Label>
+                <Input placeholder="0" value={form.unitPrice} onChange={(e) => setForm({ ...form, unitPrice: e.target.value })} />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleAdd} disabled={!canSave}>Add</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

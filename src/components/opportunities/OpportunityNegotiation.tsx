@@ -2,8 +2,16 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import { Plus, Handshake } from "lucide-react";
 
 interface NegotiationEntry {
@@ -52,14 +60,36 @@ const typeColors: Record<string, string> = {
   Other: "bg-secondary text-secondary-foreground",
 };
 
+const typeOptions = ["Meeting", "Phone Call", "Email", "Other"];
+
 export const OpportunityNegotiation = () => {
-  const [entries] = useState<NegotiationEntry[]>(initialEntries);
+  const [entries, setEntries] = useState<NegotiationEntry[]>(initialEntries);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [form, setForm] = useState({ type: "Meeting", summary: "", result: "", nextAction: "" });
+
+  const handleAdd = () => {
+    const now = new Date().toLocaleString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    const newEntry: NegotiationEntry = {
+      id: Date.now(),
+      date: now,
+      author: "Nguyen Bao Ngoc",
+      type: form.type,
+      summary: form.summary,
+      result: form.result,
+      nextAction: form.nextAction || undefined,
+    };
+    setEntries([newEntry, ...entries]);
+    setForm({ type: "Meeting", summary: "", result: "", nextAction: "" });
+    setDialogOpen(false);
+  };
+
+  const canSave = form.summary.trim() && form.result.trim();
 
   return (
     <Card className="p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-sm">Negotiation History</h3>
-        <Button size="sm" className="gap-1.5">
+        <Button size="sm" className="gap-1.5" onClick={() => setDialogOpen(true)}>
           <Plus className="h-3.5 w-3.5" /> Add Entry
         </Button>
       </div>
@@ -104,6 +134,41 @@ export const OpportunityNegotiation = () => {
           ))}
         </div>
       )}
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add Negotiation Entry</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label>Type</Label>
+              <Select value={form.type} onValueChange={(v) => setForm({ ...form, type: v })}>
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  {typeOptions.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Summary <span className="text-destructive">*</span></Label>
+              <Textarea placeholder="Describe what was discussed..." rows={3} value={form.summary} onChange={(e) => setForm({ ...form, summary: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label>Result <span className="text-destructive">*</span></Label>
+              <Textarea placeholder="Outcome of the negotiation..." rows={2} value={form.result} onChange={(e) => setForm({ ...form, result: e.target.value })} />
+            </div>
+            <div className="space-y-2">
+              <Label>Next Action</Label>
+              <Input placeholder="Follow-up action (optional)" value={form.nextAction} onChange={(e) => setForm({ ...form, nextAction: e.target.value })} />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleAdd} disabled={!canSave}>Add</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };

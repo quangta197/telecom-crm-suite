@@ -2,14 +2,17 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
+  Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
+import {
+  Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
+} from "@/components/ui/select";
 import { Plus, Eye, FileText } from "lucide-react";
 
 interface Quotation {
@@ -37,14 +40,43 @@ const statusColors: Record<string, string> = {
   "Pending Confirmation": "bg-warning/10 text-warning",
 };
 
+const statusOptions = ["Draft", "Sent", "Pending Confirmation", "Accepted", "Rejected"];
+
 export const OpportunityQuotations = () => {
-  const [quotations] = useState<Quotation[]>(initialQuotations);
+  const [quotations, setQuotations] = useState<Quotation[]>(initialQuotations);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [form, setForm] = useState({ title: "", totalValue: "", discount: "", status: "Draft", validUntil: "" });
+
+  const handleAdd = () => {
+    const total = parseInt(form.totalValue.replace(/,/g, ""), 10) || 0;
+    const discountPct = parseFloat(form.discount) || 0;
+    const final = Math.round(total * (1 - discountPct / 100));
+    const code = `QT-2024-${String(quotations.length + 1).padStart(3, "0")}`;
+    const now = new Date().toLocaleDateString("en-GB", { day: "2-digit", month: "2-digit", year: "numeric" });
+
+    const newQ: Quotation = {
+      id: Date.now(),
+      code,
+      title: form.title,
+      totalValue: total.toLocaleString(),
+      discount: `${discountPct}%`,
+      finalValue: final.toLocaleString(),
+      status: form.status,
+      createdDate: now,
+      validUntil: form.validUntil || now,
+    };
+    setQuotations([...quotations, newQ]);
+    setForm({ title: "", totalValue: "", discount: "", status: "Draft", validUntil: "" });
+    setDialogOpen(false);
+  };
+
+  const canSave = form.title.trim() && form.totalValue.trim();
 
   return (
     <Card className="p-6">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-semibold text-sm">Quotations</h3>
-        <Button size="sm" className="gap-1.5">
+        <Button size="sm" className="gap-1.5" onClick={() => setDialogOpen(true)}>
           <Plus className="h-3.5 w-3.5" /> Create Quotation
         </Button>
       </div>
@@ -90,6 +122,49 @@ export const OpportunityQuotations = () => {
           </TableBody>
         </Table>
       )}
+
+      <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Create Quotation</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label>Title <span className="text-destructive">*</span></Label>
+              <Input placeholder="Quotation title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Total Value <span className="text-destructive">*</span></Label>
+                <Input placeholder="0" value={form.totalValue} onChange={(e) => setForm({ ...form, totalValue: e.target.value })} />
+              </div>
+              <div className="space-y-2">
+                <Label>Discount (%)</Label>
+                <Input placeholder="0" value={form.discount} onChange={(e) => setForm({ ...form, discount: e.target.value })} />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Status</Label>
+                <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
+                  <SelectTrigger><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    {statusOptions.map((s) => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label>Valid Until</Label>
+                <Input type="date" value={form.validUntil} onChange={(e) => setForm({ ...form, validUntil: e.target.value })} />
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleAdd} disabled={!canSave}>Create</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };
