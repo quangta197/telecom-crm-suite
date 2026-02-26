@@ -49,13 +49,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-// Mock data for quotation templates
-const initialTemplates = [
-  { id: 1, name: "Gói Internet doanh nghiệp", description: "Mẫu báo giá cho các gói Internet B2B", isDefault: true },
-  { id: 2, name: "Giải pháp tổng đài", description: "Mẫu báo giá tổng đài VoIP và Cloud PBX", isDefault: false },
-  { id: 3, name: "Dịch vụ Cloud", description: "Mẫu báo giá các dịch vụ Cloud hosting, VPS", isDefault: false },
-  { id: 4, name: "Combo viễn thông", description: "Mẫu báo giá gói combo Internet + Điện thoại", isDefault: false },
-];
+import { useQuotationTemplatesStore } from "@/stores/quotationTemplatesStore";
 
 // Mock data for status definitions
 const initialStatuses = {
@@ -99,7 +93,7 @@ const colorOptions = [
 ];
 
 export default function Settings() {
-  const [templates, setTemplates] = useState(initialTemplates);
+  const { templates, reorderTemplates: setTemplates, setDefault } = useQuotationTemplatesStore();
   const [statuses, setStatuses] = useState(initialStatuses);
   const [selectedStatusType, setSelectedStatusType] = useState<keyof typeof initialStatuses>("lead");
   const [templateDialogOpen, setTemplateDialogOpen] = useState(false);
@@ -194,11 +188,7 @@ export default function Settings() {
                 <TemplateList
                   templates={templates}
                   onReorder={setTemplates}
-                  onSetDefault={(id) => {
-                    setTemplates((prev) =>
-                      prev.map((t) => ({ ...t, isDefault: t.id === id }))
-                    );
-                  }}
+                  onSetDefault={(id) => setDefault(id)}
                 />
                 <p className="text-sm text-muted-foreground mt-4">
                   💡 Kéo thả để sắp xếp thứ tự hiển thị của các biểu mẫu
