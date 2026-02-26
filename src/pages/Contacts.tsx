@@ -21,7 +21,6 @@ const contacts = [
     name: "MISA Corporation",
     taxCode: "0102345646",
     phone: "0362 855 655",
-    smeScore: 90,
   },
   {
     id: 2,
@@ -29,7 +28,6 @@ const contacts = [
     name: "Friendly Solutions LLC",
     taxCode: "0102345647",
     phone: "0362 624 827",
-    smeScore: 100,
   },
   {
     id: 3,
@@ -37,7 +35,6 @@ const contacts = [
     name: "VanKieu Corporation",
     taxCode: "0102345648",
     phone: "0362 222 333",
-    smeScore: 40,
   },
   {
     id: 4,
@@ -45,7 +42,6 @@ const contacts = [
     name: "Small Shop Inc",
     taxCode: "0102345649",
     phone: "0362 123 123",
-    smeScore: 70,
   },
   {
     id: 5,
@@ -53,7 +49,6 @@ const contacts = [
     name: "Central Coffee Co",
     taxCode: "0102345650",
     phone: "0362 255 255",
-    smeScore: 90,
   },
   {
     id: 6,
@@ -61,7 +56,6 @@ const contacts = [
     name: "Friendly Trade & Services",
     taxCode: "0102345651",
     phone: "0362 500 500",
-    smeScore: 80,
   },
   {
     id: 7,
@@ -69,7 +63,6 @@ const contacts = [
     name: "Dragon Corp",
     taxCode: "0102345652",
     phone: "0362 212 212",
-    smeScore: 10,
   },
   {
     id: 8,
@@ -77,7 +70,6 @@ const contacts = [
     name: "T & T Fashion Chain",
     taxCode: "0102345653",
     phone: "0362 222 222",
-    smeScore: 100,
   },
   {
     id: 9,
@@ -85,7 +77,6 @@ const contacts = [
     name: "Sunrise Corporation",
     taxCode: "0102345654",
     phone: "0362 678 678",
-    smeScore: 90,
   },
   {
     id: 10,
@@ -93,7 +84,6 @@ const contacts = [
     name: "Coffee 69",
     taxCode: "0102345655",
     phone: "0362 822 833",
-    smeScore: 20,
   },
 ];
 
@@ -102,7 +92,6 @@ const filterOptions = [
   { id: "name", label: "Customer Name" },
   { id: "taxCode", label: "Tax Code" },
   { id: "phone", label: "Phone" },
-  { id: "smeScore", label: "SME Potential Score" },
 ];
 
 const savedFilters = ["VIP Customers", "New Customers"];
@@ -129,11 +118,7 @@ const Contacts = () => {
     }
   };
 
-  const getScoreColor = (score: number) => {
-    if (score >= 80) return "text-success";
-    if (score >= 50) return "text-warning";
-    return "text-destructive";
-  };
+
 
   return (
     <MainLayout
@@ -170,7 +155,6 @@ const Contacts = () => {
                 <TableHead>Customer Name</TableHead>
                 <TableHead>Tax Code</TableHead>
                 <TableHead>Phone</TableHead>
-                <TableHead className="text-right">SME Potential Score</TableHead>
                 <TableHead className="w-12"></TableHead>
               </TableRow>
             </TableHeader>
@@ -199,9 +183,6 @@ const Contacts = () => {
                       <Phone className="h-3.5 w-3.5 text-success" />
                       <span>{contact.phone}</span>
                     </div>
-                  </TableCell>
-                  <TableCell className={`text-right font-semibold ${getScoreColor(contact.smeScore)}`}>
-                    {contact.smeScore}
                   </TableCell>
                   <TableCell>
                     <Button variant="ghost" size="icon">
