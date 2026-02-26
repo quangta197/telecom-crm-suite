@@ -98,6 +98,7 @@ const OpportunityDetail = () => {
   const { fields: customFieldDefs } = useOpportunityCustomFieldsStore();
   const [activeStage, setActiveStage] = useState("closed-won");
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, string>>(opportunityData.customFields);
+  const [activeCustomFieldIds, setActiveCustomFieldIds] = useState<string[]>(Object.keys(opportunityData.customFields));
   const [generalFieldValues, setGeneralFieldValues] = useState<Record<string, string>>({
     customer: opportunityData.customer,
     opportunityName: opportunityData.opportunityName,
@@ -376,61 +377,111 @@ const OpportunityDetail = () => {
                 </Card>
 
                 {/* Extended Information */}
-                {customFieldDefs.length > 0 && (
-                  <Card className="p-6 mt-4">
-                    <h3 className="font-semibold mb-6">Thông tin mở rộng</h3>
+                <Card className="p-6 mt-4">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="font-semibold">Thông tin mở rộng</h3>
+                    {(() => {
+                      const availableFields = customFieldDefs.filter((f) => !activeCustomFieldIds.includes(f.id));
+                      if (availableFields.length === 0) return null;
+                      return (
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs">
+                              <Plus className="h-3.5 w-3.5" /> Thêm trường
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            {availableFields.map((field) => (
+                              <DropdownMenuItem
+                                key={field.id}
+                                onClick={() => setActiveCustomFieldIds((prev) => [...prev, field.id])}
+                              >
+                                {field.label}
+                              </DropdownMenuItem>
+                            ))}
+                          </DropdownMenuContent>
+                        </DropdownMenu>
+                      );
+                    })()}
+                  </div>
+                  {activeCustomFieldIds.length === 0 ? (
+                    <p className="text-sm text-muted-foreground text-center py-4">
+                      Chưa có trường mở rộng nào. Nhấn "Thêm trường" để chọn từ danh sách.
+                    </p>
+                  ) : (
                     <div className="grid grid-cols-2 gap-x-12 gap-y-4 text-sm">
-                      {customFieldDefs.map((field) => (
-                        <div key={field.id} className="flex justify-between items-center py-2 border-b group min-h-[40px]">
-                          <span className="text-muted-foreground">{field.label}</span>
-                          {editingFieldId === `ext_${field.id}` ? (
-                            <div className="flex items-center gap-1.5 max-w-[60%]">
-                              {field.type === "select" && field.options ? (
-                                <UISelect value={editingValue} onValueChange={(v) => { setCustomFieldValues((prev) => ({ ...prev, [field.id]: v })); setEditingFieldId(null); }}>
-                                  <UISelectTrigger className="h-8 text-sm w-[180px]">
-                                    <UISelectValue placeholder="Chọn..." />
-                                  </UISelectTrigger>
-                                  <UISelectContent>
-                                    {field.options.map((opt) => (
-                                      <UISelectItem key={opt} value={opt}>{opt}</UISelectItem>
-                                    ))}
-                                  </UISelectContent>
-                                </UISelect>
-                              ) : field.type === "textarea" ? (
-                                <Textarea
-                                  value={editingValue}
-                                  onChange={(e) => setEditingValue(e.target.value)}
-                                  onKeyDown={makeFieldKeyDown("custom")}
-                                  onBlur={() => saveField("custom")}
-                                  className="h-16 text-sm w-[180px]"
-                                  autoFocus
-                                />
-                              ) : (
-                                <Input
-                                  type={field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
-                                  value={editingValue}
-                                  onChange={(e) => setEditingValue(e.target.value)}
-                                  onKeyDown={makeFieldKeyDown("custom")}
-                                  onBlur={() => saveField("custom")}
-                                  className="h-8 text-sm w-[180px]"
-                                  autoFocus
-                                />
-                              )}
+                      {activeCustomFieldIds.map((fieldId) => {
+                        const field = customFieldDefs.find((f) => f.id === fieldId);
+                        if (!field) return null;
+                        return (
+                          <div key={field.id} className="flex justify-between items-center py-2 border-b group min-h-[40px]">
+                            <div className="flex items-center gap-1.5">
+                              <span className="text-muted-foreground">{field.label}</span>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-5 w-5 opacity-0 group-hover:opacity-100 transition-opacity text-muted-foreground hover:text-destructive"
+                                onClick={() => {
+                                  setActiveCustomFieldIds((prev) => prev.filter((id) => id !== field.id));
+                                  setCustomFieldValues((prev) => {
+                                    const next = { ...prev };
+                                    delete next[field.id];
+                                    return next;
+                                  });
+                                }}
+                              >
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
                             </div>
-                          ) : (
-                            <span
-                              className="cursor-pointer hover:bg-muted px-2 py-1 rounded transition-colors min-w-[40px] text-right"
-                              onClick={() => startEditField(`ext_${field.id}`, customFieldValues[field.id])}
-                              title="Click để chỉnh sửa"
-                            >
-                              {customFieldValues[field.id] || <span className="text-muted-foreground/50 italic">Click để nhập...</span>}
-                            </span>
-                          )}
-                        </div>
-                      ))}
+                            {editingFieldId === `ext_${field.id}` ? (
+                              <div className="flex items-center gap-1.5 max-w-[60%]">
+                                {field.type === "select" && field.options ? (
+                                  <UISelect value={editingValue} onValueChange={(v) => { setCustomFieldValues((prev) => ({ ...prev, [field.id]: v })); setEditingFieldId(null); }}>
+                                    <UISelectTrigger className="h-8 text-sm w-[180px]">
+                                      <UISelectValue placeholder="Chọn..." />
+                                    </UISelectTrigger>
+                                    <UISelectContent>
+                                      {field.options.map((opt) => (
+                                        <UISelectItem key={opt} value={opt}>{opt}</UISelectItem>
+                                      ))}
+                                    </UISelectContent>
+                                  </UISelect>
+                                ) : field.type === "textarea" ? (
+                                  <Textarea
+                                    value={editingValue}
+                                    onChange={(e) => setEditingValue(e.target.value)}
+                                    onKeyDown={makeFieldKeyDown("custom")}
+                                    onBlur={() => saveField("custom")}
+                                    className="h-16 text-sm w-[180px]"
+                                    autoFocus
+                                  />
+                                ) : (
+                                  <Input
+                                    type={field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
+                                    value={editingValue}
+                                    onChange={(e) => setEditingValue(e.target.value)}
+                                    onKeyDown={makeFieldKeyDown("custom")}
+                                    onBlur={() => saveField("custom")}
+                                    className="h-8 text-sm w-[180px]"
+                                    autoFocus
+                                  />
+                                )}
+                              </div>
+                            ) : (
+                              <span
+                                className="cursor-pointer hover:bg-muted px-2 py-1 rounded transition-colors min-w-[40px] text-right"
+                                onClick={() => startEditField(`ext_${field.id}`, customFieldValues[field.id])}
+                                title="Click để chỉnh sửa"
+                              >
+                                {customFieldValues[field.id] || <span className="text-muted-foreground/50 italic">Click để nhập...</span>}
+                              </span>
+                            )}
+                          </div>
+                        );
+                      })}
                     </div>
-                  </Card>
-                )}
+                  )}
+                </Card>
               </TabsContent>
 
               <TabsContent value="services" className="mt-6">
