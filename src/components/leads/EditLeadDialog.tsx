@@ -25,7 +25,7 @@ export interface LeadData {
   website: string;
   industry: string;
   employees: string;
-  budget: string;
+  forecastRevenue: string;
   timeline: string;
   interests: string[];
   notes: string;
@@ -122,8 +122,8 @@ export const EditLeadDialog = ({ open, onOpenChange, lead, onSave }: EditLeadDia
             <Input value={formData.employees} onChange={e => handleChange("employees", e.target.value)} />
           </div>
           <div className="space-y-2">
-            <Label>Budget</Label>
-            <Input value={formData.budget} onChange={e => handleChange("budget", e.target.value)} />
+            <Label>Forecast Revenue</Label>
+            <Input value={formData.forecastRevenue} onChange={e => handleChange("forecastRevenue", e.target.value)} />
           </div>
           <div className="space-y-2">
             <Label>Timeline</Label>

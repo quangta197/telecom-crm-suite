@@ -48,7 +48,7 @@ const initialLeadData: LeadData = {
   website: "www.netnam.vn",
   industry: "Internet Services",
   employees: "100-500",
-  budget: "$50,000 - $100,000",
+  forecastRevenue: "$50,000 - $100,000",
   timeline: "Q1 2024",
   interests: ["Cloud Services", "Network Infrastructure", "Security"],
   notes: "Very interested in cloud migration. Decision maker.",
@@ -220,7 +220,7 @@ const LeadDetail = () => {
                       ["Assigned To", leadData.assignedTo],
                       ["Created Date", leadData.createdAt],
                       ["Last Activity", leadData.lastActivity],
-                      ["Budget", leadData.budget],
+                      ["Forecast Revenue", leadData.forecastRevenue],
                       ["Timeline", leadData.timeline],
                     ].map(([label, value]) => (
                       <div key={label as string} className="flex justify-between py-2.5 border-b border-border/60">
