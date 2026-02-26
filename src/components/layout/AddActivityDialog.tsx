@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { Phone, Mail, Calendar, MessageSquare } from "lucide-react";
+import { format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useActivityTypesStore, iconMap } from "@/stores/activityTypesStore";
 import {
@@ -12,6 +13,13 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 type ActivityType = string;
 
@@ -28,12 +36,6 @@ interface AddActivityDialogProps {
   }) => void;
 }
 
-const defaultConfig = {
-  title: "Log Activity",
-  titlePlaceholder: "Subject",
-  descPlaceholder: "Details...",
-};
-
 export function AddActivityDialog({
   open,
   onOpenChange,
@@ -42,18 +44,22 @@ export function AddActivityDialog({
 }: AddActivityDialogProps) {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [date, setDate] = useState<Date>(new Date());
+  const [time, setTime] = useState(() => {
+    const now = new Date();
+    return `${String(now.getHours()).padStart(2, "0")}:${String(now.getMinutes()).padStart(2, "0")}`;
+  });
   const { activityTypes } = useActivityTypesStore();
 
   const actType = activityTypes.find((at) => at.id === type);
   const Icon = actType ? iconMap[actType.icon] : null;
-  const dialogTitle = actType ? `Log ${actType.name}` : defaultConfig.title;
+  const dialogTitle = actType ? `Log ${actType.name}` : "Log Activity";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const today = new Date();
-    const formattedDate = `${today.getMonth() + 1}/${today.getDate()}/${today.getFullYear().toString().slice(-2)}`;
-    
+
+    const formattedDate = format(date, "MM/dd/yyyy") + " " + time;
+
     onAdd({
       type,
       title,
@@ -61,9 +67,10 @@ export function AddActivityDialog({
       author: "Current User",
       date: formattedDate,
     });
-    
+
     setTitle("");
     setDescription("");
+    setDate(new Date());
     onOpenChange(false);
   };
 
@@ -88,6 +95,44 @@ export function AddActivityDialog({
                 required
               />
             </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div className="grid gap-2">
+                <Label>Date</Label>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      className={cn(
+                        "justify-start text-left font-normal h-9 text-sm",
+                        !date && "text-muted-foreground"
+                      )}
+                    >
+                      <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                      {format(date, "dd/MM/yyyy")}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={date}
+                      onSelect={(d) => d && setDate(d)}
+                      initialFocus
+                      className={cn("p-3 pointer-events-auto")}
+                    />
+                  </PopoverContent>
+                </Popover>
+              </div>
+              <div className="grid gap-2">
+                <Label htmlFor="time">Time</Label>
+                <Input
+                  id="time"
+                  type="time"
+                  value={time}
+                  onChange={(e) => setTime(e.target.value)}
+                  className="h-9"
+                />
+              </div>
+            </div>
             <div className="grid gap-2">
               <Label htmlFor="description">Description</Label>
               <Textarea
@@ -95,7 +140,7 @@ export function AddActivityDialog({
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Details..."
-                rows={4}
+                rows={3}
               />
             </div>
           </div>
