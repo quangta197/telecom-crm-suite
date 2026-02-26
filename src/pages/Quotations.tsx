@@ -10,17 +10,18 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, MoreHorizontal, Eye, Send } from "lucide-react";
+import { Plus, MoreHorizontal, Eye, Send, ShieldCheck, UserCheck } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import { useTableSort } from "@/hooks/use-table-sort";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const quotations = [
-  { id: 1, code: "QT-2024-001", title: "Enterprise Network Package", customer: "VNPT Hanoi", items: 12, totalValue: "$320K", discount: "5%", finalValue: "$304K", status: "Sent", validUntil: "02/15/2024" },
-  { id: 2, code: "QT-2024-002", title: "Data Center Premium Package", customer: "Viettel Business", items: 8, totalValue: "$580K", discount: "8%", finalValue: "$534K", status: "Pending Confirmation", validUntil: "02/20/2024" },
-  { id: 3, code: "QT-2024-003", title: "Cloud Migration Standard", customer: "FPT Telecom", items: 5, totalValue: "$210K", discount: "3%", finalValue: "$204K", status: "Accepted", validUntil: "02/25/2024" },
-  { id: 4, code: "QT-2024-004", title: "5G Enterprise Solution", customer: "CMC Telecom", items: 15, totalValue: "$450K", discount: "10%", finalValue: "$405K", status: "Draft", validUntil: "02/28/2024" },
-  { id: 5, code: "QT-2024-005", title: "IoT Platform Package", customer: "MobiFone", items: 7, totalValue: "$180K", discount: "5%", finalValue: "$171K", status: "Sent", validUntil: "03/01/2024" },
+  { id: 1, code: "QT-2024-001", title: "Enterprise Network Package", customer: "VNPT Hanoi", items: 12, totalValue: "$320K", discount: "5%", finalValue: "$304K", status: "Sent", validUntil: "02/15/2024", approvalType: "self" as const },
+  { id: 2, code: "QT-2024-002", title: "Data Center Premium Package", customer: "Viettel Business", items: 8, totalValue: "$580K", discount: "8%", finalValue: "$534K", status: "Pending Confirmation", validUntil: "02/20/2024", approvalType: "manager" as const, approvalStatus: "approved" as const },
+  { id: 3, code: "QT-2024-003", title: "Cloud Migration Standard", customer: "FPT Telecom", items: 5, totalValue: "$210K", discount: "3%", finalValue: "$204K", status: "Accepted", validUntil: "02/25/2024", approvalType: "self" as const },
+  { id: 4, code: "QT-2024-004", title: "5G Enterprise Solution", customer: "CMC Telecom", items: 15, totalValue: "$450K", discount: "10%", finalValue: "$405K", status: "Draft", validUntil: "02/28/2024", approvalType: "manager" as const, approvalStatus: "pending" as const },
+  { id: 5, code: "QT-2024-005", title: "IoT Platform Package", customer: "MobiFone", items: 7, totalValue: "$180K", discount: "5%", finalValue: "$171K", status: "Sent", validUntil: "03/01/2024", approvalType: "self" as const },
 ];
 
 type Quotation = typeof quotations[0];
@@ -33,9 +34,22 @@ const statusColors: Record<string, string> = {
   "Rejected": "bg-destructive/10 text-destructive",
 };
 
+const approvalStatusColors: Record<string, string> = {
+  pending: "bg-warning/10 text-warning",
+  approved: "bg-success/10 text-success",
+  rejected: "bg-destructive/10 text-destructive",
+};
+
+const approvalStatusLabels: Record<string, string> = {
+  pending: "Chờ duyệt",
+  approved: "Đã duyệt",
+  rejected: "Từ chối",
+};
+
 const columns: { key: keyof Quotation; label: string }[] = [
   { key: "code", label: "Quote ID" },
   { key: "title", label: "Title" },
+  { key: "approvalType", label: "Type" },
   { key: "customer", label: "Customer" },
   { key: "totalValue", label: "Total" },
   { key: "discount", label: "Discount" },
@@ -127,6 +141,19 @@ const Quotations = () => {
                   <TableCell className="font-medium text-primary hover:underline">
                     {quote.title}
                   </TableCell>
+                  <TableCell>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <Badge variant="outline" className={`gap-1 text-xs ${quote.approvalType === "self" ? "border-primary/30 text-primary" : "border-orange-400/30 text-orange-600"}`}>
+                          {quote.approvalType === "self" ? <UserCheck className="h-3 w-3" /> : <ShieldCheck className="h-3 w-3" />}
+                          {quote.approvalType === "self" ? "Tự quyết" : "Cần duyệt"}
+                        </Badge>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        {quote.approvalType === "self" ? "Sale tự quyết định" : "Cần phê duyệt của Quản lý"}
+                      </TooltipContent>
+                    </Tooltip>
+                  </TableCell>
                   <TableCell>{quote.customer}</TableCell>
                   <TableCell>{quote.totalValue}</TableCell>
                   <TableCell className="text-success">-{quote.discount}</TableCell>
@@ -137,6 +164,11 @@ const Quotations = () => {
                     <Badge variant="secondary" className={statusColors[quote.status]}>
                       {quote.status}
                     </Badge>
+                    {quote.approvalType === "manager" && quote.approvalStatus && (
+                      <Badge variant="secondary" className={`ml-1.5 ${approvalStatusColors[quote.approvalStatus]}`}>
+                        {approvalStatusLabels[quote.approvalStatus]}
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell>{quote.validUntil}</TableCell>
                   <TableCell>
