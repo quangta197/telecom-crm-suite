@@ -12,6 +12,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { MoreHorizontal } from "lucide-react";
+import { SortableTableHead } from "@/components/ui/sortable-table-head";
+import { useTableSort } from "@/hooks/use-table-sort";
 
 interface Opportunity {
   id: number;
@@ -43,6 +45,18 @@ const stageColors: Record<string, string> = {
   "Closed Won": "bg-success/10 text-success",
 };
 
+const columns: { key: keyof Opportunity; label: string }[] = [
+  { key: "code", label: "Opp ID" },
+  { key: "title", label: "Opportunity Name" },
+  { key: "company", label: "Customer" },
+  { key: "leadCode", label: "Lead" },
+  { key: "value", label: "Value" },
+  { key: "stage", label: "Stage" },
+  { key: "probability", label: "Probability" },
+  { key: "closeDate", label: "Close Date" },
+  { key: "owner", label: "Owner" },
+];
+
 export function OpportunityTableView({
   opportunities,
   selectedRows,
@@ -51,6 +65,8 @@ export function OpportunityTableView({
   onToggleAll,
 }: OpportunityTableViewProps) {
   const navigate = useNavigate();
+  const { sorted, sortKey, sortDir, handleSort } = useTableSort(opportunities);
+
   return (
     <div className="rounded-lg bg-card shadow-sm overflow-hidden border">
       <Table>
@@ -62,20 +78,21 @@ export function OpportunityTableView({
                 onCheckedChange={onToggleAll}
               />
             </TableHead>
-            <TableHead>Opp ID</TableHead>
-            <TableHead>Opportunity Name</TableHead>
-            <TableHead>Customer</TableHead>
-            <TableHead>Lead</TableHead>
-            <TableHead>Value</TableHead>
-            <TableHead>Stage</TableHead>
-            <TableHead>Probability</TableHead>
-            <TableHead>Close Date</TableHead>
-            <TableHead>Owner</TableHead>
+            {columns.map((col) => (
+              <SortableTableHead
+                key={col.key}
+                label={col.label}
+                sortKey={col.key}
+                currentSortKey={sortKey as string | null}
+                currentSortDir={sortDir}
+                onSort={(k) => handleSort(k as keyof Opportunity)}
+              />
+            ))}
             <TableHead className="w-12"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {opportunities.map((opp) => (
+          {sorted.map((opp) => (
             <TableRow
               key={opp.id}
               className={`hover:bg-muted/50 cursor-pointer ${
@@ -136,12 +153,8 @@ export function OpportunityTableView({
       </Table>
 
       <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/30">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>Total: {opportunities.length}</span>
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-muted-foreground">1 to {opportunities.length}</span>
-        </div>
+        <span className="text-sm text-muted-foreground">Total: {opportunities.length}</span>
+        <span className="text-sm text-muted-foreground">1 to {opportunities.length}</span>
       </div>
     </div>
   );
