@@ -95,67 +95,65 @@ const LeadDetail = () => {
       <div className="space-y-6 animate-fade-in">
         {/* Header */}
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/leads")}>
-              <ArrowLeft className="h-5 w-5" />
+          <div className="flex items-center gap-3">
+            <Button variant="ghost" size="icon" className="h-9 w-9" onClick={() => navigate("/leads")}>
+              <ArrowLeft className="h-4 w-4" />
             </Button>
-            <div className="flex items-center gap-4">
-              <Avatar className="h-14 w-14">
-                <AvatarFallback className="text-lg bg-primary/10 text-primary">
-                  {leadData.name.split(" ").map(n => n[0]).join("")}
-                </AvatarFallback>
-              </Avatar>
-              <div>
-                <h1 className="text-xl font-bold">{leadData.name}</h1>
-                <div className="flex items-center gap-3 mt-1 text-sm">
-                  <span className="text-muted-foreground">{leadData.title} at {leadData.company}</span>
-                  <Badge className={statusColors[leadData.status]}>{leadData.status}</Badge>
-                </div>
+            <Avatar className="h-12 w-12 border-2 border-primary/20">
+              <AvatarFallback className="text-base font-semibold bg-primary/10 text-primary">
+                {leadData.name.split(" ").map(n => n[0]).join("")}
+              </AvatarFallback>
+            </Avatar>
+            <div>
+              <h1 className="text-lg font-bold leading-tight">{leadData.name}</h1>
+              <div className="flex items-center gap-2 mt-0.5 text-sm">
+                <span className="text-muted-foreground">{leadData.title} at {leadData.company}</span>
+                <Badge className={cn("text-xs px-2 py-0.5", statusColors[leadData.status])}>{leadData.status}</Badge>
               </div>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" className="gap-2">
-              <Target className="h-4 w-4" />
+            <Button variant="outline" size="sm" className="gap-1.5">
+              <Target className="h-3.5 w-3.5" />
               Convert to Opportunity
             </Button>
-            <Button className="gap-2" onClick={() => setEditOpen(true)}>
-              <Edit className="h-4 w-4" />
+            <Button size="sm" className="gap-1.5" onClick={() => setEditOpen(true)}>
+              <Edit className="h-3.5 w-3.5" />
               Edit
             </Button>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" className="h-8 w-8">
               <MoreHorizontal className="h-4 w-4" />
             </Button>
           </div>
         </div>
 
         {/* Lead Score & Stage */}
-        <div className="grid grid-cols-2 gap-6">
-          <Card className="p-6">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-semibold">Lead Score</h3>
+        <div className="grid grid-cols-2 gap-4">
+          <Card className="p-5">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-sm">Lead Score</h3>
               <span className="text-2xl font-bold text-primary">{leadData.score}</span>
             </div>
-            <Progress value={leadData.score} className="h-3" />
-            <p className="text-sm text-muted-foreground mt-2">
+            <Progress value={leadData.score} className="h-2.5" />
+            <p className="text-xs text-muted-foreground mt-2">
               {leadData.score >= 80 ? "High probability of conversion" : 
                leadData.score >= 50 ? "Moderate engagement" : "Needs nurturing"}
             </p>
           </Card>
           
-          <Card className="p-6">
-            <h3 className="font-semibold mb-4">Lead Stage</h3>
-            <div className="flex items-center gap-2">
+          <Card className="p-5">
+            <h3 className="font-semibold text-sm mb-4">Lead Stage</h3>
+            <div className="flex items-center gap-1">
               {stages.map((stage) => (
                 <div key={stage.id} className="flex-1">
                   <div
                     className={cn(
-                      "h-2 rounded-full",
+                      "h-1.5 rounded-full",
                       stage.completed ? "bg-primary" : "bg-muted"
                     )}
                   />
                   <p className={cn(
-                    "text-xs mt-1 text-center",
+                    "text-xs mt-1.5 text-center",
                     stage.active ? "text-primary font-medium" : "text-muted-foreground"
                   )}>
                     {stage.label}
@@ -167,45 +165,45 @@ const LeadDetail = () => {
         </div>
 
         {/* Main Content */}
-        <div className="grid grid-cols-3 gap-6">
+        <div className="grid grid-cols-3 gap-4">
           {/* Left - Detail Tabs */}
           <div className="col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
-              <TabsList className="w-full justify-start bg-transparent border-b rounded-none h-auto p-0">
+              <TabsList className="w-full justify-start bg-transparent border-b rounded-none h-auto p-0 gap-0">
                 {["detail", "notes", "attachments"].map((tab) => (
                   <TabsTrigger
                     key={tab}
                     value={tab}
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 capitalize"
+                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent data-[state=active]:shadow-none px-5 py-2.5 text-sm capitalize"
                   >
                     {tab === "detail" ? "Detail Info" : tab}
                   </TabsTrigger>
                 ))}
               </TabsList>
 
-              <TabsContent value="detail" className="mt-6">
-                <Card className="p-6">
-                  <h3 className="font-semibold mb-6">Contact Information</h3>
-                  <div className="grid grid-cols-2 gap-x-12 gap-y-4 text-sm">
+              <TabsContent value="detail" className="mt-4">
+                <Card className="p-5">
+                  <h3 className="font-semibold text-sm mb-5">Contact Information</h3>
+                  <div className="grid grid-cols-2 gap-x-10 gap-y-0 text-sm">
                     {[
                       ["Full Name", leadData.name],
                       ["Title", leadData.title],
                       ["Company", leadData.company],
                       ["Industry", leadData.industry],
-                      ["Phone", leadData.phone],
+                      ["Phone", leadData.phone, true],
                       ["Email", leadData.email, true],
                       ["Website", leadData.website, true],
                       ["Address", leadData.address],
                     ].map(([label, value, isLink]) => (
-                      <div key={label as string} className="flex justify-between py-2 border-b">
+                      <div key={label as string} className="flex justify-between py-2.5 border-b border-border/60">
                         <span className="text-muted-foreground">{label}</span>
-                        <span className={isLink ? "text-primary" : ""}>{value}</span>
+                        <span className={cn("text-right", isLink ? "text-primary" : "font-medium")}>{value}</span>
                       </div>
                     ))}
                   </div>
 
-                  <h3 className="font-semibold mt-8 mb-6">Lead Details</h3>
-                  <div className="grid grid-cols-2 gap-x-12 gap-y-4 text-sm">
+                  <h3 className="font-semibold text-sm mt-7 mb-5">Lead Details</h3>
+                  <div className="grid grid-cols-2 gap-x-10 gap-y-0 text-sm">
                     {[
                       ["Source", leadData.source],
                       ["Status", leadData.status],
@@ -216,27 +214,27 @@ const LeadDetail = () => {
                       ["Budget", leadData.budget],
                       ["Timeline", leadData.timeline],
                     ].map(([label, value]) => (
-                      <div key={label as string} className="flex justify-between py-2 border-b">
+                      <div key={label as string} className="flex justify-between py-2.5 border-b border-border/60">
                         <span className="text-muted-foreground">{label}</span>
-                        <span>{value}</span>
+                        <span className="font-medium">{value}</span>
                       </div>
                     ))}
                   </div>
 
-                  <h3 className="font-semibold mt-8 mb-4">Interests</h3>
-                  <div className="flex flex-wrap gap-2">
+                  <h3 className="font-semibold text-sm mt-7 mb-3">Interests</h3>
+                  <div className="flex flex-wrap gap-1.5">
                     {leadData.interests.map((interest) => (
-                      <Badge key={interest} variant="secondary">{interest}</Badge>
+                      <Badge key={interest} variant="secondary" className="text-xs">{interest}</Badge>
                     ))}
                   </div>
                 </Card>
               </TabsContent>
 
-              <TabsContent value="notes" className="mt-6">
+              <TabsContent value="notes" className="mt-4">
                 <LeadNotes />
               </TabsContent>
 
-              <TabsContent value="attachments" className="mt-6">
+              <TabsContent value="attachments" className="mt-4">
                 <LeadAttachments />
               </TabsContent>
             </Tabs>
@@ -245,56 +243,54 @@ const LeadDetail = () => {
           {/* Right - Activity Sidebar */}
           <div className="col-span-1">
             <Card className="p-0 overflow-hidden">
-              <div className="flex items-center justify-center gap-2 p-3 border-b">
+              <div className="flex items-center justify-center gap-3 p-3 border-b">
                 {([
                   { Icon: Phone, type: "call" as const },
                   { Icon: Calendar, type: "meeting" as const },
                   { Icon: MessageSquare, type: "note" as const },
                   { Icon: Mail, type: "email" as const },
                 ]).map(({ Icon, type }) => (
-                  <Button key={type} variant="ghost" size="icon" className="h-9 w-9" onClick={() => openActivityDialog(type)}>
+                  <Button key={type} variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary" onClick={() => openActivityDialog(type)}>
                     <Icon className="h-4 w-4" />
                   </Button>
                 ))}
               </div>
 
               <div className="p-4 border-b">
-                <h4 className="font-medium mb-2">Quick Actions</h4>
+                <h4 className="font-semibold text-sm mb-2">Quick Actions</h4>
                 <div className="grid grid-cols-2 gap-2">
-                  <Button variant="outline" size="sm" className="gap-1" onClick={() => openActivityDialog("call")}>
+                  <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8" onClick={() => openActivityDialog("call")}>
                     <Phone className="h-3 w-3" /> Call
                   </Button>
-                  <Button variant="outline" size="sm" className="gap-1" onClick={() => openActivityDialog("email")}>
+                  <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8" onClick={() => openActivityDialog("email")}>
                     <Mail className="h-3 w-3" /> Email
                   </Button>
-                  <Button variant="outline" size="sm" className="gap-1" onClick={() => openActivityDialog("meeting")}>
+                  <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8" onClick={() => openActivityDialog("meeting")}>
                     <Calendar className="h-3 w-3" /> Meeting
                   </Button>
-                  <Button variant="outline" size="sm" className="gap-1" onClick={() => openActivityDialog("note")}>
+                  <Button variant="outline" size="sm" className="gap-1.5 text-xs h-8" onClick={() => openActivityDialog("note")}>
                     <MessageSquare className="h-3 w-3" /> Note
                   </Button>
                 </div>
               </div>
 
-              <div className="p-3 border-b">
-                <h4 className="font-medium text-sm">Activity History</h4>
+              <div className="px-4 py-2.5 border-b">
+                <h4 className="font-semibold text-sm">Activity History</h4>
               </div>
 
               <div className="max-h-[400px] overflow-y-auto">
                 {activities.map((item) => (
-                  <div key={item.id} className="p-4 border-b hover:bg-muted/50 transition-colors">
+                  <div key={item.id} className="px-4 py-3 border-b last:border-b-0 hover:bg-muted/30 transition-colors">
                     <div className="flex items-start gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                          {item.type === "call" && <Phone className="h-4 w-4" />}
-                          {item.type === "email" && <Mail className="h-4 w-4" />}
-                          {item.type === "note" && <MessageSquare className="h-4 w-4" />}
-                          {item.type === "meeting" && <Calendar className="h-4 w-4" />}
-                        </AvatarFallback>
-                      </Avatar>
+                      <div className="h-9 w-9 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                        {item.type === "call" && <Phone className="h-3.5 w-3.5 text-primary" />}
+                        {item.type === "email" && <Mail className="h-3.5 w-3.5 text-primary" />}
+                        {item.type === "note" && <MessageSquare className="h-3.5 w-3.5 text-primary" />}
+                        {item.type === "meeting" && <Calendar className="h-3.5 w-3.5 text-primary" />}
+                      </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm">{item.title}</p>
-                        <p className="text-xs text-muted-foreground">{item.description}</p>
+                        <p className="font-semibold text-sm leading-tight">{item.title}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
                         <p className="text-xs text-muted-foreground mt-1">{item.author} • {item.date}</p>
                       </div>
                     </div>
