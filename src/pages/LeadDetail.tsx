@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import {
+  Select as UISelect,
+  SelectContent as UISelectContent,
+  SelectItem as UISelectItem,
+  SelectTrigger as UISelectTrigger,
+  SelectValue as UISelectValue,
+} from "@/components/ui/select";
 import { Progress } from "@/components/ui/progress";
 import { 
   ArrowLeft, 
@@ -25,6 +33,7 @@ import { AddActivityDialog } from "@/components/layout/AddActivityDialog";
 import { useActivityTypesStore, iconMap } from "@/stores/activityTypesStore";
 import { ConvertToOpportunityDialog } from "@/components/leads/ConvertToOpportunityDialog";
 import { useLeadStagesStore } from "@/stores/leadStagesStore";
+import { useLeadSourcesStore } from "@/stores/leadSourcesStore";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -85,6 +94,26 @@ const LeadDetail = () => {
   const [activeStage, setActiveStage] = useState("qualified");
   const [convertOpen, setConvertOpen] = useState(false);
   const { stages: stageList } = useLeadStagesStore();
+  const { sources: leadSources } = useLeadSourcesStore();
+
+  // Inline editing state
+  const [editingFieldId, setEditingFieldId] = useState<string | null>(null);
+  const [editingValue, setEditingValue] = useState("");
+
+  const startEditField = (fieldId: string, currentValue: string) => {
+    setEditingFieldId(fieldId);
+    setEditingValue(currentValue || "");
+  };
+
+  const saveEditField = (fieldKey: string) => {
+    setLeadData((prev) => ({ ...prev, [fieldKey]: editingValue } as LeadData));
+    setEditingFieldId(null);
+  };
+
+  const handleFieldKeyDown = (fieldKey: string) => (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") { e.preventDefault(); saveEditField(fieldKey); }
+    else if (e.key === "Escape") { setEditingFieldId(null); }
+  };
 
   const handleAddActivity = (activity: { type: string; title: string; description: string; author: string; date: string }) => {
     setActivities([{ id: Date.now(), ...activity }, ...activities]);
@@ -236,40 +265,99 @@ const LeadDetail = () => {
                 <Card className="p-5">
                   <h3 className="font-semibold text-sm mb-5">Contact Information</h3>
                   <div className="grid grid-cols-2 gap-x-10 gap-y-0 text-sm">
-                    {[
-                      ["Full Name", leadData.name],
-                      ["Title", leadData.title],
-                      ["Company", leadData.company],
-                      ["Industry", leadData.industry],
-                      ["Phone", leadData.phone, true],
-                      ["Email", leadData.email, true],
-                      ["Website", leadData.website, true],
-                      ["Address", leadData.address],
-                    ].map(([label, value, isLink]) => (
-                      <div key={label as string} className="flex justify-between py-2.5 border-b border-border/60">
-                        <span className="text-muted-foreground">{label}</span>
-                        <span className={cn("text-right", isLink ? "text-primary" : "font-medium")}>{value}</span>
-                      </div>
-                    ))}
+                    {([
+                      { key: "name", label: "Full Name", isLink: false },
+                      { key: "title", label: "Title", isLink: false },
+                      { key: "company", label: "Company", isLink: false },
+                      { key: "industry", label: "Industry", isLink: false },
+                      { key: "phone", label: "Phone", isLink: true },
+                      { key: "email", label: "Email", isLink: true },
+                      { key: "website", label: "Website", isLink: true },
+                      { key: "address", label: "Address", isLink: false },
+                    ] as { key: string; label: string; isLink: boolean }[]).map((item) => {
+                      const value = String(leadData[item.key as keyof LeadData] ?? "");
+                      return (
+                        <div key={item.key} className="flex justify-between items-center py-2.5 border-b border-border/60 min-h-[40px]">
+                          <span className="text-muted-foreground">{item.label}</span>
+                          {editingFieldId === item.key ? (
+                            <Input
+                              value={editingValue}
+                              onChange={(e) => setEditingValue(e.target.value)}
+                              onKeyDown={handleFieldKeyDown(item.key)}
+                              onBlur={() => saveEditField(item.key)}
+                              className="h-8 text-sm w-[180px]"
+                              autoFocus
+                            />
+                          ) : (
+                            <span
+                              className={cn(
+                                "cursor-pointer hover:bg-muted px-2 py-1 rounded transition-colors min-w-[40px] text-right",
+                                item.isLink ? "text-primary" : "font-medium"
+                              )}
+                              onClick={() => startEditField(item.key, value)}
+                              title="Click to edit"
+                            >
+                              {value || <span className="text-muted-foreground/50 italic">Click to enter...</span>}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
 
                   <h3 className="font-semibold text-sm mt-7 mb-5">Lead Details</h3>
                   <div className="grid grid-cols-2 gap-x-10 gap-y-0 text-sm">
-                    {[
-                      ["Source", leadData.source],
-                      ["Status", leadData.status],
-                      ["Lead Score", leadData.score.toString()],
-                      ["Assigned To", leadData.assignedTo],
-                      ["Created Date", leadData.createdAt],
-                      ["Last Activity", leadData.lastActivity],
-                      ["Forecast Revenue", leadData.forecastRevenue],
-                      ["Timeline", leadData.timeline],
-                    ].map(([label, value]) => (
-                      <div key={label as string} className="flex justify-between py-2.5 border-b border-border/60">
-                        <span className="text-muted-foreground">{label}</span>
-                        <span className="font-medium">{value}</span>
-                      </div>
-                    ))}
+                    {([
+                      { key: "source", label: "Source", type: "select", options: leadSources.map((s) => s.name) },
+                      { key: "status", label: "Status", type: "select", options: ["Hot", "Warm", "Cold"] },
+                      { key: "score", label: "Lead Score", type: "number", options: [] },
+                      { key: "assignedTo", label: "Assigned To", type: "text", options: [] },
+                      { key: "createdAt", label: "Created Date", type: "text", options: [] },
+                      { key: "lastActivity", label: "Last Activity", type: "text", options: [] },
+                      { key: "forecastRevenue", label: "Forecast Revenue", type: "text", options: [] },
+                      { key: "timeline", label: "Timeline", type: "text", options: [] },
+                    ] as { key: string; label: string; type: string; options: string[] }[]).map((item) => {
+                      const value = String(leadData[item.key as keyof LeadData] ?? "");
+                      return (
+                        <div key={item.key} className="flex justify-between items-center py-2.5 border-b border-border/60 min-h-[40px]">
+                          <span className="text-muted-foreground">{item.label}</span>
+                          {editingFieldId === item.key ? (
+                            <div className="max-w-[60%]">
+                              {item.type === "select" && item.options.length > 0 ? (
+                                <UISelect value={editingValue} onValueChange={(v) => { setLeadData((prev) => ({ ...prev, [item.key]: item.key === "score" ? Number(v) : v } as LeadData)); setEditingFieldId(null); }}>
+                                  <UISelectTrigger className="h-8 text-sm w-[180px]">
+                                    <UISelectValue placeholder="Select..." />
+                                  </UISelectTrigger>
+                                  <UISelectContent>
+                                    {item.options.map((opt) => (
+                                      <UISelectItem key={opt} value={opt}>{opt}</UISelectItem>
+                                    ))}
+                                  </UISelectContent>
+                                </UISelect>
+                              ) : (
+                                <Input
+                                  type={item.type === "number" ? "number" : "text"}
+                                  value={editingValue}
+                                  onChange={(e) => setEditingValue(e.target.value)}
+                                  onKeyDown={handleFieldKeyDown(item.key)}
+                                  onBlur={() => { setLeadData((prev) => ({ ...prev, [item.key]: item.key === "score" ? Number(editingValue) : editingValue } as LeadData)); setEditingFieldId(null); }}
+                                  className="h-8 text-sm w-[180px]"
+                                  autoFocus
+                                />
+                              )}
+                            </div>
+                          ) : (
+                            <span
+                              className="cursor-pointer hover:bg-muted px-2 py-1 rounded transition-colors font-medium min-w-[40px] text-right"
+                              onClick={() => startEditField(item.key, value)}
+                              title="Click to edit"
+                            >
+                              {value || <span className="text-muted-foreground/50 italic">Click to enter...</span>}
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
 
                   <h3 className="font-semibold text-sm mt-7 mb-3">Interests</h3>
