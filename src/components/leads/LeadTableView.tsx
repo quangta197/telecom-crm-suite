@@ -9,7 +9,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { MoreHorizontal, Phone } from "lucide-react";
+import { MoreHorizontal, Phone, Mail } from "lucide-react";
 
 interface Lead {
   id: number;
@@ -17,6 +17,7 @@ interface Lead {
   name: string;
   company: string;
   phone: string;
+  email: string;
   source: string;
   score: number;
   status: string;
@@ -65,6 +66,7 @@ export function LeadTableView({
             <TableHead>Lead Name</TableHead>
             <TableHead>Company</TableHead>
             <TableHead>Phone</TableHead>
+            <TableHead>Email</TableHead>
             <TableHead>Source</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-right">Score</TableHead>
@@ -95,6 +97,12 @@ export function LeadTableView({
                 <div className="flex items-center gap-2">
                   <Phone className="h-3.5 w-3.5 text-success" />
                   <span>{lead.phone}</span>
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="flex items-center gap-2">
+                  <Mail className="h-3.5 w-3.5 text-primary" />
+                  <span className="text-sm">{lead.email}</span>
                 </div>
               </TableCell>
               <TableCell>{lead.source}</TableCell>
