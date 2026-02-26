@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OpportunityServiceProducts } from "@/components/opportunities/OpportunityServiceProducts";
+import { OpportunityQuotations } from "@/components/opportunities/OpportunityQuotations";
 import { ProjectProfitLoss } from "@/components/projects/ProjectProfitLoss";
 import { AddActivityDialog } from "@/components/layout/AddActivityDialog";
 import { useActivityTypesStore, iconMap } from "@/stores/activityTypesStore";
@@ -221,10 +222,7 @@ const ProjectDetail = () => {
               </TabsContent>
 
               <TabsContent value="quotation" className="mt-6">
-                <Card className="p-6">
-                  <h3 className="font-semibold mb-4">Quotations</h3>
-                  <p className="text-muted-foreground text-center py-8">No quotations yet</p>
-                </Card>
+                <OpportunityQuotations />
               </TabsContent>
             </Tabs>
           </div>
