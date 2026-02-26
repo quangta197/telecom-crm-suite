@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card } from "@/components/ui/card";
 import { OpportunityContacts } from "@/components/opportunities/OpportunityContacts";
+import { OpportunityAttachments } from "@/components/opportunities/OpportunityAttachments";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { 
   ArrowLeft, 
@@ -335,9 +336,7 @@ const OpportunityDetail = () => {
               </TabsContent>
 
               <TabsContent value="attachments" className="mt-6">
-                <Card className="p-6">
-                  <p className="text-muted-foreground text-center py-8">No attachments yet</p>
-                </Card>
+                <OpportunityAttachments />
               </TabsContent>
 
               <TabsContent value="contacts" className="mt-6">
