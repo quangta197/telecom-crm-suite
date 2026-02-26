@@ -19,6 +19,8 @@ const initialOpportunities = [
     probability: 75,
     closeDate: "01/15/2024",
     owner: "John Smith",
+    leadId: 1,
+    leadCode: "LD00001",
   },
   {
     id: 2,
@@ -30,6 +32,8 @@ const initialOpportunities = [
     probability: 60,
     closeDate: "01/22/2024",
     owner: "Sarah Johnson",
+    leadId: null,
+    leadCode: null,
   },
   {
     id: 3,
@@ -41,6 +45,8 @@ const initialOpportunities = [
     probability: 45,
     closeDate: "01/30/2024",
     owner: "Mike Wilson",
+    leadId: 2,
+    leadCode: "LD00002",
   },
   {
     id: 4,
@@ -52,6 +58,8 @@ const initialOpportunities = [
     probability: 80,
     closeDate: "02/10/2024",
     owner: "John Smith",
+    leadId: null,
+    leadCode: null,
   },
   {
     id: 5,
@@ -63,6 +71,8 @@ const initialOpportunities = [
     probability: 30,
     closeDate: "02/28/2024",
     owner: "Emily Davis",
+    leadId: 3,
+    leadCode: "LD00003",
   },
   {
     id: 6,
@@ -74,6 +84,8 @@ const initialOpportunities = [
     probability: 95,
     closeDate: "01/05/2024",
     owner: "Sarah Johnson",
+    leadId: null,
+    leadCode: null,
   },
 ];
 
@@ -142,6 +154,8 @@ const Opportunities = () => {
       probability: data.probability,
       closeDate: formattedDate,
       owner: data.owner,
+      leadId: null as number | null,
+      leadCode: null as string | null,
     };
 
     setOpportunitiesList((prev) => [...prev, newOpportunity]);
