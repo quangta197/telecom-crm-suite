@@ -8,11 +8,11 @@ export interface OpportunityTypeDefinition {
 }
 
 const defaultTypes: OpportunityTypeDefinition[] = [
-  { id: "new-customer", name: "New Customer", color: "bg-blue-500", description: "Khách hàng mới" },
-  { id: "existing-customer", name: "Existing Customer", color: "bg-green-500", description: "Khách hàng hiện tại" },
-  { id: "upsell", name: "Upsell", color: "bg-orange-500", description: "Bán thêm sản phẩm/dịch vụ" },
-  { id: "cross-sell", name: "Cross-sell", color: "bg-purple-500", description: "Bán chéo sản phẩm/dịch vụ" },
-  { id: "renewal", name: "Renewal", color: "bg-yellow-500", description: "Gia hạn hợp đồng" },
+  { id: "new-customer", name: "New Customer", color: "bg-blue-500", description: "New customer acquisition" },
+  { id: "existing-customer", name: "Existing Customer", color: "bg-green-500", description: "Existing customer expansion" },
+  { id: "upsell", name: "Upsell", color: "bg-orange-500", description: "Upsell additional products/services" },
+  { id: "cross-sell", name: "Cross-sell", color: "bg-purple-500", description: "Cross-sell related products/services" },
+  { id: "renewal", name: "Renewal", color: "bg-yellow-500", description: "Contract renewal" },
 ];
 
 interface OpportunityTypesState {

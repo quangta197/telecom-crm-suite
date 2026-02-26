@@ -8,11 +8,11 @@ export interface ProjectTypeDefinition {
 }
 
 const defaultTypes: ProjectTypeDefinition[] = [
-  { id: "implementation", name: "Triển khai", color: "bg-blue-500", description: "Dự án triển khai sản phẩm/dịch vụ" },
-  { id: "maintenance", name: "Bảo trì", color: "bg-green-500", description: "Dự án bảo trì, hỗ trợ kỹ thuật" },
-  { id: "consulting", name: "Tư vấn", color: "bg-purple-500", description: "Dự án tư vấn giải pháp" },
-  { id: "internal", name: "Nội bộ", color: "bg-orange-500", description: "Dự án nội bộ công ty" },
-  { id: "research", name: "Nghiên cứu", color: "bg-yellow-500", description: "Dự án nghiên cứu, phát triển" },
+  { id: "implementation", name: "Implementation", color: "bg-blue-500", description: "Product/service deployment projects" },
+  { id: "maintenance", name: "Maintenance", color: "bg-green-500", description: "Technical maintenance and support" },
+  { id: "consulting", name: "Consulting", color: "bg-purple-500", description: "Solution consulting projects" },
+  { id: "internal", name: "Internal", color: "bg-orange-500", description: "Internal company projects" },
+  { id: "research", name: "Research", color: "bg-yellow-500", description: "Research and development projects" },
 ];
 
 interface ProjectTypesState {

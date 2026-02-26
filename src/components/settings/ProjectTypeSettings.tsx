@@ -24,14 +24,14 @@ import {
 } from "@/stores/projectTypesStore";
 
 const colorOptions = [
-  { value: "bg-slate-500", label: "Xám" },
-  { value: "bg-red-500", label: "Đỏ" },
-  { value: "bg-orange-500", label: "Cam" },
-  { value: "bg-yellow-500", label: "Vàng" },
-  { value: "bg-green-500", label: "Xanh lá" },
-  { value: "bg-blue-500", label: "Xanh dương" },
-  { value: "bg-purple-500", label: "Tím" },
-  { value: "bg-pink-500", label: "Hồng" },
+  { value: "bg-slate-500", label: "Gray" },
+  { value: "bg-red-500", label: "Red" },
+  { value: "bg-orange-500", label: "Orange" },
+  { value: "bg-yellow-500", label: "Yellow" },
+  { value: "bg-green-500", label: "Green" },
+  { value: "bg-blue-500", label: "Blue" },
+  { value: "bg-purple-500", label: "Purple" },
+  { value: "bg-pink-500", label: "Pink" },
 ];
 
 export function ProjectTypeSettings() {
@@ -68,17 +68,17 @@ export function ProjectTypeSettings() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-semibold text-lg">Loại Dự án</h3>
-          <p className="text-sm text-muted-foreground">Định nghĩa các loại dự án trong hệ thống</p>
+          <h3 className="font-semibold text-lg">Project Types</h3>
+          <p className="text-sm text-muted-foreground">Define project types used in the system</p>
         </div>
         <Button className="gap-2" onClick={openAdd}>
-          <Plus className="h-4 w-4" /> Thêm loại
+          <Plus className="h-4 w-4" /> Add Type
         </Button>
       </div>
 
       <div className="space-y-2">
         {types.length === 0 && (
-          <p className="text-sm text-muted-foreground py-8 text-center">Chưa có loại dự án nào.</p>
+          <p className="text-sm text-muted-foreground py-8 text-center">No project types defined yet.</p>
         )}
         {types.map((t) => (
           <div key={t.id} className="flex items-center gap-3 p-3 border rounded-lg bg-card">
@@ -101,16 +101,16 @@ export function ProjectTypeSettings() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editingType ? "Sửa loại dự án" : "Thêm loại dự án"}</DialogTitle>
-            <DialogDescription>{editingType ? "Cập nhật thông tin loại dự án" : "Tạo loại dự án mới"}</DialogDescription>
+            <DialogTitle>{editingType ? "Edit Project Type" : "Add Project Type"}</DialogTitle>
+            <DialogDescription>{editingType ? "Update project type information" : "Create a new project type"}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Tên loại *</Label>
-              <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="VD: Triển khai, Tư vấn..." />
+              <Label>Name *</Label>
+              <Input value={form.name} onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))} placeholder="e.g. Implementation, Consulting..." />
             </div>
             <div className="space-y-2">
-              <Label>Màu sắc</Label>
+              <Label>Color</Label>
               <Select value={form.color} onValueChange={(v) => setForm((f) => ({ ...f, color: v }))}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -126,13 +126,13 @@ export function ProjectTypeSettings() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Mô tả</Label>
-              <Input value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="Mô tả ngắn" />
+              <Label>Description</Label>
+              <Input value={form.description} onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))} placeholder="Short description" />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Hủy</Button>
-            <Button onClick={handleSave}>{editingType ? "Cập nhật" : "Thêm"}</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleSave}>{editingType ? "Update" : "Add"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

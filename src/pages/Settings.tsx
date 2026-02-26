@@ -142,7 +142,7 @@ export default function Settings() {
             </TabsTrigger>
             <TabsTrigger value="oppTypes" className="gap-2">
               <Tags className="h-4 w-4" />
-              Loại Cơ hội
+              Opportunity Types
             </TabsTrigger>
             <TabsTrigger value="leadSources" className="gap-2">
               <Tags className="h-4 w-4" />
@@ -158,7 +158,7 @@ export default function Settings() {
             </TabsTrigger>
             <TabsTrigger value="projectTypes" className="gap-2">
               <Tags className="h-4 w-4" />
-              Loại Dự án
+              Project Types
             </TabsTrigger>
           </TabsList>
 

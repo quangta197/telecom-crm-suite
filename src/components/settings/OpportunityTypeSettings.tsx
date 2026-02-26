@@ -25,14 +25,14 @@ import {
 } from "@/stores/opportunityTypesStore";
 
 const colorOptions = [
-  { value: "bg-slate-500", label: "Xám" },
-  { value: "bg-red-500", label: "Đỏ" },
-  { value: "bg-orange-500", label: "Cam" },
-  { value: "bg-yellow-500", label: "Vàng" },
-  { value: "bg-green-500", label: "Xanh lá" },
-  { value: "bg-blue-500", label: "Xanh dương" },
-  { value: "bg-purple-500", label: "Tím" },
-  { value: "bg-pink-500", label: "Hồng" },
+  { value: "bg-slate-500", label: "Gray" },
+  { value: "bg-red-500", label: "Red" },
+  { value: "bg-orange-500", label: "Orange" },
+  { value: "bg-yellow-500", label: "Yellow" },
+  { value: "bg-green-500", label: "Green" },
+  { value: "bg-blue-500", label: "Blue" },
+  { value: "bg-purple-500", label: "Purple" },
+  { value: "bg-pink-500", label: "Pink" },
 ];
 
 export function OpportunityTypeSettings() {
@@ -81,21 +81,21 @@ export function OpportunityTypeSettings() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-semibold text-lg">Loại Cơ hội</h3>
+          <h3 className="font-semibold text-lg">Opportunity Types</h3>
           <p className="text-sm text-muted-foreground">
-            Định nghĩa các loại cơ hội kinh doanh trong hệ thống
+            Define opportunity types used in the system
           </p>
         </div>
         <Button className="gap-2" onClick={openAdd}>
           <Plus className="h-4 w-4" />
-          Thêm loại
+          Add Type
         </Button>
       </div>
 
       <div className="space-y-2">
         {types.length === 0 && (
           <p className="text-sm text-muted-foreground py-8 text-center">
-            Chưa có loại cơ hội nào.
+            No opportunity types defined yet.
           </p>
         )}
         {types.map((t) => (
@@ -123,14 +123,14 @@ export function OpportunityTypeSettings() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editingType ? "Sửa loại cơ hội" : "Thêm loại cơ hội"}</DialogTitle>
+            <DialogTitle>{editingType ? "Edit Opportunity Type" : "Add Opportunity Type"}</DialogTitle>
             <DialogDescription>
-              {editingType ? "Cập nhật thông tin loại cơ hội" : "Tạo loại cơ hội mới cho hệ thống"}
+              {editingType ? "Update opportunity type information" : "Create a new opportunity type"}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Tên loại *</Label>
+              <Label>Name *</Label>
               <Input
                 value={form.name}
                 onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
@@ -138,7 +138,7 @@ export function OpportunityTypeSettings() {
               />
             </div>
             <div className="space-y-2">
-              <Label>Màu sắc</Label>
+              <Label>Color</Label>
               <Select value={form.color} onValueChange={(v) => setForm((f) => ({ ...f, color: v }))}>
                 <SelectTrigger>
                   <SelectValue />
@@ -156,17 +156,17 @@ export function OpportunityTypeSettings() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Mô tả</Label>
+              <Label>Description</Label>
               <Input
                 value={form.description}
                 onChange={(e) => setForm((f) => ({ ...f, description: e.target.value }))}
-                placeholder="Mô tả ngắn về loại cơ hội"
+                placeholder="Short description"
               />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Hủy</Button>
-            <Button onClick={handleSave}>{editingType ? "Cập nhật" : "Thêm"}</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleSave}>{editingType ? "Update" : "Add"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
