@@ -22,9 +22,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const proposalData = {
+const projectData = {
   id: 1,
-  code: "PR-2024-001",
+  code: "PJ-2024-001",
   title: "VNPT Network Infrastructure Solution",
   customer: "VNPT Hanoi",
   contact: "Nguyen Van B",
@@ -62,12 +62,12 @@ const statusColors: Record<string, string> = {
 };
 
 const activities = [
-  { id: 1, type: "email", title: "Proposal sent", description: "Sent to customer via email", author: "John Smith", date: "01/14/2024" },
+  { id: 1, type: "email", title: "Project sent", description: "Sent to customer via email", author: "John Smith", date: "01/14/2024" },
   { id: 2, type: "note", title: "Pricing approved", description: "Internal approval received", author: "Manager", date: "01/13/2024" },
-  { id: 3, type: "note", title: "Proposal created", description: "Initial draft created", author: "John Smith", date: "01/12/2024" },
+  { id: 3, type: "note", title: "Project created", description: "Initial draft created", author: "John Smith", date: "01/12/2024" },
 ];
 
-const ProposalDetail = () => {
+const ProjectDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("detail");
@@ -78,20 +78,20 @@ const ProposalDetail = () => {
         {/* Header */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={() => navigate("/proposals")}>
+            <Button variant="ghost" size="icon" onClick={() => navigate("/projects")}>
               <ArrowLeft className="h-5 w-5" />
             </Button>
             <div>
               <div className="flex items-center gap-3">
-                <h1 className="text-xl font-bold">{proposalData.title}</h1>
-                <Badge className={statusColors[proposalData.status]}>{proposalData.status}</Badge>
+                <h1 className="text-xl font-bold">{projectData.title}</h1>
+                <Badge className={statusColors[projectData.status]}>{projectData.status}</Badge>
               </div>
               <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
-                <span className="font-mono">{proposalData.code}</span>
+                <span className="font-mono">{projectData.code}</span>
                 <span>•</span>
-                <span>{proposalData.customer}</span>
+                <span>{projectData.customer}</span>
                 <span>•</span>
-                <span className="font-semibold text-primary">{proposalData.value}</span>
+                <span className="font-semibold text-primary">{projectData.value}</span>
               </div>
             </div>
           </div>
@@ -122,10 +122,10 @@ const ProposalDetail = () => {
         {/* Summary Cards */}
         <div className="grid grid-cols-4 gap-4">
           {[
-            { label: "Customer", value: proposalData.customer, icon: FileText },
-            { label: "Valid Until", value: proposalData.validUntil, icon: Calendar },
-            { label: "Created By", value: proposalData.createdBy, icon: Mail },
-            { label: "Total Value", value: proposalData.value, icon: FileText, highlight: true },
+            { label: "Customer", value: projectData.customer, icon: FileText },
+            { label: "Valid Until", value: projectData.validUntil, icon: Calendar },
+            { label: "Created By", value: projectData.createdBy, icon: Mail },
+            { label: "Total Value", value: projectData.value, icon: FileText, highlight: true },
           ].map((item, i) => (
             <Card key={i} className="p-4">
               <div className="flex items-center gap-3">
@@ -160,21 +160,21 @@ const ProposalDetail = () => {
 
               <TabsContent value="detail" className="mt-6">
                 <Card className="p-6">
-                  <h3 className="font-semibold mb-6">Proposal Information</h3>
+                  <h3 className="font-semibold mb-6">Project Information</h3>
                   <div className="grid grid-cols-2 gap-x-12 gap-y-4 text-sm">
                     {[
-                      ["Proposal Code", proposalData.code],
-                      ["Title", proposalData.title],
-                      ["Customer", proposalData.customer],
-                      ["Contact Person", proposalData.contact],
-                      ["Contact Email", proposalData.contactEmail, true],
-                      ["Contact Phone", proposalData.contactPhone],
-                      ["Related Opportunity", proposalData.opportunity],
-                      ["Status", proposalData.status],
-                      ["Created Date", proposalData.createdAt],
-                      ["Sent Date", proposalData.sentAt || "-"],
-                      ["Valid Until", proposalData.validUntil],
-                      ["Created By", proposalData.createdBy],
+                      ["Project Code", projectData.code],
+                      ["Title", projectData.title],
+                      ["Customer", projectData.customer],
+                      ["Contact Person", projectData.contact],
+                      ["Contact Email", projectData.contactEmail, true],
+                      ["Contact Phone", projectData.contactPhone],
+                      ["Related Opportunity", projectData.opportunity],
+                      ["Status", projectData.status],
+                      ["Created Date", projectData.createdAt],
+                      ["Sent Date", projectData.sentAt || "-"],
+                      ["Valid Until", projectData.validUntil],
+                      ["Created By", projectData.createdBy],
                     ].map(([label, value, isLink]) => (
                       <div key={label as string} className="flex justify-between py-2 border-b">
                         <span className="text-muted-foreground">{label}</span>
@@ -184,7 +184,7 @@ const ProposalDetail = () => {
                   </div>
 
                   <h3 className="font-semibold mt-8 mb-4">Description</h3>
-                  <p className="text-sm text-muted-foreground">{proposalData.description}</p>
+                  <p className="text-sm text-muted-foreground">{projectData.description}</p>
                 </Card>
               </TabsContent>
 
@@ -214,7 +214,7 @@ const ProposalDetail = () => {
                       <tfoot className="bg-muted/30 font-semibold">
                         <tr className="border-t">
                           <td colSpan={3} className="p-3 text-right">Total:</td>
-                          <td className="p-3 text-right text-primary">{proposalData.value}</td>
+                          <td className="p-3 text-right text-primary">{projectData.value}</td>
                         </tr>
                       </tfoot>
                     </table>
@@ -227,9 +227,9 @@ const ProposalDetail = () => {
                   <h3 className="font-semibold mb-6">Terms & Conditions</h3>
                   <div className="grid grid-cols-2 gap-x-12 gap-y-4 text-sm">
                     {[
-                      ["Payment Terms", proposalData.terms],
-                      ["Warranty", proposalData.warranty],
-                      ["Delivery Time", proposalData.deliveryTime],
+                      ["Payment Terms", projectData.terms],
+                      ["Warranty", projectData.warranty],
+                      ["Delivery Time", projectData.deliveryTime],
                     ].map(([label, value]) => (
                       <div key={label as string} className="flex justify-between py-2 border-b">
                         <span className="text-muted-foreground">{label}</span>
@@ -292,4 +292,4 @@ const ProposalDetail = () => {
   );
 };
 
-export default ProposalDetail;
+export default ProjectDetail;

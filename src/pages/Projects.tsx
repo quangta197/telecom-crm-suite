@@ -3,13 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Plus, LayoutGrid, List } from "lucide-react";
-import { ProposalTableView } from "@/components/proposals/ProposalTableView";
-import { ProposalBoardView } from "@/components/proposals/ProposalBoardView";
+import { ProjectTableView } from "@/components/projects/ProjectTableView";
+import { ProjectBoardView } from "@/components/projects/ProjectBoardView";
 
-const initialProposals = [
+const initialProjects = [
   {
     id: 1,
-    code: "PR-2024-001",
+    code: "PJ-2024-001",
     title: "VNPT Network Infrastructure Solution",
     customer: "VNPT Hanoi",
     value: "$320K",
@@ -19,7 +19,7 @@ const initialProposals = [
   },
   {
     id: 2,
-    code: "PR-2024-002",
+    code: "PJ-2024-002",
     title: "Viettel Data Center Solution",
     customer: "Viettel Business",
     value: "$580K",
@@ -29,7 +29,7 @@ const initialProposals = [
   },
   {
     id: 3,
-    code: "PR-2024-003",
+    code: "PJ-2024-003",
     title: "Cloud Migration Package",
     customer: "FPT Telecom",
     value: "$210K",
@@ -39,7 +39,7 @@ const initialProposals = [
   },
   {
     id: 4,
-    code: "PR-2024-004",
+    code: "PJ-2024-004",
     title: "5G Enterprise Solution",
     customer: "CMC Telecom",
     value: "$450K",
@@ -49,7 +49,7 @@ const initialProposals = [
   },
   {
     id: 5,
-    code: "PR-2024-005",
+    code: "PJ-2024-005",
     title: "IoT Platform Integration",
     customer: "MobiFone",
     value: "$180K",
@@ -60,25 +60,25 @@ const initialProposals = [
 ];
 
 const filterOptions = [
-  { id: "code", label: "Proposal Code" },
+  { id: "code", label: "Project Code" },
   { id: "title", label: "Title" },
   { id: "customer", label: "Customer" },
   { id: "value", label: "Value" },
   { id: "status", label: "Status" },
 ];
 
-const savedFilters = ["Sent Proposals", "This Month's Proposals"];
+const savedFilters = ["Sent Projects", "This Month's Projects"];
 
 type ViewMode = "list" | "board";
 
-const Proposals = () => {
+const Projects = () => {
   const navigate = useNavigate();
-  const [proposals] = useState(initialProposals);
+  const [projects] = useState(initialProjects);
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
 
   const handleRowClick = (id: number) => {
-    navigate(`/proposals/${id}`);
+    navigate(`/projects/${id}`);
   };
 
   const toggleRow = (id: number) => {
@@ -88,23 +88,23 @@ const Proposals = () => {
   };
 
   const toggleAll = () => {
-    if (selectedRows.length === proposals.length) {
+    if (selectedRows.length === projects.length) {
       setSelectedRows([]);
     } else {
-      setSelectedRows(proposals.map((p) => p.id));
+      setSelectedRows(projects.map((p) => p.id));
     }
   };
 
   return (
     <MainLayout
-      filterTitle="All Proposals"
+      filterTitle="All Projects"
       filters={filterOptions}
       savedFilters={savedFilters}
     >
       <div className="space-y-6 animate-fade-in">
         {/* Page Header */}
         <div className="flex items-center justify-between">
-          <h1 className="text-xl font-bold">All Proposals</h1>
+          <h1 className="text-xl font-bold">All Projects</h1>
           <div className="flex items-center gap-2">
             {/* View Toggle */}
             <div className="flex items-center border rounded-lg p-1 bg-muted/30">
@@ -136,17 +136,17 @@ const Proposals = () => {
 
         {/* View Content */}
         {viewMode === "list" ? (
-          <ProposalTableView
-            proposals={proposals}
+          <ProjectTableView
+            projects={projects}
             selectedRows={selectedRows}
             onRowClick={handleRowClick}
             onToggleRow={toggleRow}
             onToggleAll={toggleAll}
           />
         ) : (
-          <ProposalBoardView
-            proposals={proposals}
-            onProposalClick={handleRowClick}
+          <ProjectBoardView
+            projects={projects}
+            onProjectClick={handleRowClick}
           />
         )}
       </div>
@@ -154,4 +154,4 @@ const Proposals = () => {
   );
 };
 
-export default Proposals;
+export default Projects;

@@ -11,8 +11,8 @@ import LeadDetail from "./pages/LeadDetail";
 import Opportunities from "./pages/Opportunities";
 import OpportunityDetail from "./pages/OpportunityDetail";
 import CalendarPage from "./pages/Calendar";
-import Proposals from "./pages/Proposals";
-import ProposalDetail from "./pages/ProposalDetail";
+import Projects from "./pages/Projects";
+import ProjectDetail from "./pages/ProjectDetail";
 import Quotations from "./pages/Quotations";
 import Analytics from "./pages/Analytics";
 import SalesMap from "./pages/SalesMap";
@@ -36,8 +36,8 @@ const App = () => (
           <Route path="/opportunities" element={<Opportunities />} />
           <Route path="/opportunities/:id" element={<OpportunityDetail />} />
           <Route path="/calendar" element={<CalendarPage />} />
-          <Route path="/proposals" element={<Proposals />} />
-          <Route path="/proposals/:id" element={<ProposalDetail />} />
+          <Route path="/projects" element={<Projects />} />
+          <Route path="/projects/:id" element={<ProjectDetail />} />
           <Route path="/quotations" element={<Quotations />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/sales-map" element={<SalesMap />} />
