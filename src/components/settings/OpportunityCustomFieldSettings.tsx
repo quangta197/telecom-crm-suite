@@ -28,11 +28,11 @@ import {
 } from "@/stores/opportunityCustomFieldsStore";
 
 const fieldTypeLabels: Record<FieldType, string> = {
-  text: "Văn bản",
-  number: "Số",
-  date: "Ngày",
-  select: "Danh sách chọn",
-  textarea: "Văn bản dài",
+  text: "Text",
+  number: "Number",
+  date: "Date",
+  select: "Select List",
+  textarea: "Long Text",
 };
 
 export function OpportunityCustomFieldSettings() {
@@ -98,21 +98,21 @@ export function OpportunityCustomFieldSettings() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-semibold text-lg">Thông tin mở rộng Cơ hội</h3>
+          <h3 className="font-semibold text-lg">Opportunity Custom Fields</h3>
           <p className="text-sm text-muted-foreground">
-            Định nghĩa các trường thông tin bổ sung cho Opportunity
+            Define additional fields for Opportunity records
           </p>
         </div>
         <Button className="gap-2" onClick={openAdd}>
           <Plus className="h-4 w-4" />
-          Thêm trường
+          Add Field
         </Button>
       </div>
 
       <div className="space-y-2">
         {fields.length === 0 && (
           <p className="text-sm text-muted-foreground py-8 text-center">
-            Chưa có trường mở rộng nào. Nhấn "Thêm trường" để bắt đầu.
+            No custom fields defined yet. Click "Add Field" to get started.
           </p>
         )}
         {fields.map((field) => (
@@ -129,13 +129,13 @@ export function OpportunityCustomFieldSettings() {
                 </Badge>
                 {field.required && (
                   <Badge variant="destructive" className="text-xs">
-                    Bắt buộc
+                    Required
                   </Badge>
                 )}
               </div>
               {field.type === "select" && field.options && (
                 <p className="text-xs text-muted-foreground mt-1">
-                  Tùy chọn: {field.options.join(", ")}
+                  Options: {field.options.join(", ")}
                 </p>
               )}
             </div>
@@ -152,22 +152,22 @@ export function OpportunityCustomFieldSettings() {
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{editingField ? "Sửa trường" : "Thêm trường mới"}</DialogTitle>
+            <DialogTitle>{editingField ? "Edit Field" : "Add New Field"}</DialogTitle>
             <DialogDescription>
-              {editingField ? "Cập nhật thông tin trường mở rộng" : "Tạo trường thông tin bổ sung cho Opportunity"}
+              {editingField ? "Update custom field information" : "Create an additional field for Opportunity"}
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label>Tên trường *</Label>
+              <Label>Field Name *</Label>
               <Input
                 value={form.label}
                 onChange={(e) => setForm((f) => ({ ...f, label: e.target.value }))}
-                placeholder="VD: Ngành nghề, Quy mô..."
+                placeholder="e.g. Industry, Company Size..."
               />
             </div>
             <div className="space-y-2">
-              <Label>Loại trường</Label>
+              <Label>Field Type</Label>
               <Select value={form.type} onValueChange={(v) => setForm((f) => ({ ...f, type: v as FieldType }))}>
                 <SelectTrigger>
                   <SelectValue />
@@ -181,11 +181,11 @@ export function OpportunityCustomFieldSettings() {
             </div>
             {form.type === "select" && (
               <div className="space-y-2">
-                <Label>Các tùy chọn (phân cách bằng dấu phẩy)</Label>
+                <Label>Options (comma-separated)</Label>
                 <Input
                   value={form.options}
                   onChange={(e) => setForm((f) => ({ ...f, options: e.target.value }))}
-                  placeholder="VD: Nhỏ, Vừa, Lớn"
+                  placeholder="e.g. Small, Medium, Large"
                 />
               </div>
             )}
@@ -194,12 +194,12 @@ export function OpportunityCustomFieldSettings() {
                 checked={form.required}
                 onCheckedChange={(v) => setForm((f) => ({ ...f, required: v }))}
               />
-              <Label>Bắt buộc nhập</Label>
+              <Label>Required</Label>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Hủy</Button>
-            <Button onClick={handleSave}>{editingField ? "Cập nhật" : "Thêm"}</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleSave}>{editingField ? "Update" : "Add"}</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

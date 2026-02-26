@@ -368,9 +368,9 @@ const OpportunityDetail = () => {
                               item.isLink && "text-primary font-medium"
                             )}
                             onClick={() => startEditField(`gen_${item.key}`, generalFieldValues[item.key])}
-                            title="Click để chỉnh sửa"
+                            title="Click to edit"
                           >
-                            {generalFieldValues[item.key] || <span className="text-muted-foreground/50 italic">Click để nhập...</span>}
+                            {generalFieldValues[item.key] || <span className="text-muted-foreground/50 italic">Click to enter...</span>}
                           </span>
                         )}
                       </div>
@@ -381,7 +381,7 @@ const OpportunityDetail = () => {
                 {/* Extended Information */}
                 <Card className="p-6 mt-4">
                   <div className="flex items-center justify-between mb-6">
-                    <h3 className="font-semibold">Thông tin mở rộng</h3>
+                    <h3 className="font-semibold">Extended Information</h3>
                     {(() => {
                       const availableFields = customFieldDefs.filter((f) => !activeCustomFieldIds.includes(f.id));
                       if (availableFields.length === 0) return null;
@@ -389,7 +389,7 @@ const OpportunityDetail = () => {
                         <DropdownMenu>
                           <DropdownMenuTrigger asChild>
                             <Button variant="outline" size="sm" className="gap-1.5 h-8 text-xs">
-                              <Plus className="h-3.5 w-3.5" /> Thêm trường
+                              <Plus className="h-3.5 w-3.5" /> Add Field
                             </Button>
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
@@ -408,7 +408,7 @@ const OpportunityDetail = () => {
                   </div>
                   {activeCustomFieldIds.length === 0 ? (
                     <p className="text-sm text-muted-foreground text-center py-4">
-                      Chưa có trường mở rộng nào. Nhấn "Thêm trường" để chọn từ danh sách.
+                      No custom fields added. Click "Add Field" to select from the list.
                     </p>
                   ) : (
                     <div className="grid grid-cols-2 gap-x-12 gap-y-4 text-sm">
@@ -473,9 +473,9 @@ const OpportunityDetail = () => {
                               <span
                                 className="cursor-pointer hover:bg-muted px-2 py-1 rounded transition-colors min-w-[40px] text-right"
                                 onClick={() => startEditField(`ext_${field.id}`, customFieldValues[field.id])}
-                                title="Click để chỉnh sửa"
+                                title="Click to edit"
                               >
-                                {customFieldValues[field.id] || <span className="text-muted-foreground/50 italic">Click để nhập...</span>}
+                                {customFieldValues[field.id] || <span className="text-muted-foreground/50 italic">Click to enter...</span>}
                               </span>
                             )}
                           </div>
