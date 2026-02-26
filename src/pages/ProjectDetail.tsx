@@ -6,13 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OpportunityServiceProducts } from "@/components/opportunities/OpportunityServiceProducts";
 import { ProjectProfitLoss } from "@/components/projects/ProjectProfitLoss";
+import { AddActivityDialog } from "@/components/layout/AddActivityDialog";
+import { useActivityTypesStore, iconMap } from "@/stores/activityTypesStore";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { 
   ArrowLeft, 
   Edit, 
   MoreHorizontal, 
-  Phone, 
   Calendar, 
   MessageSquare, 
   Mail,
@@ -20,7 +21,8 @@ import {
   Download,
   Send,
   Printer,
-  Copy
+  Copy,
+  Plus
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -63,7 +65,7 @@ const statusColors: Record<string, string> = {
   "Accepted": "bg-success text-success-foreground",
 };
 
-const activities = [
+const initialActivities = [
   { id: 1, type: "email", title: "Project sent", description: "Sent to customer via email", author: "John Smith", date: "01/14/2024" },
   { id: 2, type: "note", title: "Pricing approved", description: "Internal approval received", author: "Manager", date: "01/13/2024" },
   { id: 3, type: "note", title: "Project created", description: "Initial draft created", author: "John Smith", date: "01/12/2024" },
@@ -73,6 +75,14 @@ const ProjectDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("detail");
+  const [activities, setActivities] = useState(initialActivities);
+  const [activityDialogOpen, setActivityDialogOpen] = useState(false);
+  const [activityDialogType, setActivityDialogType] = useState("call");
+  const { activityTypes } = useActivityTypesStore();
+
+  const handleAddActivity = (activity: { type: string; title: string; description: string; author: string; date: string }) => {
+    setActivities([{ id: Date.now(), ...activity }, ...activities]);
+  };
 
   return (
     <MainLayout showFilters={false} showActivity={false}>
@@ -222,30 +232,62 @@ const ProjectDetail = () => {
           {/* Right - Activity Sidebar */}
           <div className="col-span-1">
             <Card className="p-0 overflow-hidden">
-              <div className="p-3 border-b">
+              <div className="p-3 border-b flex items-center justify-between">
                 <h4 className="font-medium text-sm">Activity History</h4>
               </div>
 
+              {/* Activity type quick-add buttons */}
+              <div className="p-3 border-b flex flex-wrap gap-2">
+                {activityTypes.map((at) => {
+                  const Icon = iconMap[at.icon];
+                  return (
+                    <Button
+                      key={at.id}
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5 text-xs h-8"
+                      onClick={() => {
+                        setActivityDialogType(at.id);
+                        setActivityDialogOpen(true);
+                      }}
+                    >
+                      {Icon && <Icon className="h-3.5 w-3.5" />}
+                      {at.name}
+                    </Button>
+                  );
+                })}
+              </div>
+
               <div className="max-h-[500px] overflow-y-auto">
-                {activities.map((item) => (
-                  <div key={item.id} className="p-4 border-b hover:bg-muted/50 transition-colors">
-                    <div className="flex items-start gap-3">
-                      <Avatar className="h-10 w-10">
-                        <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                          {item.type === "email" && <Mail className="h-4 w-4" />}
-                          {item.type === "note" && <MessageSquare className="h-4 w-4" />}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-medium text-sm">{item.title}</p>
-                        <p className="text-xs text-muted-foreground">{item.description}</p>
-                        <p className="text-xs text-muted-foreground mt-1">{item.author} • {item.date}</p>
+                {activities.map((item) => {
+                  const actType = activityTypes.find((at) => at.id === item.type);
+                  const Icon = actType ? iconMap[actType.icon] : MessageSquare;
+                  return (
+                    <div key={item.id} className="p-4 border-b hover:bg-muted/50 transition-colors">
+                      <div className="flex items-start gap-3">
+                        <Avatar className="h-10 w-10">
+                          <AvatarFallback className="text-xs bg-primary/10 text-primary">
+                            {Icon && <Icon className="h-4 w-4" />}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm">{item.title}</p>
+                          <p className="text-xs text-muted-foreground">{item.description}</p>
+                          <p className="text-xs text-muted-foreground mt-1">{item.author} • {item.date}</p>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </Card>
+
+            <AddActivityDialog
+              open={activityDialogOpen}
+              onOpenChange={setActivityDialogOpen}
+              type={activityDialogType}
+              onAdd={handleAddActivity}
+            />
           </div>
         </div>
       </div>
