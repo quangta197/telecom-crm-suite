@@ -16,6 +16,7 @@ import {
   Table, TableBody, TableCell, TableHead, TableHeader, TableRow,
 } from "@/components/ui/table";
 import { Plus, Phone, Mail, Trash2, ExternalLink } from "lucide-react";
+import { useContactRolesStore } from "@/stores/contactRolesStore";
 
 interface Contact {
   id: number;
@@ -26,8 +27,6 @@ interface Contact {
   role: string;
   isPrimary: boolean;
 }
-
-const roleOptions = ["Decision Maker", "Technical Lead", "Influencer", "End User", "Procurement"];
 
 const initialContacts: Contact[] = [
   {
@@ -54,7 +53,8 @@ export function OpportunityContacts() {
   const navigate = useNavigate();
   const [contacts, setContacts] = useState<Contact[]>(initialContacts);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [form, setForm] = useState({ name: "", title: "", phone: "", email: "", role: "Influencer" });
+  const [form, setForm] = useState({ name: "", title: "", phone: "", email: "", role: "" });
+  const { roles } = useContactRolesStore();
 
   const handleAdd = () => {
     if (!form.name.trim()) return;
@@ -70,7 +70,7 @@ export function OpportunityContacts() {
         isPrimary: prev.length === 0,
       },
     ]);
-    setForm({ name: "", title: "", phone: "", email: "", role: "Influencer" });
+    setForm({ name: "", title: "", phone: "", email: "", role: "" });
     setDialogOpen(false);
   };
 
@@ -201,8 +201,8 @@ export function OpportunityContacts() {
               <Select value={form.role} onValueChange={(v) => setForm({ ...form, role: v })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
-                  {roleOptions.map((r) => (
-                    <SelectItem key={r} value={r}>{r}</SelectItem>
+                  {roles.map((r) => (
+                    <SelectItem key={r.id} value={r.name}>{r.name}</SelectItem>
                   ))}
                 </SelectContent>
               </Select>
