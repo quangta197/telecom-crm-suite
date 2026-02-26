@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useOpportunityStagesStore } from "@/stores/opportunityStagesStore";
+import { useOpportunityCustomFieldsStore } from "@/stores/opportunityCustomFieldsStore";
 import { useParams, useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
@@ -43,20 +44,22 @@ const opportunityData = {
   currency: "VND",
   contact: "Nguyen Ngoc Anh",
   customer: "Dat Phat Company Ltd",
+  opportunityName: "Sales for Dat Phat Company Ltd",
+  opportunityType: "New Customer",
+  stage: "Closed Won",
   successRate: 100,
   expectedRevenue: "5,000,000",
   expectedCloseDate: "10/06/2021",
-  stage: "Closed Won",
-  opportunityName: "Sales for Dat Phat Company Ltd",
-  opportunityType: "New Customer",
-  productType: "MeInvoice",
-  amount: "5,000,000",
   source: "Sales Rep Search",
-  campaign: "-",
-  project: "-",
-  salesProject: "Sales Project",
   winLossReason: "Company Brand Trust",
-  expectedSpend: "1,000,000",
+  decisionPerson: "Tran Van Minh",
+  position: "CEO",
+  // Extended field values (keyed by custom field id)
+  customFields: {
+    "industry": "Viễn thông",
+    "company-size": "51-200",
+    "competitor": "VNPT, FPT Telecom",
+  } as Record<string, string>,
 };
 
 const leadActivities = [
@@ -83,6 +86,7 @@ const OpportunityDetail = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("detail");
   const { stages: stageList } = useOpportunityStagesStore();
+  const { fields: customFieldDefs } = useOpportunityCustomFieldsStore();
   const [activeStage, setActiveStage] = useState("closed-won");
   const { activityTypes } = useActivityTypesStore();
   const [activities, setActivities] = useState([...oppActivities, ...leadActivities]);
@@ -256,72 +260,44 @@ const OpportunityDetail = () => {
                 <Card className="p-6">
                   <h3 className="font-semibold mb-6">General Information</h3>
                   <div className="grid grid-cols-2 gap-x-12 gap-y-4 text-sm">
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Customer</span>
-                      <span className="text-primary font-medium">{opportunityData.customer}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Contact</span>
-                      <span className="text-primary font-medium">{opportunityData.contact}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Opportunity Name</span>
-                      <span>{opportunityData.opportunityName}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Opportunity Type</span>
-                      <span>{opportunityData.opportunityType}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Product Type</span>
-                      <span>{opportunityData.productType}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Amount</span>
-                      <span>{opportunityData.amount}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Stage</span>
-                      <span>{opportunityData.stage}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Success Rate (%)</span>
-                      <span>{opportunityData.successRate}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Expected Revenue</span>
-                      <span>{opportunityData.expectedRevenue}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Expected Close Date</span>
-                      <span>{opportunityData.expectedCloseDate}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Source</span>
-                      <span>{opportunityData.source}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Campaign</span>
-                      <span>{opportunityData.campaign}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Belongs to Project</span>
-                      <span>{opportunityData.project}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Sales Project</span>
-                      <span>{opportunityData.salesProject}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Win/Loss Reason</span>
-                      <span>{opportunityData.winLossReason}</span>
-                    </div>
-                    <div className="flex justify-between py-2 border-b">
-                      <span className="text-muted-foreground">Expected Spend</span>
-                      <span>{opportunityData.expectedSpend}</span>
-                    </div>
+                    {[
+                      { label: "Customer", value: opportunityData.customer, isLink: true },
+                      { label: "Opportunity Name", value: opportunityData.opportunityName },
+                      { label: "Contact", value: opportunityData.contact, isLink: true },
+                      { label: "Opportunity Type", value: opportunityData.opportunityType },
+                      { label: "Stage", value: opportunityData.stage },
+                      { label: "Success Rate (%)", value: opportunityData.successRate },
+                      { label: "Expected Revenue", value: opportunityData.expectedRevenue },
+                      { label: "Expected Close Date", value: opportunityData.expectedCloseDate },
+                      { label: "Source", value: opportunityData.source },
+                      { label: "Win/Loss Reason", value: opportunityData.winLossReason },
+                      { label: "Decision Person", value: opportunityData.decisionPerson },
+                      { label: "Position", value: opportunityData.position },
+                    ].map((item) => (
+                      <div key={item.label} className="flex justify-between py-2 border-b">
+                        <span className="text-muted-foreground">{item.label}</span>
+                        <span className={item.isLink ? "text-primary font-medium" : ""}>
+                          {item.value || "-"}
+                        </span>
+                      </div>
+                    ))}
                   </div>
                 </Card>
+
+                {/* Extended Information */}
+                {customFieldDefs.length > 0 && (
+                  <Card className="p-6 mt-4">
+                    <h3 className="font-semibold mb-6">Thông tin mở rộng</h3>
+                    <div className="grid grid-cols-2 gap-x-12 gap-y-4 text-sm">
+                      {customFieldDefs.map((field) => (
+                        <div key={field.id} className="flex justify-between py-2 border-b">
+                          <span className="text-muted-foreground">{field.label}</span>
+                          <span>{opportunityData.customFields[field.id] || "-"}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </Card>
+                )}
               </TabsContent>
 
               <TabsContent value="services" className="mt-6">
