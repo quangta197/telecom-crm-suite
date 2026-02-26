@@ -13,9 +13,10 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from "@/components/ui/select";
-import { Plus, Eye, FileText, ShieldCheck, UserCheck, Trash2 } from "lucide-react";
+import { Plus, Eye, FileText, ShieldCheck, UserCheck, Trash2, Printer } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useQuotationTemplatesStore } from "@/stores/quotationTemplatesStore";
+import { PrintQuotationDialog } from "./PrintQuotationDialog";
 
 type ApprovalType = "self" | "manager";
 
@@ -66,6 +67,7 @@ const managerStatusOptions = ["Draft"];
 export const OpportunityQuotations = () => {
   const [quotations, setQuotations] = useState<Quotation[]>(initialQuotations);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [printQuotation, setPrintQuotation] = useState<typeof initialQuotations[0] | null>(null);
   const { templates } = useQuotationTemplatesStore();
   const defaultTemplate = templates.find((t) => t.isDefault);
   const [form, setForm] = useState({ title: "", totalValue: "", discount: "", status: "Draft", validUntil: "", approvalType: "self" as ApprovalType, template: defaultTemplate?.name || "" });
@@ -138,7 +140,7 @@ export const OpportunityQuotations = () => {
               <TableHead>Status</TableHead>
               <TableHead>Approval</TableHead>
               <TableHead>Valid Until</TableHead>
-              <TableHead className="w-10"></TableHead>
+              <TableHead className="w-20"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -191,9 +193,14 @@ export const OpportunityQuotations = () => {
                 </TableCell>
                 <TableCell>{q.validUntil}</TableCell>
                 <TableCell>
-                  <Button variant="ghost" size="icon" className="h-7 w-7">
-                    <Eye className="h-3.5 w-3.5 text-muted-foreground" />
-                  </Button>
+                  <div className="flex gap-0.5">
+                    <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setPrintQuotation(q)} title="Print PDF">
+                      <Printer className="h-3.5 w-3.5 text-muted-foreground" />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="h-7 w-7">
+                      <Eye className="h-3.5 w-3.5 text-muted-foreground" />
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))}
@@ -283,6 +290,11 @@ export const OpportunityQuotations = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      <PrintQuotationDialog
+        open={!!printQuotation}
+        onOpenChange={(open) => !open && setPrintQuotation(null)}
+        quotation={printQuotation}
+      />
     </Card>
   );
 };
