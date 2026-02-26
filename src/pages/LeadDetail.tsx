@@ -336,19 +336,22 @@ const LeadDetail = () => {
                     className="h-6 text-xs px-2.5 rounded-full"
                     onClick={() => setActivityFilter("all")}
                   >
-                    All
+                    All ({activities.length})
                   </Button>
-                  {activityTypes.map((at) => (
-                    <Button
-                      key={at.id}
-                      size="sm"
-                      variant={activityFilter === at.id ? "default" : "outline"}
-                      className="h-6 text-xs px-2.5 rounded-full"
-                      onClick={() => setActivityFilter(at.id)}
-                    >
-                      {at.name}
-                    </Button>
-                  ))}
+                  {activityTypes.map((at) => {
+                    const count = activities.filter((a) => a.type === at.id).length;
+                    return (
+                      <Button
+                        key={at.id}
+                        size="sm"
+                        variant={activityFilter === at.id ? "default" : "outline"}
+                        className="h-6 text-xs px-2.5 rounded-full"
+                        onClick={() => setActivityFilter(at.id)}
+                      >
+                        {at.name} ({count})
+                      </Button>
+                    );
+                  })}
                 </div>
               </div>
 

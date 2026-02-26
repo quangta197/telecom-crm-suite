@@ -395,30 +395,36 @@ const OpportunityDetail = () => {
                     className="h-6 text-xs px-2.5 rounded-full"
                     onClick={() => setActivityFilter("all")}
                   >
-                    All
+                    All ({activities.length})
                   </Button>
-                  {activityTypes.map((at) => (
-                    <Button
-                      key={at.id}
-                      size="sm"
-                      variant={activityFilter === at.id ? "default" : "outline"}
-                      className="h-6 text-xs px-2.5 rounded-full"
-                      onClick={() => setActivityFilter(at.id)}
-                    >
-                      {at.name}
-                    </Button>
-                  ))}
-                  {[{ id: "quote", name: "Quote" }, { id: "negotiation", name: "Negotiation" }].map((t) => (
-                    <Button
-                      key={t.id}
-                      size="sm"
-                      variant={activityFilter === t.id ? "default" : "outline"}
-                      className="h-6 text-xs px-2.5 rounded-full"
-                      onClick={() => setActivityFilter(t.id)}
-                    >
-                      {t.name}
-                    </Button>
-                  ))}
+                  {activityTypes.map((at) => {
+                    const count = activities.filter((a) => a.type === at.id).length;
+                    return (
+                      <Button
+                        key={at.id}
+                        size="sm"
+                        variant={activityFilter === at.id ? "default" : "outline"}
+                        className="h-6 text-xs px-2.5 rounded-full"
+                        onClick={() => setActivityFilter(at.id)}
+                      >
+                        {at.name} ({count})
+                      </Button>
+                    );
+                  })}
+                  {[{ id: "quote", name: "Quote" }, { id: "negotiation", name: "Negotiation" }].map((t) => {
+                    const count = activities.filter((a) => a.type === t.id).length;
+                    return (
+                      <Button
+                        key={t.id}
+                        size="sm"
+                        variant={activityFilter === t.id ? "default" : "outline"}
+                        className="h-6 text-xs px-2.5 rounded-full"
+                        onClick={() => setActivityFilter(t.id)}
+                      >
+                        {t.name} ({count})
+                      </Button>
+                    );
+                  })}
                 </div>
               </div>
 
