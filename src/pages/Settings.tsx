@@ -26,6 +26,7 @@ import { OpportunityStageSettings } from "@/components/settings/OpportunityStage
 import { LeadSourceSettings } from "@/components/settings/LeadSourceSettings";
 import { ContactRoleSettings } from "@/components/settings/ContactRoleSettings";
 import { OpportunityCustomFieldSettings } from "@/components/settings/OpportunityCustomFieldSettings";
+import { OpportunityTypeSettings } from "@/components/settings/OpportunityTypeSettings";
 import {
   Dialog,
   DialogContent,
@@ -137,6 +138,10 @@ export default function Settings() {
             <TabsTrigger value="oppStages" className="gap-2">
               <GitBranch className="h-4 w-4" />
               Opportunity Stages
+            </TabsTrigger>
+            <TabsTrigger value="oppTypes" className="gap-2">
+              <Tags className="h-4 w-4" />
+              Loại Cơ hội
             </TabsTrigger>
             <TabsTrigger value="leadSources" className="gap-2">
               <Tags className="h-4 w-4" />
@@ -303,6 +308,15 @@ export default function Settings() {
             <Card>
               <CardContent className="pt-6">
                 <OpportunityStageSettings />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Opportunity Types Tab */}
+          <TabsContent value="oppTypes">
+            <Card>
+              <CardContent className="pt-6">
+                <OpportunityTypeSettings />
               </CardContent>
             </Card>
           </TabsContent>
