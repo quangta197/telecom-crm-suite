@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -22,6 +23,8 @@ interface Opportunity {
   probability: number;
   closeDate: string;
   owner: string;
+  leadId?: number | null;
+  leadCode?: string | null;
 }
 
 interface OpportunityTableViewProps {
@@ -47,6 +50,7 @@ export function OpportunityTableView({
   onToggleRow,
   onToggleAll,
 }: OpportunityTableViewProps) {
+  const navigate = useNavigate();
   return (
     <div className="rounded-lg bg-card shadow-sm overflow-hidden border">
       <Table>
@@ -61,6 +65,7 @@ export function OpportunityTableView({
             <TableHead>Opp ID</TableHead>
             <TableHead>Opportunity Name</TableHead>
             <TableHead>Customer</TableHead>
+            <TableHead>Lead</TableHead>
             <TableHead>Value</TableHead>
             <TableHead>Stage</TableHead>
             <TableHead>Probability</TableHead>
@@ -89,6 +94,21 @@ export function OpportunityTableView({
                 {opp.title}
               </TableCell>
               <TableCell>{opp.company}</TableCell>
+              <TableCell>
+                {opp.leadId && opp.leadCode ? (
+                  <span
+                    className="text-primary font-mono text-xs hover:underline cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      navigate(`/leads/${opp.leadId}`);
+                    }}
+                  >
+                    {opp.leadCode}
+                  </span>
+                ) : (
+                  <span className="text-muted-foreground text-xs">—</span>
+                )}
+              </TableCell>
               <TableCell className="font-semibold text-primary">
                 {opp.value}
               </TableCell>
