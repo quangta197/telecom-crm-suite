@@ -9,6 +9,9 @@ import { Card } from "@/components/ui/card";
 import { OpportunityContacts } from "@/components/opportunities/OpportunityContacts";
 import { OpportunityAttachments } from "@/components/opportunities/OpportunityAttachments";
 import { OpportunityNotes } from "@/components/opportunities/OpportunityNotes";
+import { OpportunityServiceProducts } from "@/components/opportunities/OpportunityServiceProducts";
+import { OpportunityQuotations } from "@/components/opportunities/OpportunityQuotations";
+import { OpportunityNegotiation } from "@/components/opportunities/OpportunityNegotiation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { 
   ArrowLeft, 
@@ -208,48 +211,23 @@ const OpportunityDetail = () => {
           <div className="col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="w-full justify-start bg-transparent border-b rounded-none h-auto p-0">
-                <TabsTrigger 
-                  value="detail" 
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2"
-                >
-                  Detail Info
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="orders" 
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2"
-                >
-                  Orders
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="notes" 
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2"
-                >
-                  Notes
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="attachments" 
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2"
-                >
-                  Attachments
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="contacts" 
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2"
-                >
-                  Contacts
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="in-progress" 
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2"
-                >
-                  In Progress
-                </TabsTrigger>
-                <TabsTrigger 
-                  value="completed" 
-                  className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2"
-                >
-                  Completed
-                </TabsTrigger>
+                {[
+                  { value: "detail", label: "Detail Info" },
+                  { value: "services", label: "Service/Product" },
+                  { value: "notes", label: "Notes" },
+                  { value: "attachments", label: "Attachments" },
+                  { value: "contacts", label: "Contacts" },
+                  { value: "quotation", label: "Quotation" },
+                  { value: "negotiation", label: "Negotiation" },
+                ].map((tab) => (
+                  <TabsTrigger
+                    key={tab.value}
+                    value={tab.value}
+                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2"
+                  >
+                    {tab.label}
+                  </TabsTrigger>
+                ))}
               </TabsList>
 
               <TabsContent value="detail" className="mt-6">
@@ -324,10 +302,8 @@ const OpportunityDetail = () => {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="orders" className="mt-6">
-                <Card className="p-6">
-                  <p className="text-muted-foreground text-center py-8">No orders yet</p>
-                </Card>
+              <TabsContent value="services" className="mt-6">
+                <OpportunityServiceProducts />
               </TabsContent>
 
               <TabsContent value="notes" className="mt-6">
@@ -342,16 +318,12 @@ const OpportunityDetail = () => {
                 <OpportunityContacts />
               </TabsContent>
 
-              <TabsContent value="in-progress" className="mt-6">
-                <Card className="p-6">
-                  <p className="text-muted-foreground text-center py-8">No tasks in progress</p>
-                </Card>
+              <TabsContent value="quotation" className="mt-6">
+                <OpportunityQuotations />
               </TabsContent>
 
-              <TabsContent value="completed" className="mt-6">
-                <Card className="p-6">
-                  <p className="text-muted-foreground text-center py-8">No completed tasks</p>
-                </Card>
+              <TabsContent value="negotiation" className="mt-6">
+                <OpportunityNegotiation />
               </TabsContent>
             </Tabs>
           </div>
