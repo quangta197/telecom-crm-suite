@@ -88,6 +88,7 @@ const OpportunityDetail = () => {
   const [activities, setActivities] = useState([...oppActivities, ...leadActivities]);
   const [activityDialogOpen, setActivityDialogOpen] = useState(false);
   const [activityType, setActivityType] = useState("call");
+  const [activityFilter, setActivityFilter] = useState("all");
   const [editingActivityId, setEditingActivityId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState({ title: "", description: "" });
 
@@ -386,11 +387,45 @@ const OpportunityDetail = () => {
               </div>
 
               <div className="px-4 py-2.5 border-b">
-                <h4 className="font-semibold text-sm">Activity History</h4>
+                <h4 className="font-semibold text-sm mb-2">Activity History</h4>
+                <div className="flex flex-wrap gap-1.5">
+                  <Button
+                    size="sm"
+                    variant={activityFilter === "all" ? "default" : "outline"}
+                    className="h-6 text-xs px-2.5 rounded-full"
+                    onClick={() => setActivityFilter("all")}
+                  >
+                    All
+                  </Button>
+                  {activityTypes.map((at) => (
+                    <Button
+                      key={at.id}
+                      size="sm"
+                      variant={activityFilter === at.id ? "default" : "outline"}
+                      className="h-6 text-xs px-2.5 rounded-full"
+                      onClick={() => setActivityFilter(at.id)}
+                    >
+                      {at.name}
+                    </Button>
+                  ))}
+                  {[{ id: "quote", name: "Quote" }, { id: "negotiation", name: "Negotiation" }].map((t) => (
+                    <Button
+                      key={t.id}
+                      size="sm"
+                      variant={activityFilter === t.id ? "default" : "outline"}
+                      className="h-6 text-xs px-2.5 rounded-full"
+                      onClick={() => setActivityFilter(t.id)}
+                    >
+                      {t.name}
+                    </Button>
+                  ))}
+                </div>
               </div>
 
               <div className="max-h-[450px] overflow-y-auto">
-                {activities.map((item) => {
+                {activities
+                  .filter((item) => activityFilter === "all" || item.type === activityFilter)
+                  .map((item) => {
                   const actType = activityTypes.find((at) => at.id === item.type);
                   // For special types (quote, negotiation), use custom icons
                   const isQuote = item.type === "quote";

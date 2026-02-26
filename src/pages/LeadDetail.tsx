@@ -80,6 +80,7 @@ const LeadDetail = () => {
   const [activities, setActivities] = useState(initialActivities);
   const [activityDialogOpen, setActivityDialogOpen] = useState(false);
   const [activityType, setActivityType] = useState<string>("call");
+  const [activityFilter, setActivityFilter] = useState("all");
   const { activityTypes } = useActivityTypesStore();
   const [activeStage, setActiveStage] = useState("qualified");
   const [convertOpen, setConvertOpen] = useState(false);
@@ -327,11 +328,34 @@ const LeadDetail = () => {
               </div>
 
               <div className="px-4 py-2.5 border-b">
-                <h4 className="font-semibold text-sm">Activity History</h4>
+                <h4 className="font-semibold text-sm mb-2">Activity History</h4>
+                <div className="flex flex-wrap gap-1.5">
+                  <Button
+                    size="sm"
+                    variant={activityFilter === "all" ? "default" : "outline"}
+                    className="h-6 text-xs px-2.5 rounded-full"
+                    onClick={() => setActivityFilter("all")}
+                  >
+                    All
+                  </Button>
+                  {activityTypes.map((at) => (
+                    <Button
+                      key={at.id}
+                      size="sm"
+                      variant={activityFilter === at.id ? "default" : "outline"}
+                      className="h-6 text-xs px-2.5 rounded-full"
+                      onClick={() => setActivityFilter(at.id)}
+                    >
+                      {at.name}
+                    </Button>
+                  ))}
+                </div>
               </div>
 
               <div className="max-h-[450px] overflow-y-auto">
-                {activities.map((item) => {
+                {activities
+                  .filter((item) => activityFilter === "all" || item.type === activityFilter)
+                  .map((item) => {
                   const actType = activityTypes.find((at) => at.id === item.type);
                   const Icon = actType ? iconMap[actType.icon] : null;
                   const color = actType?.color || "bg-primary/10";
