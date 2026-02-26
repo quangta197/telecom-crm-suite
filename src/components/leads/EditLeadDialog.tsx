@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -130,6 +132,38 @@ export const EditLeadDialog = ({ open, onOpenChange, lead, onSave }: EditLeadDia
           <div className="space-y-2">
             <Label>Assigned To</Label>
             <Input value={formData.assignedTo} onChange={e => handleChange("assignedTo", e.target.value)} />
+          </div>
+          <div className="col-span-2 space-y-2">
+            <Label>Interests</Label>
+            <div className="flex flex-wrap gap-2 mb-2">
+              {formData.interests.map((interest) => (
+                <Badge key={interest} variant="secondary" className="gap-1 pr-1">
+                  {interest}
+                  <button
+                    type="button"
+                    onClick={() => setFormData(prev => ({ ...prev, interests: prev.interests.filter(i => i !== interest) }))}
+                    className="ml-1 rounded-full hover:bg-muted p-0.5"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </Badge>
+              ))}
+            </div>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Add interest..."
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    const val = (e.target as HTMLInputElement).value.trim();
+                    if (val && !formData.interests.includes(val)) {
+                      setFormData(prev => ({ ...prev, interests: [...prev.interests, val] }));
+                      (e.target as HTMLInputElement).value = "";
+                    }
+                  }
+                }}
+              />
+            </div>
           </div>
           <div className="col-span-2 space-y-2">
             <Label>Notes</Label>
