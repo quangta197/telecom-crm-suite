@@ -40,14 +40,14 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 const colorOptions = [
-  { value: "bg-slate-500", label: "Xám" },
-  { value: "bg-red-500", label: "Đỏ" },
-  { value: "bg-orange-500", label: "Cam" },
-  { value: "bg-yellow-500", label: "Vàng" },
-  { value: "bg-green-500", label: "Xanh lá" },
-  { value: "bg-blue-500", label: "Xanh dương" },
-  { value: "bg-purple-500", label: "Tím" },
-  { value: "bg-pink-500", label: "Hồng" },
+  { value: "bg-slate-500", label: "Gray" },
+  { value: "bg-red-500", label: "Red" },
+  { value: "bg-orange-500", label: "Orange" },
+  { value: "bg-yellow-500", label: "Yellow" },
+  { value: "bg-green-500", label: "Green" },
+  { value: "bg-blue-500", label: "Blue" },
+  { value: "bg-purple-500", label: "Purple" },
+  { value: "bg-pink-500", label: "Pink" },
 ];
 
 function SortableStageItem({
@@ -131,11 +131,11 @@ export function OpportunityStageSettings() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="font-semibold">Opportunity Stages</h3>
-          <p className="text-sm text-muted-foreground">Định nghĩa các giai đoạn pipeline cho Opportunity</p>
+          <p className="text-sm text-muted-foreground">Define pipeline stages for Opportunity</p>
         </div>
         <Button className="gap-2" onClick={openAdd}>
           <Plus className="h-4 w-4" />
-          Thêm giai đoạn
+          Add Stage
         </Button>
       </div>
 
@@ -154,20 +154,20 @@ export function OpportunityStageSettings() {
         </SortableContext>
       </DndContext>
 
-      <p className="text-sm text-muted-foreground">💡 Kéo thả để sắp xếp thứ tự các giai đoạn trong pipeline</p>
+      <p className="text-sm text-muted-foreground">💡 Drag and drop to reorder pipeline stages</p>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle>{editingId ? "Sửa giai đoạn" : "Thêm giai đoạn"}</DialogTitle>
+            <DialogTitle>{editingId ? "Edit Stage" : "Add Stage"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label>Tên</Label>
-              <Input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="VD: Discovery, Proposal..." />
+              <Label>Name</Label>
+              <Input value={form.label} onChange={(e) => setForm({ ...form, label: e.target.value })} placeholder="e.g. Discovery, Proposal..." />
             </div>
             <div className="space-y-2">
-              <Label>Màu sắc</Label>
+              <Label>Color</Label>
               <Select value={form.color} onValueChange={(v) => setForm({ ...form, color: v })}>
                 <SelectTrigger>
                   <SelectValue />
@@ -185,13 +185,13 @@ export function OpportunityStageSettings() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Mô tả</Label>
-              <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Mô tả ngắn" />
+              <Label>Description</Label>
+              <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Short description" />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Hủy</Button>
-            <Button onClick={handleSave}>Lưu</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleSave}>Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

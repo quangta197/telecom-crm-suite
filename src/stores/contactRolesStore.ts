@@ -7,11 +7,11 @@ export interface ContactRoleDefinition {
 }
 
 const defaultRoles: ContactRoleDefinition[] = [
-  { id: "decision-maker", name: "Decision Maker", description: "Người ra quyết định" },
-  { id: "technical-lead", name: "Technical Lead", description: "Người phụ trách kỹ thuật" },
-  { id: "influencer", name: "Influencer", description: "Người ảnh hưởng đến quyết định" },
-  { id: "end-user", name: "End User", description: "Người dùng cuối" },
-  { id: "procurement", name: "Procurement", description: "Bộ phận mua sắm" },
+  { id: "decision-maker", name: "Decision Maker", description: "Decision maker" },
+  { id: "technical-lead", name: "Technical Lead", description: "Technical lead" },
+  { id: "influencer", name: "Influencer", description: "Influences decision" },
+  { id: "end-user", name: "End User", description: "End user" },
+  { id: "procurement", name: "Procurement", description: "Procurement department" },
 ];
 
 interface ContactRolesState {

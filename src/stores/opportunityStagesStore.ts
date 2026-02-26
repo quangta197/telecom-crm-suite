@@ -8,12 +8,12 @@ export interface OpportunityStageDefinition {
 }
 
 const defaultStages: OpportunityStageDefinition[] = [
-  { id: "discovery", label: "Discovery", color: "bg-slate-500", description: "Đang tìm hiểu nhu cầu" },
-  { id: "qualification", label: "Qualification", color: "bg-blue-500", description: "Đánh giá khả năng" },
-  { id: "proposal", label: "Proposal", color: "bg-yellow-500", description: "Đã gửi đề xuất" },
-  { id: "negotiation", label: "Negotiation", color: "bg-orange-500", description: "Đang đàm phán" },
-  { id: "closed-won", label: "Closed Won", color: "bg-green-500", description: "Thắng hợp đồng" },
-  { id: "closed-lost", label: "Closed Lost", color: "bg-red-500", description: "Mất cơ hội" },
+  { id: "discovery", label: "Discovery", color: "bg-slate-500", description: "Exploring needs" },
+  { id: "qualification", label: "Qualification", color: "bg-blue-500", description: "Evaluating fit" },
+  { id: "proposal", label: "Proposal", color: "bg-yellow-500", description: "Proposal sent" },
+  { id: "negotiation", label: "Negotiation", color: "bg-orange-500", description: "Negotiating terms" },
+  { id: "closed-won", label: "Closed Won", color: "bg-green-500", description: "Deal won" },
+  { id: "closed-lost", label: "Closed Lost", color: "bg-red-500", description: "Deal lost" },
 ];
 
 interface OpportunityStagesState {

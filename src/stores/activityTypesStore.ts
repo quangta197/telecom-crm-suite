@@ -11,14 +11,14 @@ export interface ActivityTypeDefinition {
 }
 
 export const iconOptions: { value: string; label: string; icon: LucideIcon }[] = [
-  { value: "phone", label: "Điện thoại", icon: Phone },
+  { value: "phone", label: "Phone", icon: Phone },
   { value: "mail", label: "Email", icon: Mail },
-  { value: "calendar", label: "Lịch hẹn", icon: Calendar },
-  { value: "message", label: "Ghi chú", icon: MessageSquare },
-  { value: "video", label: "Video call", icon: Video },
-  { value: "users", label: "Họp nhóm", icon: Users },
-  { value: "file", label: "Tài liệu", icon: FileText },
-  { value: "briefcase", label: "Công việc", icon: Briefcase },
+  { value: "calendar", label: "Meeting", icon: Calendar },
+  { value: "message", label: "Note", icon: MessageSquare },
+  { value: "video", label: "Video Call", icon: Video },
+  { value: "users", label: "Group Meeting", icon: Users },
+  { value: "file", label: "Document", icon: FileText },
+  { value: "briefcase", label: "Task", icon: Briefcase },
 ];
 
 export const iconMap: Record<string, LucideIcon> = Object.fromEntries(
@@ -26,10 +26,10 @@ export const iconMap: Record<string, LucideIcon> = Object.fromEntries(
 );
 
 const defaultActivityTypes: ActivityTypeDefinition[] = [
-  { id: "call", name: "Call", icon: "phone", color: "bg-blue-500", description: "Gọi điện thoại" },
-  { id: "email", name: "Email", icon: "mail", color: "bg-green-500", description: "Gửi email" },
-  { id: "meeting", name: "Meeting", icon: "calendar", color: "bg-orange-500", description: "Cuộc họp / Lịch hẹn" },
-  { id: "note", name: "Note", icon: "message", color: "bg-purple-500", description: "Ghi chú" },
+  { id: "call", name: "Call", icon: "phone", color: "bg-blue-500", description: "Phone call" },
+  { id: "email", name: "Email", icon: "mail", color: "bg-green-500", description: "Send email" },
+  { id: "meeting", name: "Meeting", icon: "calendar", color: "bg-orange-500", description: "Meeting / Appointment" },
+  { id: "note", name: "Note", icon: "message", color: "bg-purple-500", description: "Note" },
 ];
 
 interface ActivityTypesState {

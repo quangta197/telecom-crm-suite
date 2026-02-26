@@ -43,14 +43,14 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 const colorOptions = [
-  { value: "bg-slate-500", label: "Xám" },
-  { value: "bg-red-500", label: "Đỏ" },
-  { value: "bg-orange-500", label: "Cam" },
-  { value: "bg-yellow-500", label: "Vàng" },
-  { value: "bg-green-500", label: "Xanh lá" },
-  { value: "bg-blue-500", label: "Xanh dương" },
-  { value: "bg-purple-500", label: "Tím" },
-  { value: "bg-pink-500", label: "Hồng" },
+  { value: "bg-slate-500", label: "Gray" },
+  { value: "bg-red-500", label: "Red" },
+  { value: "bg-orange-500", label: "Orange" },
+  { value: "bg-yellow-500", label: "Yellow" },
+  { value: "bg-green-500", label: "Green" },
+  { value: "bg-blue-500", label: "Blue" },
+  { value: "bg-purple-500", label: "Purple" },
+  { value: "bg-pink-500", label: "Pink" },
 ];
 
 function SortableActivityItem({
@@ -141,12 +141,12 @@ export function ActivityTypeSettings() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="font-semibold">Loại hoạt động</h3>
-          <p className="text-sm text-muted-foreground">Định nghĩa các loại hoạt động sử dụng trong Lead, Opportunity...</p>
+          <h3 className="font-semibold">Activity Types</h3>
+          <p className="text-sm text-muted-foreground">Define activity types used in Lead, Opportunity...</p>
         </div>
         <Button className="gap-2" onClick={openAdd}>
           <Plus className="h-4 w-4" />
-          Thêm loại
+          Add Type
         </Button>
       </div>
 
@@ -165,17 +165,17 @@ export function ActivityTypeSettings() {
         </SortableContext>
       </DndContext>
 
-      <p className="text-sm text-muted-foreground">💡 Kéo thả để sắp xếp thứ tự hiển thị</p>
+      <p className="text-sm text-muted-foreground">💡 Drag and drop to reorder display order</p>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle>{editingId ? "Sửa loại hoạt động" : "Thêm loại hoạt động"}</DialogTitle>
+            <DialogTitle>{editingId ? "Edit Activity Type" : "Add Activity Type"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label>Tên</Label>
-              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="VD: Call, Email..." />
+              <Label>Name</Label>
+              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Call, Email..." />
             </div>
             <div className="space-y-2">
               <Label>Icon</Label>
@@ -199,7 +199,7 @@ export function ActivityTypeSettings() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Màu sắc</Label>
+              <Label>Color</Label>
               <Select value={form.color} onValueChange={(v) => setForm({ ...form, color: v })}>
                 <SelectTrigger>
                   <SelectValue />
@@ -217,13 +217,13 @@ export function ActivityTypeSettings() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Mô tả</Label>
-              <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Mô tả ngắn" />
+              <Label>Description</Label>
+              <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Short description" />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Hủy</Button>
-            <Button onClick={handleSave}>Lưu</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleSave}>Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

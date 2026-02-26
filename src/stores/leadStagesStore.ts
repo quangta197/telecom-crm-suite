@@ -8,10 +8,10 @@ export interface LeadStageDefinition {
 }
 
 const defaultStages: LeadStageDefinition[] = [
-  { id: "new", label: "New", color: "bg-slate-500", description: "Lead mới tiếp nhận" },
-  { id: "contacted", label: "Contacted", color: "bg-blue-500", description: "Đã liên hệ" },
-  { id: "qualified", label: "Qualified", color: "bg-orange-500", description: "Đã đánh giá đủ điều kiện" },
-  { id: "converted", label: "Converted", color: "bg-green-500", description: "Đã chuyển đổi thành cơ hội" },
+  { id: "new", label: "New", color: "bg-slate-500", description: "Newly received lead" },
+  { id: "contacted", label: "Contacted", color: "bg-blue-500", description: "Contacted" },
+  { id: "qualified", label: "Qualified", color: "bg-orange-500", description: "Qualified lead" },
+  { id: "converted", label: "Converted", color: "bg-green-500", description: "Converted to opportunity" },
 ];
 
 interface LeadStagesState {

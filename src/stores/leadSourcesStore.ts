@@ -8,12 +8,12 @@ export interface LeadSourceDefinition {
 }
 
 const defaultSources: LeadSourceDefinition[] = [
-  { id: "website", name: "Website", color: "bg-blue-500", description: "Từ website công ty" },
-  { id: "referral", name: "Referral", color: "bg-green-500", description: "Giới thiệu từ khách hàng" },
-  { id: "social", name: "Social Media", color: "bg-purple-500", description: "Mạng xã hội" },
-  { id: "cold-call", name: "Cold Call", color: "bg-orange-500", description: "Gọi điện trực tiếp" },
-  { id: "event", name: "Event", color: "bg-pink-500", description: "Sự kiện, hội thảo" },
-  { id: "partner", name: "Partner", color: "bg-yellow-500", description: "Đối tác giới thiệu" },
+  { id: "website", name: "Website", color: "bg-blue-500", description: "From company website" },
+  { id: "referral", name: "Referral", color: "bg-green-500", description: "Customer referral" },
+  { id: "social", name: "Social Media", color: "bg-purple-500", description: "Social media channels" },
+  { id: "cold-call", name: "Cold Call", color: "bg-orange-500", description: "Direct cold calling" },
+  { id: "event", name: "Event", color: "bg-pink-500", description: "Events and seminars" },
+  { id: "partner", name: "Partner", color: "bg-yellow-500", description: "Partner referral" },
 ];
 
 interface LeadSourcesState {

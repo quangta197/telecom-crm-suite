@@ -58,8 +58,8 @@ export function TemplateList({
       const newTemplates = arrayMove(templates, oldIndex, newIndex);
       onReorder(newTemplates);
       toast({
-        title: "Đã cập nhật thứ tự",
-        description: "Thứ tự biểu mẫu đã được thay đổi",
+        title: "Order updated",
+        description: "Template order has been changed",
       });
     }
   }

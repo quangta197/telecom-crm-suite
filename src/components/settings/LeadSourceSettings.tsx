@@ -21,14 +21,14 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 
 const colorOptions = [
-  { value: "bg-slate-500", label: "Xám" },
-  { value: "bg-red-500", label: "Đỏ" },
-  { value: "bg-orange-500", label: "Cam" },
-  { value: "bg-yellow-500", label: "Vàng" },
-  { value: "bg-green-500", label: "Xanh lá" },
-  { value: "bg-blue-500", label: "Xanh dương" },
-  { value: "bg-purple-500", label: "Tím" },
-  { value: "bg-pink-500", label: "Hồng" },
+  { value: "bg-slate-500", label: "Gray" },
+  { value: "bg-red-500", label: "Red" },
+  { value: "bg-orange-500", label: "Orange" },
+  { value: "bg-yellow-500", label: "Yellow" },
+  { value: "bg-green-500", label: "Green" },
+  { value: "bg-blue-500", label: "Blue" },
+  { value: "bg-purple-500", label: "Purple" },
+  { value: "bg-pink-500", label: "Pink" },
 ];
 
 function SortableSourceItem({ item, onEdit, onDelete }: { item: LeadSourceDefinition; onEdit: () => void; onDelete: () => void }) {
@@ -88,9 +88,9 @@ export function LeadSourceSettings() {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="font-semibold">Lead Sources</h3>
-          <p className="text-sm text-muted-foreground">Định nghĩa các nguồn tiếp nhận Lead</p>
+          <p className="text-sm text-muted-foreground">Define lead acquisition sources</p>
         </div>
-        <Button className="gap-2" onClick={openAdd}><Plus className="h-4 w-4" /> Thêm nguồn</Button>
+        <Button className="gap-2" onClick={openAdd}><Plus className="h-4 w-4" /> Add Source</Button>
       </div>
 
       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
@@ -103,20 +103,20 @@ export function LeadSourceSettings() {
         </SortableContext>
       </DndContext>
 
-      <p className="text-sm text-muted-foreground">💡 Kéo thả để sắp xếp thứ tự hiển thị</p>
+      <p className="text-sm text-muted-foreground">💡 Drag and drop to reorder display order</p>
 
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
         <DialogContent className="sm:max-w-[400px]">
           <DialogHeader>
-            <DialogTitle>{editingId ? "Sửa nguồn" : "Thêm nguồn"}</DialogTitle>
+            <DialogTitle>{editingId ? "Edit Source" : "Add Source"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-2">
-              <Label>Tên</Label>
-              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="VD: Website, Referral..." />
+              <Label>Name</Label>
+              <Input value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} placeholder="e.g. Website, Referral..." />
             </div>
             <div className="space-y-2">
-              <Label>Màu sắc</Label>
+              <Label>Color</Label>
               <Select value={form.color} onValueChange={(v) => setForm({ ...form, color: v })}>
                 <SelectTrigger><SelectValue /></SelectTrigger>
                 <SelectContent>
@@ -129,13 +129,13 @@ export function LeadSourceSettings() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>Mô tả</Label>
-              <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Mô tả ngắn" />
+              <Label>Description</Label>
+              <Input value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} placeholder="Short description" />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDialogOpen(false)}>Hủy</Button>
-            <Button onClick={handleSave}>Lưu</Button>
+            <Button variant="outline" onClick={() => setDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleSave}>Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
