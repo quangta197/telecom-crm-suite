@@ -13,6 +13,11 @@ import { OpportunityServiceProducts } from "@/components/opportunities/Opportuni
 import { OpportunityQuotations } from "@/components/opportunities/OpportunityQuotations";
 import { OpportunityNegotiation } from "@/components/opportunities/OpportunityNegotiation";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { AddActivityDialog } from "@/components/layout/AddActivityDialog";
+import { useActivityTypesStore, iconMap } from "@/stores/activityTypesStore";
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { 
   ArrowLeft, 
   Users, 
@@ -20,12 +25,10 @@ import {
   Edit, 
   MoreHorizontal, 
   Check, 
-  Phone, 
-  Calendar, 
-  MessageSquare, 
-  Mail,
+  Plus,
   FileText,
-  ShoppingCart
+  ShoppingCart,
+  Handshake,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -54,51 +57,44 @@ const opportunityData = {
   expectedSpend: "1,000,000",
 };
 
-
-const activityItems = [
-  {
-    id: "1",
-    code: "DH02345646",
-    date: "05/09/2019",
-    description: "Order for A Chau Bank",
-    amount: "50,000,000",
-    status: "Not Executed",
-    detailDescription: "-",
-    executor: "Nguyen Bao Ngoc",
-    type: "order",
-  },
-  {
-    id: "2",
-    code: "BG12031515",
-    date: "05/09/2019",
-    description: "",
-    amount: "20,000,000",
-    status: "Not Approved",
-    detailDescription: "-",
-    executor: "Nguyen Bao Ngoc",
-    type: "quote",
-  },
-  {
-    id: "3",
-    code: "Opportunity for MISA Corp",
-    date: "04/09/2019",
-    description: "",
-    productType: "AMIS.VN",
-    amount: "3,000,000",
-    stage: "Training Deployment",
-    detailDescription: "-",
-    executor: "Nguyen Bao Ngoc",
-    type: "opportunity",
-  },
+const leadActivities = [
+  { id: "l1", type: "call", title: "Discovery call", description: "Discussed requirements and budget", author: "John Smith", date: "01/15/2024", source: "lead" as const },
+  { id: "l2", type: "email", title: "Information sent", description: "Sent product brochure", author: "John Smith", date: "01/13/2024", source: "lead" as const },
+  { id: "l3", type: "note", title: "Lead qualified", description: "Budget confirmed, timeline Q1 2024", author: "John Smith", date: "01/12/2024", source: "lead" as const },
 ];
+
+const oppActivities = [
+  { id: "o1", type: "meeting", title: "Proposal presentation", description: "Presented solution to stakeholders", author: "Nguyen Bao Ngoc", date: "06/01/2024", source: "opportunity" as const },
+  { id: "o2", type: "call", title: "Follow-up call", description: "Discussed pricing details and contract terms", author: "Nguyen Bao Ngoc", date: "05/28/2024", source: "opportunity" as const },
+  { id: "o3", type: "quote", title: "Quotation QT-2024-001 sent", description: "Enterprise Network Package - 5,000,000 VND", author: "Nguyen Bao Ngoc", date: "05/25/2024", source: "opportunity" as const },
+  { id: "o4", type: "negotiation", title: "Price negotiation", description: "Customer requested 10% discount, counter-offered 7%", author: "Nguyen Bao Ngoc", date: "05/20/2024", source: "opportunity" as const },
+  { id: "o5", type: "email", title: "Contract draft sent", description: "Sent contract for review", author: "Nguyen Bao Ngoc", date: "05/15/2024", source: "opportunity" as const },
+];
+
+const sourceLabels: Record<string, { label: string; className: string }> = {
+  lead: { label: "From Lead", className: "bg-amber-500/10 text-amber-600 border-amber-200" },
+  opportunity: { label: "Opportunity", className: "bg-primary/10 text-primary border-primary/20" },
+};
 
 const OpportunityDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("detail");
-  const [activityTab, setActivityTab] = useState("opportunity");
   const { stages: stageList } = useOpportunityStagesStore();
   const [activeStage, setActiveStage] = useState("closed-won");
+  const { activityTypes } = useActivityTypesStore();
+  const [activities, setActivities] = useState([...oppActivities, ...leadActivities]);
+  const [activityDialogOpen, setActivityDialogOpen] = useState(false);
+  const [activityType, setActivityType] = useState("call");
+
+  const handleAddActivity = (activity: { type: string; title: string; description: string; author: string; date: string }) => {
+    setActivities([{ id: String(Date.now()), source: "opportunity" as const, ...activity }, ...activities]);
+  };
+
+  const openActivityDialog = (type: string) => {
+    setActivityType(type);
+    setActivityDialogOpen(true);
+  };
 
   return (
     <MainLayout showFilters={false} showActivity={false}>
@@ -331,123 +327,87 @@ const OpportunityDetail = () => {
           {/* Right - Activity Sidebar */}
           <div className="col-span-1">
             <Card className="p-0 overflow-hidden">
-
-              {/* Tabs */}
-              <div className="flex border-b">
-                <button
-                  onClick={() => setActivityTab("opportunity")}
-                  className={cn(
-                    "flex-1 py-2 text-sm font-medium border-b-2 transition-colors",
-                    activityTab === "opportunity" 
-                      ? "border-primary text-primary" 
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  Opportunity
-                </button>
-                <button
-                  onClick={() => setActivityTab("customer")}
-                  className={cn(
-                    "flex-1 py-2 text-sm font-medium border-b-2 transition-colors",
-                    activityTab === "customer" 
-                      ? "border-primary text-primary" 
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  Customer
-                </button>
-                <button
-                  onClick={() => setActivityTab("purchase")}
-                  className={cn(
-                    "flex-1 py-2 text-sm font-medium border-b-2 transition-colors",
-                    activityTab === "purchase" 
-                      ? "border-primary text-primary" 
-                      : "border-transparent text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  Purchase
-                </button>
+              <div className="flex items-center justify-between p-3 border-b">
+                <div className="flex items-center gap-2">
+                  {activityTypes.slice(0, 4).map((at) => {
+                    const Icon = iconMap[at.icon];
+                    return (
+                      <Button key={at.id} variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-primary" onClick={() => openActivityDialog(at.id)}>
+                        {Icon && <Icon className="h-4 w-4" />}
+                      </Button>
+                    );
+                  })}
+                </div>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button size="sm" className="gap-1.5 h-8 text-xs">
+                      <Plus className="h-3.5 w-3.5" /> Add
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {activityTypes.map((at) => {
+                      const Icon = iconMap[at.icon];
+                      return (
+                        <DropdownMenuItem key={at.id} onClick={() => openActivityDialog(at.id)} className="gap-2">
+                          <div className={`h-5 w-5 rounded-full ${at.color} flex items-center justify-center text-white`}>
+                            {Icon && <Icon className="h-3 w-3" />}
+                          </div>
+                          {at.name}
+                        </DropdownMenuItem>
+                      );
+                    })}
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
 
-              {/* Activity Subtabs */}
-              <div className="flex border-b text-xs">
-                <button className="flex-1 py-2 border-b-2 border-primary text-primary font-medium">
-                  Activity
-                </button>
-                <button className="flex-1 py-2 text-muted-foreground hover:text-foreground">
-                  Purchase
-                </button>
+              <div className="px-4 py-2.5 border-b">
+                <h4 className="font-semibold text-sm">Activity History</h4>
               </div>
 
-              {/* Activity List */}
-              <div className="max-h-[500px] overflow-y-auto">
-                {activityItems.map((item) => (
-                  <div key={item.id} className="p-4 border-b hover:bg-muted/50 transition-colors">
-                    <div className="flex items-start gap-3">
-                      <Avatar className="h-10 w-10 flex-shrink-0">
-                        <AvatarFallback className={cn(
-                          "text-xs",
-                          item.type === "order" && "bg-amber-100 text-amber-700",
-                          item.type === "quote" && "bg-green-100 text-green-700",
-                          item.type === "opportunity" && "bg-blue-100 text-blue-700"
-                        )}>
-                          {item.type === "order" && <ShoppingCart className="h-4 w-4" />}
-                          {item.type === "quote" && <FileText className="h-4 w-4" />}
-                          {item.type === "opportunity" && "CH"}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className="font-semibold text-sm text-primary">{item.code}</span>
+              <div className="max-h-[450px] overflow-y-auto">
+                {activities.map((item) => {
+                  const actType = activityTypes.find((at) => at.id === item.type);
+                  // For special types (quote, negotiation), use custom icons
+                  const isQuote = item.type === "quote";
+                  const isNegotiation = item.type === "negotiation";
+                  const Icon = isQuote ? FileText : isNegotiation ? Handshake : actType ? iconMap[actType.icon] : null;
+                  const color = isQuote ? "bg-success" : isNegotiation ? "bg-info" : actType?.color || "bg-primary/10";
+                  const srcInfo = item.source ? sourceLabels[item.source] : null;
+
+                  return (
+                    <div key={item.id} className="px-4 py-3 border-b last:border-b-0 hover:bg-muted/30 transition-colors">
+                      <div className="flex items-start gap-3">
+                        <div className={`h-9 w-9 rounded-full ${color} flex items-center justify-center flex-shrink-0 text-white`}>
+                          {Icon && <Icon className="h-3.5 w-3.5" />}
                         </div>
-                        <p className="text-xs text-muted-foreground">{item.date}</p>
-                        
-                        {item.description && (
-                          <div className="mt-2 text-xs">
-                            <span className="text-muted-foreground">Description: </span>
-                            <span>{item.description}</span>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            <p className="font-semibold text-sm leading-tight">{item.title}</p>
+                            {srcInfo && (
+                              <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${srcInfo.className}`}>
+                                {srcInfo.label}
+                              </Badge>
+                            )}
                           </div>
-                        )}
-                        
-                        {item.productType && (
-                          <div className="mt-1 text-xs">
-                            <span className="text-muted-foreground">Product Type: </span>
-                            <span>{item.productType}</span>
-                          </div>
-                        )}
-                        
-                        <div className="mt-1 text-xs">
-                          <span className="text-muted-foreground">Amount: </span>
-                          <span>{item.amount}</span>
-                        </div>
-                        
-                        {item.status && (
-                          <div className="mt-1 text-xs">
-                            <span className="text-muted-foreground">Status: </span>
-                            <span>{item.status}</span>
-                          </div>
-                        )}
-                        
-                        {item.stage && (
-                          <div className="mt-1 text-xs">
-                            <span className="text-muted-foreground">Stage: </span>
-                            <span>{item.stage}</span>
-                          </div>
-                        )}
-                        
-                        <div className="mt-1 text-xs">
-                          <span className="text-muted-foreground">Executor: </span>
-                          <span>{item.executor}</span>
+                          <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
+                          <p className="text-xs text-muted-foreground mt-1">{item.author} • {item.date}</p>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </Card>
           </div>
         </div>
       </div>
+
+      <AddActivityDialog
+        open={activityDialogOpen}
+        onOpenChange={setActivityDialogOpen}
+        type={activityType}
+        onAdd={handleAddActivity}
+      />
     </MainLayout>
   );
 };
