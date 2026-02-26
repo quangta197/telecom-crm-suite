@@ -26,6 +26,7 @@ interface ConvertToOpportunityDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   lead: LeadData;
+  onConverted?: () => void;
 }
 
 const stages = ["Discovery", "Qualification", "Proposal", "Negotiation", "Closed Won"];
@@ -35,6 +36,7 @@ export function ConvertToOpportunityDialog({
   open,
   onOpenChange,
   lead,
+  onConverted,
 }: ConvertToOpportunityDialogProps) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -59,6 +61,7 @@ export function ConvertToOpportunityDialog({
       description: `Opportunity "${formData.title}" has been created.`,
     });
 
+    onConverted?.();
     onOpenChange(false);
     navigate("/opportunities");
   };
