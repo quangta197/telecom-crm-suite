@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Plus, Eye, FileText, ShieldCheck, UserCheck, Trash2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { useQuotationTemplatesStore } from "@/stores/quotationTemplatesStore";
 
 type ApprovalType = "self" | "manager";
 
@@ -22,6 +23,7 @@ interface Quotation {
   id: number;
   code: string;
   title: string;
+  template: string;
   totalValue: string;
   discount: string;
   finalValue: string;
@@ -34,8 +36,8 @@ interface Quotation {
 }
 
 const initialQuotations: Quotation[] = [
-  { id: 1, code: "QT-2024-001", title: "Enterprise Network Package", totalValue: "5,000,000", discount: "5%", finalValue: "4,750,000", status: "Sent", createdDate: "01/06/2024", validUntil: "02/15/2024", approvalType: "self" },
-  { id: 2, code: "QT-2024-003", title: "Cloud Migration Standard", totalValue: "3,000,000", discount: "3%", finalValue: "2,910,000", status: "Draft", createdDate: "05/06/2024", validUntil: "06/15/2024", approvalType: "manager", approvalStatus: "pending" },
+  { id: 1, code: "QT-2024-001", title: "Enterprise Network Package", template: "Enterprise Internet Package", totalValue: "5,000,000", discount: "5%", finalValue: "4,750,000", status: "Sent", createdDate: "01/06/2024", validUntil: "02/15/2024", approvalType: "self" },
+  { id: 2, code: "QT-2024-003", title: "Cloud Migration Standard", template: "Cloud Services", totalValue: "3,000,000", discount: "3%", finalValue: "2,910,000", status: "Draft", createdDate: "05/06/2024", validUntil: "06/15/2024", approvalType: "manager", approvalStatus: "pending" },
 ];
 
 const statusColors: Record<string, string> = {
@@ -64,7 +66,9 @@ const managerStatusOptions = ["Draft"];
 export const OpportunityQuotations = () => {
   const [quotations, setQuotations] = useState<Quotation[]>(initialQuotations);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [form, setForm] = useState({ title: "", totalValue: "", discount: "", status: "Draft", validUntil: "", approvalType: "self" as ApprovalType });
+  const { templates } = useQuotationTemplatesStore();
+  const defaultTemplate = templates.find((t) => t.isDefault);
+  const [form, setForm] = useState({ title: "", totalValue: "", discount: "", status: "Draft", validUntil: "", approvalType: "self" as ApprovalType, template: defaultTemplate?.name || "" });
 
   const handleAdd = () => {
     const total = parseInt(form.totalValue.replace(/,/g, ""), 10) || 0;
@@ -77,6 +81,7 @@ export const OpportunityQuotations = () => {
       id: Date.now(),
       code,
       title: form.title,
+      template: form.template,
       totalValue: total.toLocaleString(),
       discount: `${discountPct}%`,
       finalValue: final.toLocaleString(),
@@ -87,7 +92,7 @@ export const OpportunityQuotations = () => {
       approvalStatus: form.approvalType === "manager" ? "pending" : undefined,
     };
     setQuotations([...quotations, newQ]);
-    setForm({ title: "", totalValue: "", discount: "", status: "Draft", validUntil: "", approvalType: "self" });
+    setForm({ title: "", totalValue: "", discount: "", status: "Draft", validUntil: "", approvalType: "self", template: defaultTemplate?.name || "" });
     setDialogOpen(false);
   };
 
@@ -103,7 +108,7 @@ export const OpportunityQuotations = () => {
     );
   };
 
-  const canSave = form.title.trim() && form.totalValue.trim();
+  const canSave = form.title.trim() && form.totalValue.trim() && form.template;
 
   return (
     <Card className="p-6">
@@ -125,6 +130,7 @@ export const OpportunityQuotations = () => {
             <TableRow className="bg-muted/50">
               <TableHead>Quote ID</TableHead>
               <TableHead>Title</TableHead>
+              <TableHead>Template</TableHead>
               <TableHead>Type</TableHead>
               <TableHead className="text-right">Total</TableHead>
               <TableHead>Discount</TableHead>
@@ -140,6 +146,9 @@ export const OpportunityQuotations = () => {
               <TableRow key={q.id} className="hover:bg-muted/50 cursor-pointer">
                 <TableCell className="font-mono text-sm">{q.code}</TableCell>
                 <TableCell className="font-medium">{q.title}</TableCell>
+                <TableCell>
+                  <Badge variant="outline" className="text-xs">{q.template}</Badge>
+                </TableCell>
                 <TableCell>
                   <Tooltip>
                     <TooltipTrigger>
@@ -223,6 +232,23 @@ export const OpportunityQuotations = () => {
               </div>
             </div>
 
+            <div className="space-y-2">
+              <Label>Template <span className="text-destructive">*</span></Label>
+              <Select value={form.template} onValueChange={(v) => setForm({ ...form, template: v })}>
+                <SelectTrigger><SelectValue placeholder="Select template" /></SelectTrigger>
+                <SelectContent>
+                  {templates.map((t) => (
+                    <SelectItem key={t.id} value={t.name}>
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-3.5 w-3.5 text-muted-foreground" />
+                        {t.name}
+                        {t.isDefault && <Badge variant="secondary" className="text-[10px] px-1.5 py-0">Default</Badge>}
+                      </div>
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
             <div className="space-y-2">
               <Label>Title <span className="text-destructive">*</span></Label>
               <Input placeholder="Quotation title" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
