@@ -20,6 +20,7 @@ import {
 import { cn } from "@/lib/utils";
 import { EditLeadDialog, LeadData } from "@/components/leads/EditLeadDialog";
 import { LeadNotes } from "@/components/leads/LeadNotes";
+import { LeadAttachments } from "@/components/leads/LeadAttachments";
 
 const initialLeadData: LeadData = {
   id: 1,
@@ -223,9 +224,7 @@ const LeadDetail = () => {
               </TabsContent>
 
               <TabsContent value="attachments" className="mt-6">
-                <Card className="p-6">
-                  <p className="text-muted-foreground text-center py-8">No attachments yet</p>
-                </Card>
+                <LeadAttachments />
               </TabsContent>
             </Tabs>
           </div>
