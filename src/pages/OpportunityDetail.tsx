@@ -98,6 +98,20 @@ const OpportunityDetail = () => {
   const { fields: customFieldDefs } = useOpportunityCustomFieldsStore();
   const [activeStage, setActiveStage] = useState("closed-won");
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, string>>(opportunityData.customFields);
+  const [generalFieldValues, setGeneralFieldValues] = useState<Record<string, string>>({
+    customer: opportunityData.customer,
+    opportunityName: opportunityData.opportunityName,
+    contact: opportunityData.contact,
+    opportunityType: opportunityData.opportunityType,
+    stage: opportunityData.stage,
+    successRate: String(opportunityData.successRate),
+    expectedRevenue: opportunityData.expectedRevenue,
+    expectedCloseDate: opportunityData.expectedCloseDate,
+    source: opportunityData.source,
+    winLossReason: opportunityData.winLossReason,
+    decisionPerson: opportunityData.decisionPerson,
+    position: opportunityData.position,
+  });
   const [editingFieldId, setEditingFieldId] = useState<string | null>(null);
   const [editingValue, setEditingValue] = useState("");
   const editInputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
@@ -139,14 +153,19 @@ const OpportunityDetail = () => {
     setEditingActivityId(null);
   };
 
-  const startEditField = (fieldId: string) => {
+  const startEditField = (fieldId: string, currentValue: string) => {
     setEditingFieldId(fieldId);
-    setEditingValue(customFieldValues[fieldId] || "");
+    setEditingValue(currentValue || "");
   };
 
-  const saveEditField = () => {
+  const saveField = (store: "general" | "custom") => {
     if (editingFieldId) {
-      setCustomFieldValues((prev) => ({ ...prev, [editingFieldId]: editingValue }));
+      const rawId = editingFieldId.replace(/^(gen_|ext_)/, "");
+      if (store === "general") {
+        setGeneralFieldValues((prev) => ({ ...prev, [rawId]: editingValue }));
+      } else {
+        setCustomFieldValues((prev) => ({ ...prev, [rawId]: editingValue }));
+      }
       setEditingFieldId(null);
     }
   };
@@ -155,10 +174,10 @@ const OpportunityDetail = () => {
     setEditingFieldId(null);
   };
 
-  const handleFieldKeyDown = (e: React.KeyboardEvent) => {
+  const makeFieldKeyDown = (store: "general" | "custom") => (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      saveEditField();
+      saveField(store);
     } else if (e.key === "Escape") {
       cancelEditField();
     }
@@ -299,24 +318,58 @@ const OpportunityDetail = () => {
                   <h3 className="font-semibold mb-6">General Information</h3>
                   <div className="grid grid-cols-2 gap-x-12 gap-y-4 text-sm">
                     {[
-                      { label: "Customer", value: opportunityData.customer, isLink: true },
-                      { label: "Opportunity Name", value: opportunityData.opportunityName },
-                      { label: "Contact", value: opportunityData.contact, isLink: true },
-                      { label: "Opportunity Type", value: opportunityData.opportunityType },
-                      { label: "Stage", value: opportunityData.stage },
-                      { label: "Success Rate (%)", value: opportunityData.successRate },
-                      { label: "Expected Revenue", value: opportunityData.expectedRevenue },
-                      { label: "Expected Close Date", value: opportunityData.expectedCloseDate },
-                      { label: "Source", value: opportunityData.source },
-                      { label: "Win/Loss Reason", value: opportunityData.winLossReason },
-                      { label: "Decision Person", value: opportunityData.decisionPerson },
-                      { label: "Position", value: opportunityData.position },
+                      { key: "customer", label: "Customer", isLink: true },
+                      { key: "opportunityName", label: "Opportunity Name" },
+                      { key: "contact", label: "Contact", isLink: true },
+                      { key: "opportunityType", label: "Opportunity Type", type: "select" as const, options: ["New Customer", "Existing Customer", "Upsell", "Cross-sell"] },
+                      { key: "stage", label: "Stage", type: "select" as const, options: stageList.map((s) => s.label) },
+                      { key: "successRate", label: "Success Rate (%)", type: "number" as const },
+                      { key: "expectedRevenue", label: "Expected Revenue" },
+                      { key: "expectedCloseDate", label: "Expected Close Date", type: "date" as const },
+                      { key: "source", label: "Source" },
+                      { key: "winLossReason", label: "Win/Loss Reason" },
+                      { key: "decisionPerson", label: "Decision Person" },
+                      { key: "position", label: "Position" },
                     ].map((item) => (
-                      <div key={item.label} className="flex justify-between py-2 border-b">
+                      <div key={item.key} className="flex justify-between items-center py-2 border-b min-h-[40px]">
                         <span className="text-muted-foreground">{item.label}</span>
-                        <span className={item.isLink ? "text-primary font-medium" : ""}>
-                          {item.value || "-"}
-                        </span>
+                        {editingFieldId === `gen_${item.key}` ? (
+                          <div className="flex items-center gap-1.5 max-w-[60%]">
+                            {item.type === "select" && item.options ? (
+                              <UISelect value={editingValue} onValueChange={(v) => { setGeneralFieldValues((prev) => ({ ...prev, [item.key]: v })); setEditingFieldId(null); }}>
+                                <UISelectTrigger className="h-8 text-sm w-[180px]">
+                                  <UISelectValue placeholder="Chọn..." />
+                                </UISelectTrigger>
+                                <UISelectContent>
+                                  {item.options.map((opt) => (
+                                    <UISelectItem key={opt} value={opt}>{opt}</UISelectItem>
+                                  ))}
+                                </UISelectContent>
+                              </UISelect>
+                            ) : (
+                              <Input
+                                type={item.type === "number" ? "number" : item.type === "date" ? "date" : "text"}
+                                value={editingValue}
+                                onChange={(e) => setEditingValue(e.target.value)}
+                                onKeyDown={makeFieldKeyDown("general")}
+                                onBlur={() => saveField("general")}
+                                className="h-8 text-sm w-[180px]"
+                                autoFocus
+                              />
+                            )}
+                          </div>
+                        ) : (
+                          <span
+                            className={cn(
+                              "cursor-pointer hover:bg-muted px-2 py-1 rounded transition-colors min-w-[40px] text-right",
+                              item.isLink && "text-primary font-medium"
+                            )}
+                            onClick={() => startEditField(`gen_${item.key}`, generalFieldValues[item.key])}
+                            title="Click để chỉnh sửa"
+                          >
+                            {generalFieldValues[item.key] || <span className="text-muted-foreground/50 italic">Click để nhập...</span>}
+                          </span>
+                        )}
                       </div>
                     ))}
                   </div>
@@ -330,10 +383,10 @@ const OpportunityDetail = () => {
                       {customFieldDefs.map((field) => (
                         <div key={field.id} className="flex justify-between items-center py-2 border-b group min-h-[40px]">
                           <span className="text-muted-foreground">{field.label}</span>
-                          {editingFieldId === field.id ? (
+                          {editingFieldId === `ext_${field.id}` ? (
                             <div className="flex items-center gap-1.5 max-w-[60%]">
                               {field.type === "select" && field.options ? (
-                                <UISelect value={editingValue} onValueChange={(v) => { setEditingValue(v); setCustomFieldValues((prev) => ({ ...prev, [field.id]: v })); setEditingFieldId(null); }}>
+                                <UISelect value={editingValue} onValueChange={(v) => { setCustomFieldValues((prev) => ({ ...prev, [field.id]: v })); setEditingFieldId(null); }}>
                                   <UISelectTrigger className="h-8 text-sm w-[180px]">
                                     <UISelectValue placeholder="Chọn..." />
                                   </UISelectTrigger>
@@ -345,22 +398,20 @@ const OpportunityDetail = () => {
                                 </UISelect>
                               ) : field.type === "textarea" ? (
                                 <Textarea
-                                  ref={editInputRef as React.RefObject<HTMLTextAreaElement>}
                                   value={editingValue}
                                   onChange={(e) => setEditingValue(e.target.value)}
-                                  onKeyDown={handleFieldKeyDown}
-                                  onBlur={saveEditField}
+                                  onKeyDown={makeFieldKeyDown("custom")}
+                                  onBlur={() => saveField("custom")}
                                   className="h-16 text-sm w-[180px]"
                                   autoFocus
                                 />
                               ) : (
                                 <Input
-                                  ref={editInputRef as React.RefObject<HTMLInputElement>}
                                   type={field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
                                   value={editingValue}
                                   onChange={(e) => setEditingValue(e.target.value)}
-                                  onKeyDown={handleFieldKeyDown}
-                                  onBlur={saveEditField}
+                                  onKeyDown={makeFieldKeyDown("custom")}
+                                  onBlur={() => saveField("custom")}
                                   className="h-8 text-sm w-[180px]"
                                   autoFocus
                                 />
@@ -369,7 +420,7 @@ const OpportunityDetail = () => {
                           ) : (
                             <span
                               className="cursor-pointer hover:bg-muted px-2 py-1 rounded transition-colors min-w-[40px] text-right"
-                              onClick={() => startEditField(field.id)}
+                              onClick={() => startEditField(`ext_${field.id}`, customFieldValues[field.id])}
                               title="Click để chỉnh sửa"
                             >
                               {customFieldValues[field.id] || <span className="text-muted-foreground/50 italic">Click để nhập...</span>}
