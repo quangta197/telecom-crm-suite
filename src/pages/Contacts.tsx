@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
@@ -11,8 +11,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Plus, MoreHorizontal, Phone, ArrowUpDown, ArrowUp, ArrowDown } from "lucide-react";
+import { Plus, MoreHorizontal, Phone } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SortableTableHead } from "@/components/ui/sortable-table-head";
+import { useTableSort } from "@/hooks/use-table-sort";
 
 const contacts = [
   { id: 1, code: "CT00015", name: "MISA Corporation", taxCode: "0102345646", phone: "0362 855 655", email: "info@misa.vn", address: "Phạm Văn Bạch, Cầu Giấy, Hà Nội", industry: "Software", contactPerson: "Nguyễn Văn A" },
@@ -27,10 +29,9 @@ const contacts = [
   { id: 10, code: "CT00025", name: "Coffee 69", taxCode: "0102345655", phone: "0362 822 833", email: "order@coffee69.vn", address: "Bình Thạnh, TP.HCM", industry: "F&B", contactPerson: "Mai Thị K" },
 ];
 
-type SortKey = keyof typeof contacts[0];
-type SortDir = "asc" | "desc" | null;
+type Contact = typeof contacts[0];
 
-const columns: { key: SortKey; label: string }[] = [
+const columns: { key: keyof Contact; label: string }[] = [
   { key: "code", label: "Customer Code" },
   { key: "name", label: "Customer Name" },
   { key: "taxCode", label: "Tax Code" },
@@ -47,28 +48,7 @@ const savedFilters = ["VIP Customers", "New Customers"];
 const Contacts = () => {
   const navigate = useNavigate();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
-  const [sortKey, setSortKey] = useState<SortKey | null>(null);
-  const [sortDir, setSortDir] = useState<SortDir>(null);
-
-  const handleSort = (key: SortKey) => {
-    if (sortKey === key) {
-      if (sortDir === "asc") setSortDir("desc");
-      else if (sortDir === "desc") { setSortKey(null); setSortDir(null); }
-      else setSortDir("asc");
-    } else {
-      setSortKey(key);
-      setSortDir("asc");
-    }
-  };
-
-  const sortedContacts = useMemo(() => {
-    if (!sortKey || !sortDir) return contacts;
-    return [...contacts].sort((a, b) => {
-      const aVal = String(a[sortKey]).toLowerCase();
-      const bVal = String(b[sortKey]).toLowerCase();
-      return sortDir === "asc" ? aVal.localeCompare(bVal) : bVal.localeCompare(aVal);
-    });
-  }, [sortKey, sortDir]);
+  const { sorted, sortKey, sortDir, handleSort } = useTableSort(contacts);
 
   const handleRowClick = (id: number) => navigate(`/contacts/${id}`);
 
@@ -81,12 +61,6 @@ const Contacts = () => {
   const toggleAll = () => {
     if (selectedRows.length === contacts.length) setSelectedRows([]);
     else setSelectedRows(contacts.map((c) => c.id));
-  };
-
-  const SortIcon = ({ colKey }: { colKey: SortKey }) => {
-    if (sortKey !== colKey) return <ArrowUpDown className="h-3.5 w-3.5 ml-1 text-muted-foreground/50" />;
-    if (sortDir === "asc") return <ArrowUp className="h-3.5 w-3.5 ml-1 text-primary" />;
-    return <ArrowDown className="h-3.5 w-3.5 ml-1 text-primary" />;
   };
 
   return (
@@ -107,22 +81,20 @@ const Contacts = () => {
                   <Checkbox checked={selectedRows.length === contacts.length} onCheckedChange={toggleAll} />
                 </TableHead>
                 {columns.map((col) => (
-                  <TableHead
+                  <SortableTableHead
                     key={col.key}
-                    className="cursor-pointer select-none hover:text-foreground transition-colors"
-                    onClick={() => handleSort(col.key)}
-                  >
-                    <div className="flex items-center">
-                      {col.label}
-                      <SortIcon colKey={col.key} />
-                    </div>
-                  </TableHead>
+                    label={col.label}
+                    sortKey={col.key}
+                    currentSortKey={sortKey as string | null}
+                    currentSortDir={sortDir}
+                    onSort={(k) => handleSort(k as keyof Contact)}
+                  />
                 ))}
                 <TableHead className="w-12"></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {sortedContacts.map((contact) => (
+              {sorted.map((contact) => (
                 <TableRow
                   key={contact.id}
                   className={`hover:bg-muted/50 cursor-pointer ${selectedRows.includes(contact.id) ? "bg-primary/5" : ""}`}

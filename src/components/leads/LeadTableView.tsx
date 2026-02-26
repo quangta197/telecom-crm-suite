@@ -10,6 +10,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { MoreHorizontal, Phone, Mail } from "lucide-react";
+import { SortableTableHead } from "@/components/ui/sortable-table-head";
+import { useTableSort } from "@/hooks/use-table-sort";
 
 interface Lead {
   id: number;
@@ -38,6 +40,17 @@ const statusColors = {
   Cold: "bg-info/10 text-info",
 };
 
+const columns: { key: keyof Lead; label: string; className?: string }[] = [
+  { key: "code", label: "Lead ID" },
+  { key: "name", label: "Lead Name" },
+  { key: "company", label: "Company" },
+  { key: "phone", label: "Phone" },
+  { key: "email", label: "Email" },
+  { key: "source", label: "Source" },
+  { key: "status", label: "Status" },
+  { key: "score", label: "Score", className: "text-right" },
+];
+
 export function LeadTableView({
   leads,
   selectedRows,
@@ -45,6 +58,8 @@ export function LeadTableView({
   onToggleRow,
   onToggleAll,
 }: LeadTableViewProps) {
+  const { sorted, sortKey, sortDir, handleSort } = useTableSort(leads);
+
   const getScoreColor = (score: number) => {
     if (score >= 80) return "text-success";
     if (score >= 50) return "text-warning";
@@ -62,19 +77,22 @@ export function LeadTableView({
                 onCheckedChange={onToggleAll}
               />
             </TableHead>
-            <TableHead>Lead ID</TableHead>
-            <TableHead>Lead Name</TableHead>
-            <TableHead>Company</TableHead>
-            <TableHead>Phone</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Source</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead className="text-right">Score</TableHead>
+            {columns.map((col) => (
+              <SortableTableHead
+                key={col.key}
+                label={col.label}
+                sortKey={col.key}
+                currentSortKey={sortKey as string | null}
+                currentSortDir={sortDir}
+                onSort={(k) => handleSort(k as keyof Lead)}
+                className={col.className}
+              />
+            ))}
             <TableHead className="w-12"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {leads.map((lead) => (
+          {sorted.map((lead) => (
             <TableRow
               key={lead.id}
               className={`hover:bg-muted/50 cursor-pointer ${
@@ -130,12 +148,8 @@ export function LeadTableView({
       </Table>
 
       <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/30">
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-          <span>Total: {leads.length}</span>
-        </div>
-        <div className="flex items-center gap-2 text-sm">
-          <span className="text-muted-foreground">1 to {leads.length}</span>
-        </div>
+        <span className="text-sm text-muted-foreground">Total: {leads.length}</span>
+        <span className="text-sm text-muted-foreground">1 to {leads.length}</span>
       </div>
     </div>
   );

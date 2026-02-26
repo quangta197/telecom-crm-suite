@@ -12,69 +12,18 @@ import {
 } from "@/components/ui/table";
 import { Plus, MoreHorizontal, Eye, Send } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
+import { SortableTableHead } from "@/components/ui/sortable-table-head";
+import { useTableSort } from "@/hooks/use-table-sort";
 
 const quotations = [
-  {
-    id: 1,
-    code: "QT-2024-001",
-    title: "Enterprise Network Package",
-    customer: "VNPT Hanoi",
-    items: 12,
-    totalValue: "$320K",
-    discount: "5%",
-    finalValue: "$304K",
-    status: "Sent",
-    validUntil: "02/15/2024",
-  },
-  {
-    id: 2,
-    code: "QT-2024-002",
-    title: "Data Center Premium Package",
-    customer: "Viettel Business",
-    items: 8,
-    totalValue: "$580K",
-    discount: "8%",
-    finalValue: "$534K",
-    status: "Pending Confirmation",
-    validUntil: "02/20/2024",
-  },
-  {
-    id: 3,
-    code: "QT-2024-003",
-    title: "Cloud Migration Standard",
-    customer: "FPT Telecom",
-    items: 5,
-    totalValue: "$210K",
-    discount: "3%",
-    finalValue: "$204K",
-    status: "Accepted",
-    validUntil: "02/25/2024",
-  },
-  {
-    id: 4,
-    code: "QT-2024-004",
-    title: "5G Enterprise Solution",
-    customer: "CMC Telecom",
-    items: 15,
-    totalValue: "$450K",
-    discount: "10%",
-    finalValue: "$405K",
-    status: "Draft",
-    validUntil: "02/28/2024",
-  },
-  {
-    id: 5,
-    code: "QT-2024-005",
-    title: "IoT Platform Package",
-    customer: "MobiFone",
-    items: 7,
-    totalValue: "$180K",
-    discount: "5%",
-    finalValue: "$171K",
-    status: "Sent",
-    validUntil: "03/01/2024",
-  },
+  { id: 1, code: "QT-2024-001", title: "Enterprise Network Package", customer: "VNPT Hanoi", items: 12, totalValue: "$320K", discount: "5%", finalValue: "$304K", status: "Sent", validUntil: "02/15/2024" },
+  { id: 2, code: "QT-2024-002", title: "Data Center Premium Package", customer: "Viettel Business", items: 8, totalValue: "$580K", discount: "8%", finalValue: "$534K", status: "Pending Confirmation", validUntil: "02/20/2024" },
+  { id: 3, code: "QT-2024-003", title: "Cloud Migration Standard", customer: "FPT Telecom", items: 5, totalValue: "$210K", discount: "3%", finalValue: "$204K", status: "Accepted", validUntil: "02/25/2024" },
+  { id: 4, code: "QT-2024-004", title: "5G Enterprise Solution", customer: "CMC Telecom", items: 15, totalValue: "$450K", discount: "10%", finalValue: "$405K", status: "Draft", validUntil: "02/28/2024" },
+  { id: 5, code: "QT-2024-005", title: "IoT Platform Package", customer: "MobiFone", items: 7, totalValue: "$180K", discount: "5%", finalValue: "$171K", status: "Sent", validUntil: "03/01/2024" },
 ];
+
+type Quotation = typeof quotations[0];
 
 const statusColors: Record<string, string> = {
   "Draft": "bg-secondary text-secondary-foreground",
@@ -83,6 +32,17 @@ const statusColors: Record<string, string> = {
   "Sent": "bg-primary/10 text-primary",
   "Rejected": "bg-destructive/10 text-destructive",
 };
+
+const columns: { key: keyof Quotation; label: string }[] = [
+  { key: "code", label: "Quote ID" },
+  { key: "title", label: "Title" },
+  { key: "customer", label: "Customer" },
+  { key: "totalValue", label: "Total" },
+  { key: "discount", label: "Discount" },
+  { key: "finalValue", label: "Final Value" },
+  { key: "status", label: "Status" },
+  { key: "validUntil", label: "Valid Until" },
+];
 
 const filterOptions = [
   { id: "code", label: "Quotation Code" },
@@ -96,6 +56,7 @@ const savedFilters = ["Sent Quotations", "This Month's Quotations"];
 
 const Quotations = () => {
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
+  const { sorted, sortKey, sortDir, handleSort } = useTableSort(quotations);
 
   const toggleRow = (id: number) => {
     setSelectedRows((prev) =>
@@ -118,16 +79,13 @@ const Quotations = () => {
       savedFilters={savedFilters}
     >
       <div className="space-y-6 animate-fade-in">
-        {/* Page Header */}
         <div className="flex items-center justify-between">
           <h1 className="text-xl font-bold">All Quotations</h1>
           <Button className="gradient-primary">
-            <Plus className="mr-2 h-4 w-4" />
-            Add
+            <Plus className="mr-2 h-4 w-4" /> Add
           </Button>
         </div>
 
-        {/* Table */}
         <div className="rounded-lg bg-card shadow-sm overflow-hidden border">
           <Table>
             <TableHeader>
@@ -138,19 +96,21 @@ const Quotations = () => {
                     onCheckedChange={toggleAll}
                   />
                 </TableHead>
-                <TableHead>Quote ID</TableHead>
-                <TableHead>Title</TableHead>
-                <TableHead>Customer</TableHead>
-                <TableHead>Total</TableHead>
-                <TableHead>Discount</TableHead>
-                <TableHead>Final Value</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Valid Until</TableHead>
+                {columns.map((col) => (
+                  <SortableTableHead
+                    key={col.key}
+                    label={col.label}
+                    sortKey={col.key}
+                    currentSortKey={sortKey as string | null}
+                    currentSortDir={sortDir}
+                    onSort={(k) => handleSort(k as keyof Quotation)}
+                  />
+                ))}
                 <TableHead className="w-24">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {quotations.map((quote) => (
+              {sorted.map((quote) => (
                 <TableRow
                   key={quote.id}
                   className={`hover:bg-muted/50 cursor-pointer ${
@@ -197,14 +157,9 @@ const Quotations = () => {
             </TableBody>
           </Table>
 
-          {/* Footer */}
           <div className="flex items-center justify-between px-4 py-3 border-t bg-muted/30">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <span>Total: {quotations.length}</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm">
-              <span className="text-muted-foreground">1 to {quotations.length}</span>
-            </div>
+            <span className="text-sm text-muted-foreground">Total: {quotations.length}</span>
+            <span className="text-sm text-muted-foreground">1 to {quotations.length}</span>
           </div>
         </div>
       </div>
