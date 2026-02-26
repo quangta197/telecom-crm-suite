@@ -53,9 +53,9 @@ const approvalStatusColors: Record<string, string> = {
 };
 
 const approvalStatusLabels: Record<string, string> = {
-  pending: "Chờ duyệt",
-  approved: "Đã duyệt",
-  rejected: "Từ chối",
+  pending: "Pending",
+  approved: "Approved",
+  rejected: "Rejected",
 };
 
 const selfStatusOptions = ["Draft", "Sent", "Pending Confirmation", "Accepted", "Rejected"];
@@ -145,11 +145,11 @@ export const OpportunityQuotations = () => {
                     <TooltipTrigger>
                       <Badge variant="outline" className={`gap-1 text-xs ${q.approvalType === "self" ? "border-primary/30 text-primary" : "border-orange-400/30 text-orange-600"}`}>
                         {q.approvalType === "self" ? <UserCheck className="h-3 w-3" /> : <ShieldCheck className="h-3 w-3" />}
-                        {q.approvalType === "self" ? "Tự quyết" : "Cần duyệt"}
+                        {q.approvalType === "self" ? "Self-Approved" : "Needs Approval"}
                       </Badge>
                     </TooltipTrigger>
                     <TooltipContent>
-                      {q.approvalType === "self" ? "Sale tự quyết định, không cần phê duyệt" : "Cần phê duyệt của Quản lý cấp trên"}
+                      {q.approvalType === "self" ? "Sales can decide without approval" : "Requires manager approval"}
                     </TooltipContent>
                   </Tooltip>
                 </TableCell>
@@ -200,7 +200,7 @@ export const OpportunityQuotations = () => {
           <div className="space-y-4 py-2">
             {/* Approval Type Selection */}
             <div className="space-y-2">
-              <Label>Loại báo giá <span className="text-destructive">*</span></Label>
+              <Label>Quotation Type <span className="text-destructive">*</span></Label>
               <div className="grid grid-cols-2 gap-3">
                 <button
                   type="button"
@@ -208,8 +208,8 @@ export const OpportunityQuotations = () => {
                   onClick={() => setForm({ ...form, approvalType: "self" })}
                 >
                   <UserCheck className={`h-6 w-6 ${form.approvalType === "self" ? "text-primary" : "text-muted-foreground"}`} />
-                  <span className={`text-sm font-medium ${form.approvalType === "self" ? "text-primary" : "text-foreground"}`}>Tự quyết</span>
-                  <span className="text-xs text-muted-foreground text-center">Sale tự quyết định, không cần duyệt</span>
+                  <span className={`text-sm font-medium ${form.approvalType === "self" ? "text-primary" : "text-foreground"}`}>Self-Approved</span>
+                  <span className="text-xs text-muted-foreground text-center">Sales can decide without approval</span>
                 </button>
                 <button
                   type="button"
@@ -217,8 +217,8 @@ export const OpportunityQuotations = () => {
                   onClick={() => setForm({ ...form, approvalType: "manager" })}
                 >
                   <ShieldCheck className={`h-6 w-6 ${form.approvalType === "manager" ? "text-orange-500" : "text-muted-foreground"}`} />
-                  <span className={`text-sm font-medium ${form.approvalType === "manager" ? "text-orange-500" : "text-foreground"}`}>Cần duyệt</span>
-                  <span className="text-xs text-muted-foreground text-center">Cần phê duyệt của Quản lý</span>
+                  <span className={`text-sm font-medium ${form.approvalType === "manager" ? "text-orange-500" : "text-foreground"}`}>Needs Approval</span>
+                  <span className="text-xs text-muted-foreground text-center">Requires manager approval</span>
                 </button>
               </div>
             </div>
@@ -246,7 +246,7 @@ export const OpportunityQuotations = () => {
               <div className="rounded-lg bg-orange-500/5 border border-orange-500/20 p-3">
                 <p className="text-xs text-orange-600 flex items-center gap-1.5">
                   <ShieldCheck className="h-3.5 w-3.5" />
-                  Báo giá sẽ ở trạng thái "Chờ duyệt" sau khi tạo. Quản lý cần phê duyệt trước khi gửi cho khách hàng.
+                  Quotation will be in "Pending" status after creation. Manager must approve before sending to customer.
                 </p>
               </div>
             )}

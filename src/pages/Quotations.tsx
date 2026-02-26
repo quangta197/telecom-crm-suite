@@ -41,9 +41,9 @@ const approvalStatusColors: Record<string, string> = {
 };
 
 const approvalStatusLabels: Record<string, string> = {
-  pending: "Chờ duyệt",
-  approved: "Đã duyệt",
-  rejected: "Từ chối",
+  pending: "Pending",
+  approved: "Approved",
+  rejected: "Rejected",
 };
 
 const columns: { key: keyof Quotation; label: string }[] = [
@@ -146,11 +146,11 @@ const Quotations = () => {
                       <TooltipTrigger>
                         <Badge variant="outline" className={`gap-1 text-xs ${quote.approvalType === "self" ? "border-primary/30 text-primary" : "border-orange-400/30 text-orange-600"}`}>
                           {quote.approvalType === "self" ? <UserCheck className="h-3 w-3" /> : <ShieldCheck className="h-3 w-3" />}
-                          {quote.approvalType === "self" ? "Tự quyết" : "Cần duyệt"}
+                          {quote.approvalType === "self" ? "Self-Approved" : "Needs Approval"}
                         </Badge>
                       </TooltipTrigger>
                       <TooltipContent>
-                        {quote.approvalType === "self" ? "Sale tự quyết định" : "Cần phê duyệt của Quản lý"}
+                        {quote.approvalType === "self" ? "Sales can decide without approval" : "Requires manager approval"}
                       </TooltipContent>
                     </Tooltip>
                   </TableCell>
