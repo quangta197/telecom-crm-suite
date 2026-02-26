@@ -25,6 +25,7 @@ import { LeadStageSettings } from "@/components/settings/LeadStageSettings";
 import { OpportunityStageSettings } from "@/components/settings/OpportunityStageSettings";
 import { LeadSourceSettings } from "@/components/settings/LeadSourceSettings";
 import { ContactRoleSettings } from "@/components/settings/ContactRoleSettings";
+import { OpportunityCustomFieldSettings } from "@/components/settings/OpportunityCustomFieldSettings";
 import {
   Dialog,
   DialogContent,
@@ -144,6 +145,10 @@ export default function Settings() {
             <TabsTrigger value="contactRoles" className="gap-2">
               <Users className="h-4 w-4" />
               Contact Roles
+            </TabsTrigger>
+            <TabsTrigger value="oppCustomFields" className="gap-2">
+              <FileText className="h-4 w-4" />
+              Opp. Custom Fields
             </TabsTrigger>
           </TabsList>
 
@@ -324,6 +329,15 @@ export default function Settings() {
             <Card>
               <CardContent className="pt-6">
                 <ContactRoleSettings />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Opportunity Custom Fields Tab */}
+          <TabsContent value="oppCustomFields">
+            <Card>
+              <CardContent className="pt-6">
+                <OpportunityCustomFieldSettings />
               </CardContent>
             </Card>
           </TabsContent>
