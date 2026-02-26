@@ -360,21 +360,6 @@ const OpportunityDetail = () => {
           {/* Right - Activity Sidebar */}
           <div className="col-span-1">
             <Card className="p-0 overflow-hidden">
-              {/* Action Buttons */}
-              <div className="flex items-center justify-center gap-2 p-3 border-b">
-                <Button variant="ghost" size="icon" className="h-9 w-9">
-                  <Phone className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
-                  <Calendar className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
-                  <MessageSquare className="h-4 w-4" />
-                </Button>
-                <Button variant="ghost" size="icon" className="h-9 w-9">
-                  <Mail className="h-4 w-4" />
-                </Button>
-              </div>
 
               {/* Tabs */}
               <div className="flex border-b">
