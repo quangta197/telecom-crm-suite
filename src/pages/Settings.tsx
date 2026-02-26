@@ -22,6 +22,7 @@ import { TemplateList } from "@/components/settings/TemplateList";
 import { ActivityTypeSettings } from "@/components/settings/ActivityTypeSettings";
 import { LeadStageSettings } from "@/components/settings/LeadStageSettings";
 import { OpportunityStageSettings } from "@/components/settings/OpportunityStageSettings";
+import { LeadSourceSettings } from "@/components/settings/LeadSourceSettings";
 import {
   Dialog,
   DialogContent,
@@ -139,6 +140,10 @@ export default function Settings() {
             <TabsTrigger value="oppStages" className="gap-2">
               <GitBranch className="h-4 w-4" />
               Opportunity Stages
+            </TabsTrigger>
+            <TabsTrigger value="leadSources" className="gap-2">
+              <Tags className="h-4 w-4" />
+              Lead Sources
             </TabsTrigger>
           </TabsList>
 
@@ -305,6 +310,15 @@ export default function Settings() {
             <Card>
               <CardContent className="pt-6">
                 <LeadStageSettings />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Lead Sources Tab */}
+          <TabsContent value="leadSources">
+            <Card>
+              <CardContent className="pt-6">
+                <LeadSourceSettings />
               </CardContent>
             </Card>
           </TabsContent>
