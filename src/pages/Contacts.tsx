@@ -21,6 +21,10 @@ const contacts = [
     name: "MISA Corporation",
     taxCode: "0102345646",
     phone: "0362 855 655",
+    email: "info@misa.vn",
+    address: "Phạm Văn Bạch, Cầu Giấy, Hà Nội",
+    industry: "Software",
+    contactPerson: "Nguyễn Văn A",
   },
   {
     id: 2,
@@ -28,6 +32,10 @@ const contacts = [
     name: "Friendly Solutions LLC",
     taxCode: "0102345647",
     phone: "0362 624 827",
+    email: "contact@friendlysol.com",
+    address: "Nguyễn Huệ, Quận 1, TP.HCM",
+    industry: "Consulting",
+    contactPerson: "Trần Thị B",
   },
   {
     id: 3,
@@ -35,6 +43,10 @@ const contacts = [
     name: "VanKieu Corporation",
     taxCode: "0102345648",
     phone: "0362 222 333",
+    email: "hello@vankieu.vn",
+    address: "Lê Lợi, Quận 1, TP.HCM",
+    industry: "Trading",
+    contactPerson: "Lê Văn C",
   },
   {
     id: 4,
@@ -42,6 +54,10 @@ const contacts = [
     name: "Small Shop Inc",
     taxCode: "0102345649",
     phone: "0362 123 123",
+    email: "shop@smallshop.vn",
+    address: "Hai Bà Trưng, Quận 3, TP.HCM",
+    industry: "Retail",
+    contactPerson: "Phạm Thị D",
   },
   {
     id: 5,
@@ -49,6 +65,10 @@ const contacts = [
     name: "Central Coffee Co",
     taxCode: "0102345650",
     phone: "0362 255 255",
+    email: "info@centralcoffee.vn",
+    address: "Đống Đa, Hà Nội",
+    industry: "F&B",
+    contactPerson: "Hoàng Văn E",
   },
   {
     id: 6,
@@ -56,6 +76,10 @@ const contacts = [
     name: "Friendly Trade & Services",
     taxCode: "0102345651",
     phone: "0362 500 500",
+    email: "trade@friendly.vn",
+    address: "Tân Bình, TP.HCM",
+    industry: "Trading",
+    contactPerson: "Vũ Thị F",
   },
   {
     id: 7,
@@ -63,6 +87,10 @@ const contacts = [
     name: "Dragon Corp",
     taxCode: "0102345652",
     phone: "0362 212 212",
+    email: "info@dragoncorp.vn",
+    address: "Ba Đình, Hà Nội",
+    industry: "Manufacturing",
+    contactPerson: "Đỗ Văn G",
   },
   {
     id: 8,
@@ -70,6 +98,10 @@ const contacts = [
     name: "T & T Fashion Chain",
     taxCode: "0102345653",
     phone: "0362 222 222",
+    email: "fashion@tnt.vn",
+    address: "Hoàn Kiếm, Hà Nội",
+    industry: "Fashion",
+    contactPerson: "Ngô Thị H",
   },
   {
     id: 9,
@@ -77,6 +109,10 @@ const contacts = [
     name: "Sunrise Corporation",
     taxCode: "0102345654",
     phone: "0362 678 678",
+    email: "hello@sunrise.vn",
+    address: "Quận 7, TP.HCM",
+    industry: "Real Estate",
+    contactPerson: "Bùi Văn I",
   },
   {
     id: 10,
@@ -84,6 +120,10 @@ const contacts = [
     name: "Coffee 69",
     taxCode: "0102345655",
     phone: "0362 822 833",
+    email: "order@coffee69.vn",
+    address: "Bình Thạnh, TP.HCM",
+    industry: "F&B",
+    contactPerson: "Mai Thị K",
   },
 ];
 
@@ -92,6 +132,10 @@ const filterOptions = [
   { id: "name", label: "Customer Name" },
   { id: "taxCode", label: "Tax Code" },
   { id: "phone", label: "Phone" },
+  { id: "email", label: "Email" },
+  { id: "address", label: "Address" },
+  { id: "industry", label: "Industry" },
+  { id: "contactPerson", label: "Contact Person" },
 ];
 
 const savedFilters = ["VIP Customers", "New Customers"];
@@ -155,6 +199,10 @@ const Contacts = () => {
                 <TableHead>Customer Name</TableHead>
                 <TableHead>Tax Code</TableHead>
                 <TableHead>Phone</TableHead>
+                <TableHead>Email</TableHead>
+                <TableHead>Address</TableHead>
+                <TableHead>Industry</TableHead>
+                <TableHead>Contact Person</TableHead>
                 <TableHead className="w-12"></TableHead>
               </TableRow>
             </TableHeader>
@@ -173,6 +221,10 @@ const Contacts = () => {
                       onCheckedChange={() => toggleRow(contact.id)}
                     />
                   </TableCell>
+                  <TableCell className="text-sm text-primary">{contact.email}</TableCell>
+                  <TableCell className="text-sm">{contact.address}</TableCell>
+                  <TableCell><Badge variant="secondary" className="text-xs">{contact.industry}</Badge></TableCell>
+                  <TableCell className="text-sm font-medium">{contact.contactPerson}</TableCell>
                   <TableCell className="font-mono text-sm">{contact.code}</TableCell>
                   <TableCell className="font-medium text-primary hover:underline">
                     {contact.name}
