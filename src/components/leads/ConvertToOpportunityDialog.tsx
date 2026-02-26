@@ -63,7 +63,15 @@ export function ConvertToOpportunityDialog({
 
     onConverted?.();
     onOpenChange(false);
-    navigate("/opportunities");
+    navigate("/opportunities", {
+      state: {
+        convertedLead: {
+          ...formData,
+          leadId: lead.id,
+          leadCode: lead.code,
+        },
+      },
+    });
   };
 
   return (

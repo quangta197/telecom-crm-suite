@@ -1,5 +1,5 @@
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Plus, LayoutGrid, List } from "lucide-react";
@@ -104,10 +104,42 @@ type ViewMode = "list" | "board";
 
 const Opportunities = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [selectedRows, setSelectedRows] = useState<number[]>([]);
   const [opportunitiesList, setOpportunitiesList] = useState(initialOpportunities);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [viewMode, setViewMode] = useState<ViewMode>("list");
+
+  // Handle converted lead from navigation state
+  useEffect(() => {
+    const state = location.state as { convertedLead?: any } | null;
+    if (state?.convertedLead) {
+      const data = state.convertedLead;
+      const newId = Math.max(...opportunitiesList.map((o) => o.id), 0) + 1;
+      const newCode = `OP${String(newId).padStart(5, "0")}`;
+      const formattedDate = data.closeDate
+        ? new Date(data.closeDate).toLocaleDateString("en-US", { month: "2-digit", day: "2-digit", year: "numeric" })
+        : "";
+
+      const newOpp = {
+        id: newId,
+        code: newCode,
+        title: data.title,
+        company: data.company,
+        value: data.value,
+        stage: data.stage,
+        probability: data.probability,
+        closeDate: formattedDate,
+        owner: data.owner,
+        leadId: data.leadId as number,
+        leadCode: data.leadCode as string,
+      };
+
+      setOpportunitiesList((prev) => [...prev, newOpp]);
+      // Clear navigation state
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.state]);
 
   const handleRowClick = (id: number) => {
     navigate(`/opportunities/${id}`);
