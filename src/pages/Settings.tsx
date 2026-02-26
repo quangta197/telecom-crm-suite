@@ -27,6 +27,7 @@ import { LeadSourceSettings } from "@/components/settings/LeadSourceSettings";
 import { ContactRoleSettings } from "@/components/settings/ContactRoleSettings";
 import { OpportunityCustomFieldSettings } from "@/components/settings/OpportunityCustomFieldSettings";
 import { OpportunityTypeSettings } from "@/components/settings/OpportunityTypeSettings";
+import { ProjectTypeSettings } from "@/components/settings/ProjectTypeSettings";
 import {
   Dialog,
   DialogContent,
@@ -154,6 +155,10 @@ export default function Settings() {
             <TabsTrigger value="oppCustomFields" className="gap-2">
               <FileText className="h-4 w-4" />
               Opp. Custom Fields
+            </TabsTrigger>
+            <TabsTrigger value="projectTypes" className="gap-2">
+              <Tags className="h-4 w-4" />
+              Loại Dự án
             </TabsTrigger>
           </TabsList>
 
@@ -352,6 +357,15 @@ export default function Settings() {
             <Card>
               <CardContent className="pt-6">
                 <OpportunityCustomFieldSettings />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Project Types Tab */}
+          <TabsContent value="projectTypes">
+            <Card>
+              <CardContent className="pt-6">
+                <ProjectTypeSettings />
               </CardContent>
             </Card>
           </TabsContent>
