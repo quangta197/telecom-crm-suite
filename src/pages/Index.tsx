@@ -1,7 +1,13 @@
+import { useState } from "react";
+import { format } from "date-fns";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Calendar as CalendarWidget } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import {
   Target,
@@ -12,12 +18,14 @@ import {
   ArrowUpRight,
   ArrowDownRight,
   Building2,
-  Calendar,
+  CalendarIcon,
   Phone,
   Mail,
   CheckCircle,
   Clock,
   BarChart3,
+  Filter,
+  Calendar,
 } from "lucide-react";
 import {
   AreaChart,
@@ -121,7 +129,15 @@ const projectStatus = [
 
 const fmt = (n: number) => `$${(n / 1000).toFixed(0)}K`;
 
+const salesReps = ["All Members", "John Smith", "Sarah Johnson", "Mike Wilson", "Emily Davis"];
+const periods = ["This Month", "Last Month", "This Quarter", "Last Quarter", "This Year", "Custom"];
+
 const Index = () => {
+  const [period, setPeriod] = useState("This Month");
+  const [salesRep, setSalesRep] = useState("All Members");
+  const [dateFrom, setDateFrom] = useState<Date | undefined>(new Date(2025, 1, 1));
+  const [dateTo, setDateTo] = useState<Date | undefined>(new Date());
+
   const totalPipeline = pipeline.reduce((s, p) => s + p.value, 0);
   const totalLeadSources = leadSources.reduce((s, l) => s + l.value, 0);
   const totalProjects = projectStatus.reduce((s, p) => s + p.count, 0);
@@ -129,10 +145,71 @@ const Index = () => {
   return (
     <MainLayout showFilters={false} showActivity={false}>
       <div className="space-y-6 animate-fade-in">
-        {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-muted-foreground text-sm">Sales overview & key metrics</p>
+        {/* Header + Filters */}
+        <div className="flex items-end justify-between gap-4">
+          <div>
+            <h1 className="text-2xl font-bold">Dashboard</h1>
+            <p className="text-muted-foreground text-sm">Sales overview & key metrics</p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            {/* Period */}
+            <Select value={period} onValueChange={setPeriod}>
+              <SelectTrigger className="w-[150px] h-9 text-sm">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {periods.map((p) => (
+                  <SelectItem key={p} value={p}>{p}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Date From */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className={cn("h-9 text-sm gap-2 font-normal", !dateFrom && "text-muted-foreground")}>
+                  <CalendarIcon className="h-3.5 w-3.5" />
+                  {dateFrom ? format(dateFrom, "dd/MM/yyyy") : "From"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <CalendarWidget mode="single" selected={dateFrom} onSelect={setDateFrom} initialFocus className={cn("p-3 pointer-events-auto")} />
+              </PopoverContent>
+            </Popover>
+
+            {/* Date To */}
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className={cn("h-9 text-sm gap-2 font-normal", !dateTo && "text-muted-foreground")}>
+                  <CalendarIcon className="h-3.5 w-3.5" />
+                  {dateTo ? format(dateTo, "dd/MM/yyyy") : "To"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <CalendarWidget mode="single" selected={dateTo} onSelect={setDateTo} initialFocus className={cn("p-3 pointer-events-auto")} />
+              </PopoverContent>
+            </Popover>
+
+            {/* Sales Rep */}
+            <Select value={salesRep} onValueChange={setSalesRep}>
+              <SelectTrigger className="w-[160px] h-9 text-sm">
+                <Users className="h-3.5 w-3.5 mr-1.5 text-muted-foreground" />
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {salesReps.map((r) => (
+                  <SelectItem key={r} value={r}>{r}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+
+            {/* Apply */}
+            <Button size="sm" className="h-9 gap-1.5">
+              <Filter className="h-3.5 w-3.5" />
+              Apply
+            </Button>
+          </div>
         </div>
 
         {/* KPI Cards */}
