@@ -25,7 +25,7 @@ const menuItems = [
   { icon: Users, label: "Liên hệ", path: "/contacts" },
   { icon: Calendar, label: "Lịch làm việc", path: "/calendar" },
   { icon: Calculator, label: "Báo giá", path: "/quotations" },
-  { icon: BarChart3, label: "Phân tích lãi lỗ", path: "/analytics" },
+  
   { icon: MapPin, label: "Bản đồ hoạt động", path: "/sales-map" },
   { icon: Settings, label: "Cài đặt", path: "/settings" },
 ];

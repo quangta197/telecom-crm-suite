@@ -28,7 +28,7 @@ const menuItems = [
   { icon: Users, label: "Contacts", path: "/contacts" },
   { icon: Calculator, label: "Quotations", path: "/quotations" },
   { icon: Calendar, label: "Calendar", path: "/calendar" },
-  { icon: BarChart3, label: "Analytics", path: "/analytics" },
+  
   { icon: MapPin, label: "Sales Map", path: "/sales-map" },
   { icon: SettingsIcon, label: "Settings", path: "/settings" },
 ];
