@@ -16,6 +16,7 @@ import {
   MoreHorizontal,
   Activity,
   GitBranch,
+  Users,
 } from "lucide-react";
 import { StatusList } from "@/components/settings/StatusList";
 import { TemplateList } from "@/components/settings/TemplateList";
@@ -23,6 +24,7 @@ import { ActivityTypeSettings } from "@/components/settings/ActivityTypeSettings
 import { LeadStageSettings } from "@/components/settings/LeadStageSettings";
 import { OpportunityStageSettings } from "@/components/settings/OpportunityStageSettings";
 import { LeadSourceSettings } from "@/components/settings/LeadSourceSettings";
+import { ContactRoleSettings } from "@/components/settings/ContactRoleSettings";
 import {
   Dialog,
   DialogContent,
@@ -144,6 +146,10 @@ export default function Settings() {
             <TabsTrigger value="leadSources" className="gap-2">
               <Tags className="h-4 w-4" />
               Lead Sources
+            </TabsTrigger>
+            <TabsTrigger value="contactRoles" className="gap-2">
+              <Users className="h-4 w-4" />
+              Contact Roles
             </TabsTrigger>
           </TabsList>
 
@@ -319,6 +325,15 @@ export default function Settings() {
             <Card>
               <CardContent className="pt-6">
                 <LeadSourceSettings />
+              </CardContent>
+            </Card>
+          </TabsContent>
+
+          {/* Contact Roles Tab */}
+          <TabsContent value="contactRoles">
+            <Card>
+              <CardContent className="pt-6">
+                <ContactRoleSettings />
               </CardContent>
             </Card>
           </TabsContent>
