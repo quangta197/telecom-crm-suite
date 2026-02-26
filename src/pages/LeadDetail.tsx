@@ -11,12 +11,11 @@ import {
   ArrowLeft, 
   Edit, 
   MoreHorizontal, 
-  Phone, 
-  Calendar, 
-  MessageSquare, 
-  Mail,
   Target,
   Plus,
+  Pencil,
+  Trash2,
+  Check,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { EditLeadDialog, LeadData } from "@/components/leads/EditLeadDialog";
@@ -93,6 +92,30 @@ const LeadDetail = () => {
   const openActivityDialog = (type: string) => {
     setActivityType(type);
     setActivityDialogOpen(true);
+  };
+
+  const [editingActivityId, setEditingActivityId] = useState<number | null>(null);
+  const [editForm, setEditForm] = useState({ title: "", description: "" });
+
+  const handleDeleteActivity = (id: number) => {
+    setActivities(activities.filter((a) => a.id !== id));
+  };
+
+  const handleStartEditActivity = (item: typeof activities[0]) => {
+    setEditingActivityId(item.id);
+    setEditForm({ title: item.title, description: item.description });
+  };
+
+  const handleSaveEditActivity = () => {
+    if (!editForm.title.trim()) return;
+    setActivities(activities.map((a) =>
+      a.id === editingActivityId ? { ...a, title: editForm.title.trim(), description: editForm.description.trim() } : a
+    ));
+    setEditingActivityId(null);
+  };
+
+  const handleCancelEditActivity = () => {
+    setEditingActivityId(null);
   };
 
   const handleSaveLead = (updated: LeadData) => {
@@ -312,19 +335,56 @@ const LeadDetail = () => {
                   const actType = activityTypes.find((at) => at.id === item.type);
                   const Icon = actType ? iconMap[actType.icon] : null;
                   const color = actType?.color || "bg-primary/10";
-                  return (
-                    <div key={item.id} className="px-4 py-3 border-b last:border-b-0 hover:bg-muted/30 transition-colors">
-                      <div className="flex items-start gap-3">
-                        <div className={`h-9 w-9 rounded-full ${color} flex items-center justify-center flex-shrink-0 text-white`}>
-                          {Icon && <Icon className="h-3.5 w-3.5" />}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <p className="font-semibold text-sm leading-tight">{item.title}</p>
-                          <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
-                          <p className="text-xs text-muted-foreground mt-1">{item.author} • {item.date}</p>
+                    return (
+                      <div key={item.id} className="px-4 py-3 border-b last:border-b-0 hover:bg-muted/30 transition-colors group">
+                        <div className="flex items-start gap-3">
+                          <div className={`h-9 w-9 rounded-full ${color} flex items-center justify-center flex-shrink-0 text-white`}>
+                            {Icon && <Icon className="h-3.5 w-3.5" />}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            {editingActivityId === item.id ? (
+                              <div className="space-y-2">
+                                <input
+                                  className="w-full text-sm font-semibold border rounded px-2 py-1 bg-background"
+                                  value={editForm.title}
+                                  onChange={(e) => setEditForm({ ...editForm, title: e.target.value })}
+                                  autoFocus
+                                />
+                                <input
+                                  className="w-full text-xs border rounded px-2 py-1 bg-background"
+                                  value={editForm.description}
+                                  onChange={(e) => setEditForm({ ...editForm, description: e.target.value })}
+                                  placeholder="Description"
+                                />
+                                <div className="flex gap-1.5">
+                                  <Button size="sm" className="h-6 text-xs gap-1" onClick={handleSaveEditActivity} disabled={!editForm.title.trim()}>
+                                    <Check className="h-3 w-3" /> Save
+                                  </Button>
+                                  <Button size="sm" variant="ghost" className="h-6 text-xs" onClick={handleCancelEditActivity}>
+                                    Cancel
+                                  </Button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <div className="flex items-center gap-2">
+                                  <p className="font-semibold text-sm leading-tight">{item.title}</p>
+                                  <div className="ml-auto flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleStartEditActivity(item)}>
+                                      <Pencil className="h-3 w-3 text-muted-foreground" />
+                                    </Button>
+                                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => handleDeleteActivity(item.id)}>
+                                      <Trash2 className="h-3 w-3 text-muted-foreground" />
+                                    </Button>
+                                  </div>
+                                </div>
+                                <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
+                                <p className="text-xs text-muted-foreground mt-1">{item.author} • {item.date}</p>
+                              </>
+                            )}
+                          </div>
                         </div>
                       </div>
-                    </div>
                   );
                 })}
               </div>
