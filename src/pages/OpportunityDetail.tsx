@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useOpportunityStagesStore } from "@/stores/opportunityStagesStore";
 import { useOpportunityCustomFieldsStore } from "@/stores/opportunityCustomFieldsStore";
+import { useOpportunityTypesStore } from "@/stores/opportunityTypesStore";
 import { useParams, useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
@@ -96,6 +97,7 @@ const OpportunityDetail = () => {
   const [activeTab, setActiveTab] = useState("detail");
   const { stages: stageList } = useOpportunityStagesStore();
   const { fields: customFieldDefs } = useOpportunityCustomFieldsStore();
+  const { types: opportunityTypes } = useOpportunityTypesStore();
   const [activeStage, setActiveStage] = useState("closed-won");
   const [customFieldValues, setCustomFieldValues] = useState<Record<string, string>>(opportunityData.customFields);
   const [activeCustomFieldIds, setActiveCustomFieldIds] = useState<string[]>(Object.keys(opportunityData.customFields));
@@ -322,7 +324,7 @@ const OpportunityDetail = () => {
                       { key: "customer", label: "Customer", isLink: true },
                       { key: "opportunityName", label: "Opportunity Name" },
                       { key: "contact", label: "Contact", isLink: true },
-                      { key: "opportunityType", label: "Opportunity Type", type: "select" as const, options: ["New Customer", "Existing Customer", "Upsell", "Cross-sell"] },
+                      { key: "opportunityType", label: "Opportunity Type", type: "select" as const, options: opportunityTypes.map((t) => t.name) },
                       { key: "stage", label: "Stage", type: "select" as const, options: stageList.map((s) => s.label) },
                       { key: "successRate", label: "Success Rate (%)", type: "number" as const },
                       { key: "expectedRevenue", label: "Expected Revenue" },
