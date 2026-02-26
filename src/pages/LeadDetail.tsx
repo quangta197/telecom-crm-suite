@@ -55,11 +55,11 @@ const initialLeadData: LeadData = {
   assignedTo: "John Smith",
 };
 
-const stages = [
-  { id: "new", label: "New", completed: true },
-  { id: "contacted", label: "Contacted", completed: true },
-  { id: "qualified", label: "Qualified", completed: true, active: true },
-  { id: "converted", label: "Converted", completed: false },
+const stageList = [
+  { id: "new", label: "New" },
+  { id: "contacted", label: "Contacted" },
+  { id: "qualified", label: "Qualified" },
+  { id: "converted", label: "Converted" },
 ];
 
 const initialActivities = [
@@ -85,6 +85,7 @@ const LeadDetail = () => {
   const [activityDialogOpen, setActivityDialogOpen] = useState(false);
   const [activityType, setActivityType] = useState<string>("call");
   const { activityTypes } = useActivityTypesStore();
+  const [activeStage, setActiveStage] = useState("qualified");
 
   const handleAddActivity = (activity: { type: string; title: string; description: string; author: string; date: string }) => {
     setActivities([{ id: Date.now(), ...activity }, ...activities]);
@@ -153,22 +154,32 @@ const LeadDetail = () => {
           <Card className="p-5">
             <h3 className="font-semibold text-sm mb-4">Lead Stage</h3>
             <div className="flex items-center gap-1">
-              {stages.map((stage) => (
-                <div key={stage.id} className="flex-1">
+              {stageList.map((stage) => {
+                const stageIndex = stageList.findIndex((s) => s.id === stage.id);
+                const activeIndex = stageList.findIndex((s) => s.id === activeStage);
+                const isCompleted = stageIndex <= activeIndex;
+                const isActive = stage.id === activeStage;
+                return (
                   <div
-                    className={cn(
-                      "h-1.5 rounded-full",
-                      stage.completed ? "bg-primary" : "bg-muted"
-                    )}
-                  />
-                  <p className={cn(
-                    "text-xs mt-1.5 text-center",
-                    stage.active ? "text-primary font-medium" : "text-muted-foreground"
-                  )}>
-                    {stage.label}
-                  </p>
-                </div>
-              ))}
+                    key={stage.id}
+                    className="flex-1 cursor-pointer group"
+                    onClick={() => setActiveStage(stage.id)}
+                  >
+                    <div
+                      className={cn(
+                        "h-1.5 rounded-full transition-colors",
+                        isCompleted ? "bg-primary" : "bg-muted group-hover:bg-primary/30"
+                      )}
+                    />
+                    <p className={cn(
+                      "text-xs mt-1.5 text-center transition-colors",
+                      isActive ? "text-primary font-medium" : "text-muted-foreground group-hover:text-foreground"
+                    )}>
+                      {stage.label}
+                    </p>
+                  </div>
+                );
+              })}
             </div>
           </Card>
         </div>
