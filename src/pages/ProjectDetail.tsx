@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { OpportunityServiceProducts } from "@/components/opportunities/OpportunityServiceProducts";
+import { ProjectProfitLoss } from "@/components/projects/ProjectProfitLoss";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { 
@@ -202,10 +203,7 @@ const ProjectDetail = () => {
               </TabsContent>
 
               <TabsContent value="pnl" className="mt-6">
-                <Card className="p-6">
-                  <h3 className="font-semibold mb-4">Profit & Loss Analysis</h3>
-                  <p className="text-muted-foreground text-center py-8">No P&L data available</p>
-                </Card>
+                <ProjectProfitLoss />
               </TabsContent>
 
               <TabsContent value="products" className="mt-6">
