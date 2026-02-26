@@ -253,14 +253,6 @@ const ProjectDetail = () => {
           {/* Right - Activity Sidebar */}
           <div className="col-span-1">
             <Card className="p-0 overflow-hidden">
-              <div className="flex items-center justify-center gap-2 p-3 border-b">
-                {[Phone, Calendar, MessageSquare, Mail].map((Icon, i) => (
-                  <Button key={i} variant="ghost" size="icon" className="h-9 w-9">
-                    <Icon className="h-4 w-4" />
-                  </Button>
-                ))}
-              </div>
-
               <div className="p-3 border-b">
                 <h4 className="font-medium text-sm">Activity History</h4>
               </div>
