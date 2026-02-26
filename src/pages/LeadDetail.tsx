@@ -24,6 +24,7 @@ import { LeadNotes } from "@/components/leads/LeadNotes";
 import { LeadAttachments } from "@/components/leads/LeadAttachments";
 import { AddActivityDialog } from "@/components/layout/AddActivityDialog";
 import { useActivityTypesStore, iconMap } from "@/stores/activityTypesStore";
+import { ConvertToOpportunityDialog } from "@/components/leads/ConvertToOpportunityDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -86,6 +87,7 @@ const LeadDetail = () => {
   const [activityType, setActivityType] = useState<string>("call");
   const { activityTypes } = useActivityTypesStore();
   const [activeStage, setActiveStage] = useState("qualified");
+  const [convertOpen, setConvertOpen] = useState(false);
 
   const handleAddActivity = (activity: { type: string; title: string; description: string; author: string; date: string }) => {
     setActivities([{ id: Date.now(), ...activity }, ...activities]);
@@ -123,7 +125,7 @@ const LeadDetail = () => {
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-1.5">
+            <Button variant="outline" size="sm" className="gap-1.5" onClick={() => setConvertOpen(true)}>
               <Target className="h-3.5 w-3.5" />
               Convert to Opportunity
             </Button>
@@ -337,6 +339,11 @@ const LeadDetail = () => {
         onOpenChange={setActivityDialogOpen}
         type={activityType}
         onAdd={handleAddActivity}
+      />
+      <ConvertToOpportunityDialog
+        open={convertOpen}
+        onOpenChange={setConvertOpen}
+        lead={leadData}
       />
     </MainLayout>
   );
