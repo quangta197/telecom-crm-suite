@@ -15,10 +15,12 @@ import {
   GripVertical,
   MoreHorizontal,
   Activity,
+  GitBranch,
 } from "lucide-react";
 import { StatusList } from "@/components/settings/StatusList";
 import { TemplateList } from "@/components/settings/TemplateList";
 import { ActivityTypeSettings } from "@/components/settings/ActivityTypeSettings";
+import { LeadStageSettings } from "@/components/settings/LeadStageSettings";
 import {
   Dialog,
   DialogContent,
@@ -128,6 +130,10 @@ export default function Settings() {
             <TabsTrigger value="activities" className="gap-2">
               <Activity className="h-4 w-4" />
               Loại hoạt động
+            </TabsTrigger>
+            <TabsTrigger value="leadStages" className="gap-2">
+              <GitBranch className="h-4 w-4" />
+              Lead Stages
             </TabsTrigger>
           </TabsList>
 
@@ -277,6 +283,15 @@ export default function Settings() {
             <Card>
               <CardContent className="pt-6">
                 <ActivityTypeSettings />
+              </CardContent>
+            </Card>
+          </TabsContent>
+          
+          {/* Lead Stages Tab */}
+          <TabsContent value="leadStages">
+            <Card>
+              <CardContent className="pt-6">
+                <LeadStageSettings />
               </CardContent>
             </Card>
           </TabsContent>

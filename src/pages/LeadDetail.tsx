@@ -25,6 +25,7 @@ import { LeadAttachments } from "@/components/leads/LeadAttachments";
 import { AddActivityDialog } from "@/components/layout/AddActivityDialog";
 import { useActivityTypesStore, iconMap } from "@/stores/activityTypesStore";
 import { ConvertToOpportunityDialog } from "@/components/leads/ConvertToOpportunityDialog";
+import { useLeadStagesStore } from "@/stores/leadStagesStore";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -56,12 +57,6 @@ const initialLeadData: LeadData = {
   assignedTo: "John Smith",
 };
 
-const stageList = [
-  { id: "new", label: "New" },
-  { id: "contacted", label: "Contacted" },
-  { id: "qualified", label: "Qualified" },
-  { id: "converted", label: "Converted" },
-];
 
 const initialActivities = [
   { id: 1, type: "call", title: "Discovery call", description: "Discussed requirements and budget", author: "John Smith", date: "01/15/2024" },
@@ -88,6 +83,7 @@ const LeadDetail = () => {
   const { activityTypes } = useActivityTypesStore();
   const [activeStage, setActiveStage] = useState("qualified");
   const [convertOpen, setConvertOpen] = useState(false);
+  const { stages: stageList } = useLeadStagesStore();
 
   const handleAddActivity = (activity: { type: string; title: string; description: string; author: string; date: string }) => {
     setActivities([{ id: Date.now(), ...activity }, ...activities]);
