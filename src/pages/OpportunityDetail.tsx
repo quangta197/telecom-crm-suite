@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useOpportunityStagesStore } from "@/stores/opportunityStagesStore";
 import { useParams, useNavigate } from "react-router-dom";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
@@ -47,14 +48,6 @@ const opportunityData = {
   expectedSpend: "1,000,000",
 };
 
-const stages = [
-  { id: "discovery", label: "Discovery", completed: true },
-  { id: "qualification", label: "Qualification", completed: true },
-  { id: "proposal", label: "Proposal", completed: true },
-  { id: "negotiation", label: "Negotiation", completed: true },
-  { id: "closed_won", label: "Closed Won", completed: true, active: true },
-  { id: "closed_lost", label: "Closed Lost", completed: false },
-];
 
 const activityItems = [
   {
@@ -98,6 +91,8 @@ const OpportunityDetail = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("detail");
   const [activityTab, setActivityTab] = useState("opportunity");
+  const { stages: stageList } = useOpportunityStagesStore();
+  const [activeStage, setActiveStage] = useState("closed-won");
 
   return (
     <MainLayout showFilters={false} showActivity={false}>
@@ -169,29 +164,36 @@ const OpportunityDetail = () => {
 
         {/* Stage Pipeline */}
         <div className="flex items-center gap-1">
-          {stages.map((stage, index) => (
-            <div
-              key={stage.id}
-              className={cn(
-                "flex-1 h-10 flex items-center justify-center text-sm font-medium relative",
-                stage.completed && !stage.active && "bg-green-500 text-white",
-                stage.active && "bg-green-600 text-white",
-                !stage.completed && !stage.active && "bg-muted text-muted-foreground",
-                index === 0 && "rounded-l-lg",
-                index === stages.length - 1 && "rounded-r-lg"
-              )}
-              style={{
-                clipPath: index === 0 
-                  ? "polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%)"
-                  : index === stages.length - 1 
-                  ? "polygon(0 0, 100% 0, 100% 100%, 0 100%, 10px 50%)"
-                  : "polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 10px 50%)"
-              }}
-            >
-              {stage.completed && <Check className="h-4 w-4 mr-1" />}
-              <span className="text-xs">{stage.label}</span>
-            </div>
-          ))}
+          {stageList.map((stage, index) => {
+            const stageIndex = stageList.findIndex((s) => s.id === stage.id);
+            const activeIndex = stageList.findIndex((s) => s.id === activeStage);
+            const isCompleted = stageIndex <= activeIndex;
+            const isActive = stage.id === activeStage;
+            return (
+              <div
+                key={stage.id}
+                onClick={() => setActiveStage(stage.id)}
+                className={cn(
+                  "flex-1 h-10 flex items-center justify-center text-sm font-medium relative cursor-pointer transition-colors",
+                  isCompleted && !isActive && `${stage.color} text-white`,
+                  isActive && `${stage.color} text-white ring-2 ring-offset-1 ring-foreground/20`,
+                  !isCompleted && "bg-muted text-muted-foreground hover:bg-muted/80",
+                  index === 0 && "rounded-l-lg",
+                  index === stageList.length - 1 && "rounded-r-lg"
+                )}
+                style={{
+                  clipPath: index === 0 
+                    ? "polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%)"
+                    : index === stageList.length - 1 
+                    ? "polygon(0 0, 100% 0, 100% 100%, 0 100%, 10px 50%)"
+                    : "polygon(0 0, calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0 100%, 10px 50%)"
+                }}
+              >
+                {isCompleted && <Check className="h-4 w-4 mr-1" />}
+                <span className="text-xs">{stage.label}</span>
+              </div>
+            );
+          })}
           <div className="ml-4 text-sm text-muted-foreground">
             {opportunityData.expectedCloseDate}
           </div>
