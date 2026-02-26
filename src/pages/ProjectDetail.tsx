@@ -4,6 +4,7 @@ import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { OpportunityServiceProducts } from "@/components/opportunities/OpportunityServiceProducts";
 import { Card } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { 
@@ -147,13 +148,19 @@ const ProjectDetail = () => {
           <div className="col-span-2">
             <Tabs value={activeTab} onValueChange={setActiveTab}>
               <TabsList className="w-full justify-start bg-transparent border-b rounded-none h-auto p-0">
-                {["detail", "items", "terms", "attachments", "history"].map((tab) => (
+                {[
+                  { value: "detail", label: "Detail Info" },
+                  { value: "attachments", label: "Attachment" },
+                  { value: "pnl", label: "P&L" },
+                  { value: "products", label: "Product/Solution" },
+                  { value: "quotation", label: "Quotation" },
+                ].map((tab) => (
                   <TabsTrigger
-                    key={tab}
-                    value={tab}
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2 capitalize"
+                    key={tab.value}
+                    value={tab.value}
+                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:bg-transparent px-4 py-2"
                   >
-                    {tab === "detail" ? "Detail Info" : tab === "items" ? "Line Items" : tab}
+                    {tab.label}
                   </TabsTrigger>
                 ))}
               </TabsList>
@@ -188,65 +195,29 @@ const ProjectDetail = () => {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="items" className="mt-6">
+              <TabsContent value="attachments" className="mt-6">
                 <Card className="p-6">
-                  <h3 className="font-semibold mb-4">Line Items</h3>
-                  <div className="border rounded-lg overflow-hidden">
-                    <table className="w-full text-sm">
-                      <thead className="bg-muted/50">
-                        <tr>
-                          <th className="text-left p-3 font-medium">Item</th>
-                          <th className="text-center p-3 font-medium">Qty</th>
-                          <th className="text-right p-3 font-medium">Unit Price</th>
-                          <th className="text-right p-3 font-medium">Total</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {lineItems.map((item) => (
-                          <tr key={item.id} className="border-t">
-                            <td className="p-3">{item.item}</td>
-                            <td className="p-3 text-center">{item.quantity}</td>
-                            <td className="p-3 text-right">{item.unitPrice}</td>
-                            <td className="p-3 text-right font-medium">{item.total}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                      <tfoot className="bg-muted/30 font-semibold">
-                        <tr className="border-t">
-                          <td colSpan={3} className="p-3 text-right">Total:</td>
-                          <td className="p-3 text-right text-primary">{projectData.value}</td>
-                        </tr>
-                      </tfoot>
-                    </table>
-                  </div>
+                  <p className="text-muted-foreground text-center py-8">No attachments yet</p>
                 </Card>
               </TabsContent>
 
-              <TabsContent value="terms" className="mt-6">
+              <TabsContent value="pnl" className="mt-6">
                 <Card className="p-6">
-                  <h3 className="font-semibold mb-6">Terms & Conditions</h3>
-                  <div className="grid grid-cols-2 gap-x-12 gap-y-4 text-sm">
-                    {[
-                      ["Payment Terms", projectData.terms],
-                      ["Warranty", projectData.warranty],
-                      ["Delivery Time", projectData.deliveryTime],
-                    ].map(([label, value]) => (
-                      <div key={label as string} className="flex justify-between py-2 border-b">
-                        <span className="text-muted-foreground">{label}</span>
-                        <span>{value}</span>
-                      </div>
-                    ))}
-                  </div>
+                  <h3 className="font-semibold mb-4">Profit & Loss Analysis</h3>
+                  <p className="text-muted-foreground text-center py-8">No P&L data available</p>
                 </Card>
               </TabsContent>
 
-              {["attachments", "history"].map((tab) => (
-                <TabsContent key={tab} value={tab} className="mt-6">
-                  <Card className="p-6">
-                    <p className="text-muted-foreground text-center py-8">No {tab} yet</p>
-                  </Card>
-                </TabsContent>
-              ))}
+              <TabsContent value="products" className="mt-6">
+                <OpportunityServiceProducts />
+              </TabsContent>
+
+              <TabsContent value="quotation" className="mt-6">
+                <Card className="p-6">
+                  <h3 className="font-semibold mb-4">Quotations</h3>
+                  <p className="text-muted-foreground text-center py-8">No quotations yet</p>
+                </Card>
+              </TabsContent>
             </Tabs>
           </div>
 
